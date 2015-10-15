@@ -1,0 +1,39 @@
+<html>
+<head>
+<style id='sheet'>
+
+body {
+	font-weight:400;
+	font-family:Calibri, sans-serif;
+	font-style:normal;
+	text-decoration:none;
+	display: block;
+	padding: 0;
+	margin: 10
+}
+
+.xHeader
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+}
+
+.xHeaderRed
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+	color:red;
+}
+</style>
+</head>
+<body>
+<span class='xHeaderRed'>Ranking avbrutt.</span><br>
+<span class='xHeader'>Trykk "Oppdater" for å fortsette.</span>
+</body>
+</html>

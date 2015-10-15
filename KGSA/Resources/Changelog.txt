@@ -1,0 +1,287 @@
+Versjon 2.8 - 14.10.2015
+
+Veldig mange endringer siden sist versjon var utgitt. Alt for mange å nevne alle her :)
+Det har blitt trimmet ned på flesket og fjernet noen funksjoner som var lite brukt.
+Retting av problemer rundt dialog-bokser om nedlasting av HTML sider ved åpning av programmet er beskrevet i Readme.txt dokumentet under kjente problemer.
+
+Først det som er fjernet helt:
+- Eksportering av bilder for fremvisning er fjernet helt. Svært vanskelig å få til riktig og alt for mye arbeid ved å holde det ved like.
+- Magrin mål under selgeroversikt fjernet. Lite brukt, lite brukervennlig, liten grunn til å beholde bare fordi.
+- Sjekk etter ny versjon på nettet fjernet. Ubrukelig siden brannmur normalt blokkerer for sjekken.
+- Automatisk opplåsning av arbeidstasjon. Fungerte bare på WinXP arbeidsstasjoner.
+
+Hva som er nytt:
+- Lager har to nye sider: Ukenytt fra Elkjop.no og Prisguide.no sammenligning av populære produkter mot lager.
+- Importering er 10 x raskere og bruker mye mindre minne enn før. Vil klare større importering enn før.
+- Ny makro innstillings panel. Forenkler hele prosessen med å sette opp makroer for automasjon. Finnes under Avansert menyen.
+- Ny avdelings ranking tab. En ny type ranking some tar med seg alle avdelinger i en og samme tabell. Tjenester og Snittpriser er to nye ranking lister.
+- Det er nå mulig å se og endre hovedprodukt- og tilbehørsvaregrupper under Verktøy -> Innstillinger -> Avansert.
+- Lagt til (valgbar) total for sist uke for butikk. Har med snittsalg, tjeneste hitrate og tilbehør SoB.
+- Ny gruppe i Adresseboken: "Full (Ukestart)" - Mottakerene i denne gruppen sendes det samme som "Full" gruppen, men bare på Mandag (eller Søndag hvis Søndag ignorers).
+
+Eksperimentelle funksjoner:
+- Webtjener og Budsjett er fortsatt eksperimentelle funksjoner som inntil videre ikke er tatt frem i lyset. (må aktiveres via Innstillinger)
+Budsjett funksjonen for avdelingsledere (lik excel-arkene som noen varehus bruker) for oppfølging av selgere fungere so-so.
+Er ikke blitt brukt nok til å vite om det fungerer tilfredstillene.
+- Android App er til bruk for en Android app jeg jobber med for varebeholdning og vareinformasjon.
+Usikkert om denne har en fremtid. Appen er ikke tilgjengelig.
+
+Bugfixes og småendringer:
+- [fix] Toppselgerer siste-åpningsdag vises ikke korrekt med stjerner som den skal. Bruker nå nyere versjon av Internet Explorer for visning av sider.
+- [fix] Rekken "Andre" under Lyd og Bilde summerer feil antall og inntjening.
+- [fix] "Andre" manglet under KnowHow ranking. Er nå med, samt gruppen viser nå hitrate under alle rankinger.
+- [fix] Indeksering er nå satt korrekt for transaksjoner. Gikk sterkt ut over ytelsen med store databaser.
+- [fix] I enkelte tilfeller når databasen er tom stoppet programmet opp pga. manglende datatabell-kolonne. Tabellen blir nå opprettet med riktig antall kolonner.
+- [fix] Bakgrunnsjobb starter selv om databasen er tom.
+- [fix] Innstillinger lagres ikke automatisk ved å lukke vinduet som før, må velge OK eller Lagre for å lagre innstillingene, som det var egentlig ment.
+- [fix] Windows 10 - Konvertering av dato feiler ved import på Windows 10 maskiner.
+- Oppdatert butikk navn og lagt til 7 nye butikker.
+
+Versjon 2.7 - 23.02.2015
+
+- Endringer med varekoder:
+-- Standard varekodeliste oppdatert med nye varekoder. Oppgradert fra tidligere versjon? Bruk "Sett tilbake til standard".
+-- Nytt alternativ for varekoder: Mulighet for å ekskludere varekoder fra hitrate. Greit for varekoder som ikke direkte er tilknyttet hovedproduktet. F.eks. RTGGPS.
+-- Flyttet Varekoder ut av Innstillinger. Finnes nå under Verktøy -> Varekoder.
+- Endret på hvordan programmet håndterer database spørringer. Smartere mellomlagring og oppdatering av ranking tar mye kortere tid; ulempen er litt mer minnebruk.
+- Skjuler nå avanserte valg under Innstillinger til en bortgjemt plass helt til de aktiveres. Helt nødvendige funksjoner vises alltid.
+- Ny Vinnprodukt-ranking. Rangeres på poeng som er angitt for hver enkel varekode. Laget spesielt for konkurranser; Fra og til dato kan velges.
+- Eksperiment: Nytt budsjett program. Budsjett opprettes under Verktøy -> Budsjett, hvis eksperimentelle funksjoner er aktivert. Webserver aktiveres på samme måte.
+- [fix] Ugyldig verdier i XML vil ikke lenger forhindre åpning av Innstillinger.
+- [fix] Avkorter lange varetekst strenger i wobsolete.csv.
+
+Versjon 2.6 - 19.10.2014
+
+- Endret på hvordan Finansierings-produkter blir tilegnet salgsavdeling. Se neste punkt.
+- For finans-salg under Oversikt og Butikk er det ikke lenger "usikkert" hvilken avdeling salget er gjort på. Varegruppen til den dyreste varen på bilaget bestemmer hvor den hører hjemme. For Cross-selgere var dette et problem.
+- Eksperiment: Implementert intern webserver for intranett. Gir tilgang til alle ranking sider og nedlasting av PDF. Aktiveres under Innstillinger -> Webserver. Obs! Hør med IT-ansvarlig før dette settes opp.
+- [fix] Små GUI fikser.
+- [fix] Ryddet opp i makro prosessene. Flere oppgaver kan avbrytes og gir bedre tilbakemelding om hva som gikk galt.
+
+Versjon 2.5.7 - 14.10.2014
+
+- Ny ranking side: Lister. Lister er en enkel oversikt av MTD salg av de ulike tjenestene, ikke ulik Toppselger-listene med ekstra kolonne og en side per liste.
+- Provisjons kolonne vises nå bare hvis det er lagt inn provisjon for den aktuelle avdelingen.
+- [fix] Rettet på endring sist åpningsdag på totalen under toppselgere; viste feil tall.
+
+Versjon 2.5.6 - 08.10.2014
+
+- Lagt til ny kolonne under service-oversikt for antall servicer satt i arbeid pr. selgerkode.
+- [fix] Rettet på krasj-bug ved lagring av selgerkode krav.
+- [fix] Rettet på siste åpningsdagsalg på toppselgerlistene som (fortsatt) ikke viste riktige tall ved slutten av måneden.
+- [fix] "Ikke vis Kasse-selgere i inntjening/omsetning listen" fungerer nå som forventet; Kasse-selgere ble også fjernet fra andre tjeneste salg.
+- [fix] Selgerkode-listene får ikke lengre doble eller triple elementer.
+
+Versjon 2.5.5 - 28.09.2014
+
+- Ny ranking side for alle KnowHow tjenester lagt til.
+- [fix] Sletting av transaksjoner under Innstillinger -> Vedlikehold resulterte i å få en ukompatibel database. Oppretter nå riktige tabeller.
+
+Versjon 2.5.4 - 24.09.2014
+
+- [Major] Lagt til lager status inkl. ukuranse varer. Viser utvikling fra egenvalgt dato. Automatisk importering og mulighet for inkludering i tjeneste ranking epost.
+- Microsoft SQL Compact er nå inkludert i installasjon, samt .Net er ikke lenger nødvendig å installeres seperat. KGSA benytter seg av .Net 3.5 som er inkludert fra Windows 7+.
+- Lagt til ny grafisk margin-mål til selgeroversikten. Mål settes under Innstillinger -> Oversikt: Margin.
+- Endret toppselgere til å være uavhengig av selgerlisten i programmet.
+- Lagt til kort introduksjons tekst til alle ranking sidene. På som standard med ny installasjon.
+- Lagt til SAGPS36/24/12 til standard varekodeliste.
+- Gjort det enklere å legge til Favoritt butikker.
+- Lagt til mulighet for å sette in navn på selgerkodene.
+- [fix] Sendes nå tilbake til siste ranking side ved avsluttning av periode-velger.
+- [fix] Begrenset minnebruken ved importering av transaksjoner. Brukere med store databaser kunne få OutOfMemory unntak.
+- [fix] Rettet på toppselgere fra siste åpningsdag som viste feil tall. Tall for to dager siden ble vist istedet i noen tilfeller.
+- [fix] Valg for skjuling av Aftersales kategori under selgeroversik fungerte ikke. Rettet på den samt lagt til valg for skjuling av Kjøkken for de butikker som ikke har det.
+- [fix] Rettet på GUI feil under innstillinger. Noen valg var ikke mulig å endre uten å åpne vinduet på nytt.
+- [fix] Bytte mellom butikker oppdaterte ikke alle faner, alt oppdateres nå.
+- [fxi] Grafer viste alle favoritt butikkene uansett om det var slått på visning eller ikke. Følger nå innstillingen i programmet.
+- [fix] Grafer fungerte ikke med mange favoritter valgt; støtter nå opp til 64 butikker.
+- [fix] Programmet vil ikke lenger hoppe ut av fokus/bak andre vindu tilfeldig lengre (håper jeg..)
+- [fix] Selgerkoder blir nå oppdatert ved hver endring, og omstart er ikke lenger nødvendig.
+- Omskrevet makro funksjon. Lagt til nye kommandoer og et valgbar "hands clear" varsel ved makro kjøring for maskiner som er delt til andre oppgaver. Obs! Gamle makroer må resettes til det nye formatet.
+
+Versjon 2.5.3 - 05.09.2014
+
+- [Major] E-post utsending er overhalt med ny adressebok. Hver mottaker kan konfigureres individuelt om hva de skal motta; Full tjenesteranking eller bare sin avdeling, og om de skal motta kveldstall eller ikke.
+- Lagt til Tilbehør til selgeroversikts ranking. Aktiveres i Innstillinger.
+- Lagt til mulighet for å se siste endringer på Toppselgere rankingen. Gjelder for TA, RTG/SA, Finans og Strøm.
+- Lagt til Snittpris til oversikt selgere.
+- Lagt til Snittpris hovedprodukter til oversikt selgere. Aktiveres i Innstillinger.
+- Lagt til valg for oppsummering av tjeneste salg under kveldsranking.
+- Lagt til støtte for "Cross"-selger. Legg til selgerkode med kategori "Cross" og den vil vises under Lyd&Bilde, Tele og Data.
+- Laget ny beste selger ranking for forrige åpningsdag.
+- Flyttet Selgerkrav for selgeroversikten til eget vindu.
+- [Service] Lagt til Ferdig service statistikk; Lister opp en gitt antall selgerkoder som fullfører flest servicer.
+- Kveldsranking kan nå benyttes uten noen favoritt-avdelinger valgt.
+- Ryddet opp i Innstillinger vindu. Fjernet/forenkelt noen valg og standardinnst. fungerer faktisk nå. Noen standard programinnstillinger har blitt endret. F.eks full transaksjons importering er nå standard.
+- [fix] Rettet på manglende totalt krav under selger oversikt pr. avdeling,
+- [fix] Rettet på standard salgspris for RTG00, var 695, skulle være 699. Obs! Endres ikke automatisk ved oppgradering fra 2.5.x
+- [fix] Rettet på oppnådd krav merking for Rtgsa under selger oversikt. Ble merket oppnådd uten at det var tilfellet.
+- [fix] Toppselgere sorteres nå på bakgrunn av alle kolonner. F.eks. Selger1 har solgt 5 RTG, selger2 har også solgt 5 RTG, men selger2 hadde tjent mer; Var helt tilfeldig hvem som kom øverst.
+- [fix] Rettet på manglende kolonner i rapport ranking. Ingen som oppdaget den feilen tidligere??
+- [fix] Laging av rapport vil ikke lengre stoppe hvis databasen inneholder mindre enn en måned med transaksjoner.
+
+Versjon 2.5.2 - 06.07.2014
+
+- Omskriving/optimalisering av kode. Ny forløpssindikator logikk. Flere prosesser støtter kanselering, f.eks. importering av ranking.
+- [fix] Oversikt selgere: Rettet KravMTD kolonne til å vise litt mer nøyaktige verdier; siste dag i måneden vil nå vise 100% av endelig krav, i stedet for ca 97%
+- [fix] Toppselgere lot seg ikke oppdatere via Oppdater knappen.
+- [fix] Rettet på skrivefeil med service kategori 'venter svar RFC'.
+
+Versjon 2.5.1
+
+- Flyttet Kuppvarer til selgeroversiktens ekstra-tabell.
+- Service listene kan nå filtreres på status, samt servicer kan markeres som behandlet.
+Obs! Ved oppdatering fra KGSA 2.5 må service databasen oppgraderes. Skjer det ikke automatisk, gå til Verktøy -> Innstillinger -> Vedlikehold -> Oppgrader service databasen. Historikk blir bevart under oppgraderingen. Servicer må importeres på nytt.
+- Lagt til flere service statuser i service grafikk. De fleste skal nå være med.
+- Lagt til Ctrl+P snarvei for utskrift.
+- [fix] Standard makro program 244 hadde en ekstra (Enter) for mye. Rettet. Bruk reset knapp for å hente frem oppdatert standard makroer.
+- [fix] Tray icon er ikke lenger alltid synlig.
+
+Versjon 2.5
+
+- Ny database versjon! Tidligere databaser fra eldre versjoner er ikke lenger kompatibelt. Er dette en oppdatering så må transaksjoner importeres på nytt. Skulle det bli endringer i databasen i senere versjoner, ordnes det da ved konvertering istedet for å begynne importering på nytt.
+- [major] Ny måte å håndtere varekoder på. Støtter nå alias navn; varekoder kan grupperes under felles navn ved å gi dem like alias navn.
+- Oppdatert varekoder. RTG00 og KG00 er gruppert sammen, samlet navn (alias) er RTG00.
+- [major] Selger oversikt har nå støtte for å legge in krav kolonner. Krav pr. selger settes under selgerkode fanen som har nye felt for formålet.
+- Flyttet Toppselgere til egen kategori [Toppselgere].
+- Lagt til valgbar kuppvarer kolonne til oversikt tabell. Se Innstillinger -> Oversikt for å aktivere.
+- Lagt til reset knapp for varekoder.
+- Lagt til valgbar rabatt kolonne til ranking.
+- Lagt til valg for Lefdal logo.
+- Programmet vil nå spørre om hva slags type CSV fil som skal importeres ved oppstart via CSV.
+- Service oversikt har nå en valgbar grafisk fremstilling av service historikken. TAT og Aktive servicer er med i denne grafen.
+- Lagt inn automatisk synkronisering av databasen ved nyinstallasjon/oppgradering.
+- Lagt inn oppdatertings sjekk.
+- [fix] Rapport for butikk endte bare i feilmeldinger, oops!
+- [fix] Lyd og Bilde-graf skjermbilde ble laget selv om grafikk ikke var valgt.
+- [fix] Epost tekst ble ikke sendt riktig.
+
+Versjon 2.4.1
+
+- [fix] Fjernet CSV kompatibilitets sjekk. Språk forskjeller og/eller Elguide server forskjeller gjorde den type sjekk upålitelig. Vil heller forsøk importering, og avbrytes hvis det forekommer for mange lese feil.
+
+Versjon 2.4
+
+- [major] Lagt til CSV eksportering av ranking tabeller og transaksjoner. Aktiveres under Innstillinger -> Tabell.
+- [major] Lagt til service ranking. Kan generere 60 dagers oversikt samt liste på aktive servicer. Nå kan du endelig sammenligne din service innsats mot butikk rivalene ;)
+- [service] Lagt til automatisk importering av servicer fra Elguide.
+- [service] Lagt til JPEG eksportering av service oversikt til valgbar mappe.
+- [major] Omskrever ny grafikk kode til ranking sidene. Butikk og Oversikt ranking har sine egne unike grafer. Trykk grafer for å få mer detaljert informasjon.
+- Søking på transaksjoner ved å trykke på "TOTALT" i ranking tabeller viser nå bare solgte tjenester istedet for alle transaksjoner som standard.
+- Lagt til hitrate uke-for-uke og måned-for-måned til grafer.
+- Lagt til valg for å bare vise totalen fra fjoråret.
+- Lagt til valg for automatisk lagring/eksport av tjeneste ranking PDF'er til angitt mappe.
+- Topp X selgere-listene viser nå tomme rader hvis antall selgere er kortere enn valg lengde.
+- Lagt til valg for å slå av/på vannmerke i PDF'er. Heia bror Lefdal :)
+- Endret hvordan hitrate vises; maks 999% og hvis tjenester er solgt men ingen produkter så farges ikke cellen. 100% + er også nå grønn som standard.
+- Både service iserv.csv og transaksjoner irank.csv aksepteres som argument under oppstart av programmet.
+- CSV filer kontrolleres nå for kompatibilitet før importering.
+- Lagt til budsjett for butikk. Aktiveres under generelt. Budsjett mål legges inn under Verktøy -> Budsjett.
+- Auto-ranking sender ikke ut epost hvis siste transaksjoner er eldre enn 24 timer. (vil derme ikke sende ut ranking etter røde dager)
+- Lagt til krav-kolonne for nettbrett. Grense settes under innstillinger.
+- Ranking av andre måneder enn den siste viser nå hele måneden, uansett hvilken dag i måneden som er valgt. (Var dette som var meningen hele tiden, men bugs..)
+- Nytt valg for importering: Importer bare favoritt avdelinger. Stor ytelse gevinst!
+- Laget ny måte å håndtere epost adresser på. Kan nå ha navn samt at det ikke lenger er en begrensning på antall adresser.
+- Endret på måten periode-valg virker på. Er nå aktiv til den deaktiveres.
+- Lagt til ny innstilling for valg av standard Elguide eksport mappe (normalt C:/) som bytter ut CSV Inego valg og Irank valg.
+- Lagt til ekstra felt under Topp X selgere-listene med totalt denne måneden, totalt i fjor samt MTD totalt i fjor.
+- Oppstart og endringer av innstillinger går nå mye raskere!
+- Kan nå generere JPG bilder av rankingene til fremvisning. Se "Eksport" i Innstillinger for valg.
+- Lagt til knapp for enkel tilbake stilling av makro program.
+- Systemstatusfelt/System tray er tilbake! KGSA kan nå skjules til systemfeltet ved minimalisering eller hvis ønskelig, når bruker trykker lukke-knappen.
+- [fix] Avdelings margin på TA manglet.
+- [fix] MDA og SDA hadde byttet plass i [Butikk] ranking og kvelds-tall.
+- (fix) Rettet på formatfeil ved kveldstall importering; Elguide ville i noen tilfeller gi tomme kolonner og det ble ikke riktig håndtert.
+- (fix) Favoritter ble i noen tilfeller lastet inn for sent under oppstart. Service stats ble ikke generert riktig i så tilfelle. Innlastingen skal nå være garantert.
+- (fix) Rettet på crash/freeze-bug ved oppdatering av ranking ved autoranking.
+- [fix] Vil ikke lenger oppdatere ranking sider dobbelt etter importering.
+- [fix] Sjekker nå kvelds-tall eksport nøyere. I noen tilfeller fikk favoritt butikker like tall. Oppstår feilen nå hopper programmet over butikken i stedet.
+- [fix] Fikset av/på hakning av Nettbrett krav.
+- [fix] Oppstod uventet unntak under generering av Topp X selger listene. Sjekker nå etter manglende tall fra fjoråret og manglende budsjett tall.
+- [fix] Rettet på varegruppe listen under transaksjoner. Tele, data og kjøkken ble ikke riktig angitt i filter.
+- [fix] Henting av transaksjoner fra selgerkoder gir ikke lenger feilmeldinger.
+- [fix] Rettet på feil datoer i kveldsranking, viste ranking datoen.
+- [fix] Oppdatert wkhtmltopdf. Tidligere versjon kunne krasje på noen systemer.
+- [fix] Ryddet opp i skjermbilde eksportering. Rettet mange feil og mangler.
+- [fix] Sammenligningstabellene fra fjoråret viser nå riktig ukedag. Den viste ukedagen i år, men burde vise ukedagen i fjor.
+- [fix] PDF til kveldsrankingen har nå dagens dato, og ikke gårsdagen som er feil.
+- Ryddet i Innstillinger vindu. Omorganisert masse innstillinger for å få bedre oversikt.
+- Endret på databasen; enkelte felt forrandret fra nvarchar til nchar som gir noe ytelsesforbedringer. Også lagt til ny funksjon kalt "Compact DB" som kan optimaliserer databasen for raskere søking.
+- Lagt til aktivitets meter til selger oversikt. Er deaktivert som standard.
+- Loggen har nå farger! Feilmeldinger f.eks. blir mer tydelig ;)
+- Maksimum database størrelse er nå satt til 4 GB, opp fra 256 MB.
+
+Versjon 2.3.1
+
+- Endret TA margin til å være omsetning TA mot omsetning butikk minus mva, som i C810. Takk til Jørgen.
+- Bedre feilhåndtering ved importering av CSV. Transaksjoner med feil i delimiter hoppes over.
+- [Oversikt] Lagt til valgbar grense på Inntjen, Finans, TA og Strøm hvor teksten blir rød når margin kommer under gitt prosent.
+- Lagt til mulighet for å køe opp en melding som bare sendes ut sammen med neste autoranking.
+- [fix] Eksporterte PDF fra periode-ranking har nå riktige datoer i filnavn.
+- [fix] Fjernet NEWSIM fra forhåndsdefinerte varekoder.
+- [fix] Aktivert på nytt høgreklikk meny; Kopiere fra ranking skal nå fungere igjen.
+
+Versjon 2.3
+
+- Ny database versjon! Var nødvendig med inkludering av ny Selgerkode løsning. Importer transaksjoner på nytt.
+- Flyttet Selgerkoder fra Innstillinger til egen fane og er nå lagret i databasen.
+- Endret på margin beregningene; Margin butikk er nå inntjening mot omsetning minus mva. TA margin er nå TA inntjening mot butikk-omsetning med mva.
+- Oppdatert utseende på rankingene. Oppdatert sorteringsfunksjonen. Tre klikk på kolonneteksten for resetting av sortering.
+- Lagt til kontekst-meny til transaksjons vindu med filter og søkefunksjoner.
+- Beregning av ranking er nå flertrådet = raskere!
+- Lagt til "Oversikt" ranking for detaljert butikk informajon brutt ned på selger nivå, samlet på en side.
+- Lagt til "Beste selger" tabeller til oversikt side.
+- Varekoder kan nå merkes som "skjult", de telles ikke i antall tjenester men inntjeningen og omsetning taes med likevel. Bra for timepris etc.
+- Med ny varekode-feature, beregnes inntjening nå på varekoder bare og ikke varegruppen (for data var det 580).
+- Lagt til flere varekoder (også gamle) som er merket som skjult.
+- Lagt til mulighet for ranking i en gitt periode.
+- [fix] Alle transaksjonene som er nødvendig for riktige tall under butikk-ranking er nå med. Tallene var mangelfulle. Share of business og margin er med. 
+- [fix] Frem/tilbake knappene ble ikke oppdatert riktig. Fikset.
+- [fix] Rettet på feil varegruppenavn for mobiltelefoner.
+- [fix] Lyd og bilde ranking lot seg ikke åpne som PDF.
+- [fix] Butikk navn for avd 1044 og 1024 var byttet om.
+- Fjernet valget for kombinering av fredag og lørdag. En bedre løsning vil kanskje komme senere.
+- + Utallige småfikser og optimaliseringer.
+
+Versjon 2.2
+
+- [major] Lagt til TA, Strøm og Finansiering til Butikk ranking. Kan bare benyttes hvis "Importer alle transaksjoner" er valgt.
+- [major] Kan nå importere CSV fra andre servere uten å miste eksisterende transaksjoner og det er mulig å importere flere CSV samtidig.
+- Lagt til JavaScript sortering; trykk på tittel-felt på en kolonne for å sortere. Testfase! Har problemer med noen type data.
+- Lagt til fritekst-søk av transaksjoner.
+- Lagt til valg for liggende/landskap PDF format.
+- Ryddet opp i Favoritt meny og skjult 17xx avdelinger.
+- [fix] Rettet på Lyd & Bilde og Tele avdeling under Butikk-ranking som var byttet om. (!)
+- [fix] Rettet på feil i makro program.
+- [fix] Rettet på feil i grafikk program; i spesielle tilfeller var det ikke mulig å hoppe til tidligere måneder.
+- Samt en hel rekke optimaliseringer og småfikser.
+
+Versjon 2.1b
+
+- Lagt til antall solgte tjenester i butikk rankingen.
+- Lagt til ny nedtreksmeny med liste over alle avdelinger i databasen.
+- Lagt til informasjon om progresjon under importering.
+- Oppdatert liste med avdelingsnavn med nye butikker.
+- Macro velger nå å overlappe med en ekstra dag samt rettet en feil i valg av riktig fra-dato.
+- [fix] Rettet på en feil i henting av navn på ukjente/nye avdelinger.
+- [fix] Lagt til nødvendig forsinkelse på sending av automatisk ranking & rettet på manglende opplåsning av arbeidsstasjon.
+- [fix] Rettet på dobbel sending av ranking. (versjon 2.1b)
+
+Versjon 2.0
+
+- [major] Endret på brukergrensesnittet. Raskere og mer oversiktlig! :)
+- [fix] rettet feil i teknikerprovisjons beregningen fra versjon 1.18 (!)
+- Ny database versjon, importer data på nytt. Sorry! Var nødvendig for å få med bilagsnr.
+- [major] Lagt til side for å vise butikk oversikt.
+- [major] Lagt til valg for å importere ALLE transaksjoner utover det som er nødvendig for tjeneste ranking. Advarsel: Kan gå tregt!
+- Lagt til nettbrett, TVer og mobiler til grafikk-fanen.
+- Lagt til link til transaksjonene fra selgerkodene.
+- Lagt til bilagsnr under transaksjoner.
+- Lagt til knapper for å enklere bytte mellom dager og måneder.
+- Selgere lagres nå per butikk. Bytte mellom butikker fungerer nå mer smertefritt.
+- Lagt til valg for Hitrate-farger med jevn overgang.
+- Fjernet extra-info. Var ikke brukbart/pålitelig nok.
+- Skrevet om Makro implementeringen. Makro programmet kan nå endres under Innstillinger.
+- [Tele] provisjons kolonnen manglet, er nå tilbake.
+- [fix] rettet feil ved automatisk sending av ranking.
+- [fix] Fikset åpne-som-PDF for rapporter.

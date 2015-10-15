@@ -1,0 +1,731 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{84CC8694-D5E7-4449-B54E-826BE0F056B9}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KGSA</RootNamespace>
+    <AssemblyName>KGSA</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>C:\Export\TMP\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.10.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>false</BootstrapperEnabled>
+    <BootstrapperComponentsLocation>Relative</BootstrapperComponentsLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\..\KGSA\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>elkjop_logo5.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>0A666B3B2C2C99259F45F0570F6A21B144AC8E7E</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>CVS_Parse_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject>KGSA.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClosedXML, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="ErikEJ.SqlCe40">
+      <HintPath>..\packages\ErikEJ.SqlCeBulkCopy.2.1.6.9\lib\net35\ErikEJ.SqlCe40.dll</HintPath>
+    </Reference>
+    <Reference Include="FileHelpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\FileHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net20\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="InputSimulator">
+      <HintPath>.\InputSimulator.dll</HintPath>
+    </Reference>
+    <Reference Include="InTheHand.Net.Personal, Version=3.5.605.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
+      <HintPath>..\packages\32feet.NET.3.5.0.0\lib\net\InTheHand.Net.Personal.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>.\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.2.1.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenPop, Version=2.0.5.0, Culture=neutral, PublicKeyToken=bebb5741791313cd, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\OpenPop.dll</HintPath>
+    </Reference>
+    <Reference Include="Salient.Data">
+      <HintPath>..\packages\ErikEJ.SqlCeBulkCopy.2.1.6.9\lib\net35\Salient.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.98.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.98.1\lib\net20\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.1, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\System.Data.SqlServerCe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppManager.cs" />
+    <Compile Include="AppSettings.cs" />
+    <Compile Include="BluetoothServer.cs" />
+    <Compile Include="Budget.cs" />
+    <Compile Include="BudgetAvdeling.cs" />
+    <Compile Include="BudgetImporter.cs" />
+    <Compile Include="KgsaTools.cs" />
+    <Compile Include="OnlineImporter.cs" />
+    <Compile Include="StreamExtensions.cs" />
+    <Compile Include="_database\Database.cs" />
+    <Compile Include="FormSettingsMacro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSettingsMacro.Designer.cs">
+      <DependentUpon>FormSettingsMacro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormVarekoder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormVarekoder.Designer.cs">
+      <DependentUpon>FormVarekoder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormBudgetCreation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormBudgetCreation.Designer.cs">
+      <DependentUpon>FormBudgetCreation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormBudgetDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormBudgetDetails.Designer.cs">
+      <DependentUpon>FormBudgetDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormBudgetTimer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormBudgetTimer.Designer.cs">
+      <DependentUpon>FormBudgetTimer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormMacro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMacro.Designer.cs">
+      <DependentUpon>FormMacro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Avdeling.cs" />
+    <Compile Include="Email.cs" />
+    <Compile Include="FormError.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormError.Designer.cs">
+      <DependentUpon>FormError.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormEmailAddressbook.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormEmailAddressbook.Designer.cs">
+      <DependentUpon>FormEmailAddressbook.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormKrav.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormKrav.Designer.cs">
+      <DependentUpon>FormKrav.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormProcessing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormProcessing.Designer.cs">
+      <DependentUpon>FormProcessing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormMain\FormQuickranking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMain\FormRanking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMain\FormService.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMain\FormStore.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormVinnprodukt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormVinnprodukt.Designer.cs">
+      <DependentUpon>FormVinnprodukt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GraphClass.cs" />
+    <Compile Include="GraphClassPlumbing.cs" />
+    <Compile Include="ImportManager.cs" />
+    <Compile Include="KgsaServer.cs" />
+    <Compile Include="LogMessage.cs" />
+    <Compile Include="FormMsgAutoranking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMsgAutoranking.Designer.cs">
+      <DependentUpon>FormMsgAutoranking.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Obsolete.cs" />
+    <Compile Include="OpenXML.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="_database\TableBuget.cs" />
+    <Compile Include="_database\TableBudgetSelger.cs" />
+    <Compile Include="_database\TableBudgetTimer.cs" />
+    <Compile Include="_database\TableDailyBudget.cs" />
+    <Compile Include="_database\TableWeekly.cs" />
+    <Compile Include="_database\TablePrisguide.cs" />
+    <Compile Include="_database\TableServiceLogg.cs" />
+    <Compile Include="_database\TableServiceHistory.cs" />
+    <Compile Include="_database\TableService.cs" />
+    <Compile Include="_database\TableHistory.cs" />
+    <Compile Include="_database\TableEmail.cs" />
+    <Compile Include="_database\TableVinnprodukt.cs" />
+    <Compile Include="_database\TableSelgerkoder.cs" />
+    <Compile Include="_database\TableSalg.cs" />
+    <Compile Include="_ranking\RankingAvdSnittpriser.cs" />
+    <Compile Include="_ranking\RankingBudget.cs" />
+    <Compile Include="_ranking\RankingAvdTjenester.cs" />
+    <Compile Include="_ranking\RankingKnowHow.cs" />
+    <Compile Include="_ranking\RankingStore.cs" />
+    <Compile Include="_ranking\RankingToppselgere.cs" />
+    <Compile Include="_ranking\RankingOversikt.cs" />
+    <Compile Include="_ranking\RankingButikk.cs" />
+    <Compile Include="_ranking\RankingVinn.cs" />
+    <Compile Include="_ranking\ReportButikk.cs" />
+    <Compile Include="_ranking\ReportAudioVideo.cs" />
+    <Compile Include="_ranking\ReportKnowHow.cs" />
+    <Compile Include="_ranking\ReportTele.cs" />
+    <Compile Include="_ranking\Ranking.cs" />
+    <Compile Include="_ranking\RankingTele.cs" />
+    <Compile Include="_ranking\RankingAudioVideo.cs" />
+    <Compile Include="csvImport.cs" />
+    <Compile Include="FormMain\FormEssentials.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSettings.Designer.cs">
+      <DependentUpon>FormSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAbout.Designer.cs">
+      <DependentUpon>FormAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSplash.Designer.cs">
+      <DependentUpon>FormSplash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormMain\FormGraphs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMain\FormImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="_ranking\RankingData.cs" />
+    <Compile Include="_ranking\ReportData.cs" />
+    <Compile Include="FormMain\FormSelgere.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleAES.cs" />
+    <Compile Include="_database\TableEan.cs" />
+    <Compile Include="_database\TableUkurans.cs" />
+    <Compile Include="_database\TableVareinfo.cs" />
+    <Compile Include="Varekoder.cs" />
+    <Compile Include="Selgerkoder.cs" />
+    <Compile Include="FormSendEmail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSendEmail.Designer.cs">
+      <DependentUpon>FormSendEmail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Service.cs" />
+    <Compile Include="ServicePlumbing.cs" />
+    <Compile Include="TimeWatch.cs" />
+    <Compile Include="TopGraph.cs" />
+    <Compile Include="VelgDato.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VelgDato.Designer.cs">
+      <DependentUpon>VelgDato.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VelgPeriode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VelgPeriode.Designer.cs">
+      <DependentUpon>VelgPeriode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VelgTypeCSV.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VelgTypeCSV.Designer.cs">
+      <DependentUpon>VelgTypeCSV.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vinnprodukt.cs" />
+    <Compile Include="WebServer.cs" />
+    <EmbeddedResource Include="FormBudgetCreation.resx">
+      <DependentUpon>FormBudgetCreation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormBudgetDetails.resx">
+      <DependentUpon>FormBudgetDetails.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormBudgetTimer.resx">
+      <DependentUpon>FormBudgetTimer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMacro.resx">
+      <DependentUpon>FormMacro.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormError.resx">
+      <DependentUpon>FormError.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSettings.resx">
+      <DependentUpon>FormSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormAbout.resx">
+      <DependentUpon>FormAbout.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormEmailAddressbook.resx">
+      <DependentUpon>FormEmailAddressbook.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormKrav.resx">
+      <DependentUpon>FormKrav.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormProcessing.resx">
+      <DependentUpon>FormProcessing.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSettingsMacro.resx">
+      <DependentUpon>FormSettingsMacro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSplash.resx">
+      <DependentUpon>FormSplash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVarekoder.resx">
+      <DependentUpon>FormVarekoder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormVinnprodukt.resx">
+      <DependentUpon>FormVinnprodukt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMsgAutoranking.resx">
+      <DependentUpon>FormMsgAutoranking.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSendEmail.resx">
+      <DependentUpon>FormSendEmail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VelgDato.resx">
+      <DependentUpon>VelgDato.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VelgPeriode.resx">
+      <DependentUpon>VelgPeriode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VelgTypeCSV.resx">
+      <DependentUpon>VelgTypeCSV.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="elkjop_logo5.ico" />
+    <Content Include="ErikEJ.SqlCe40.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Ever.ico" />
+    <Content Include="Ionic.Zip.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Microsoft.VC90.CRT\msvcr90.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\bar_green" />
+    <None Include="Resources\bar_green.png" />
+    <None Include="Resources\bar_red" />
+    <None Include="Resources\bar_red.png" />
+    <None Include="Resources\bar_green1.png" />
+    <None Include="Resources\bar_red1.png" />
+    <None Include="Resources\favicon" />
+    <None Include="Resources\style.html" />
+    <None Include="Resources\ImportData3.txt" />
+    <None Include="Resources\webserver_menu.html" />
+    <None Include="Resources\style1.html" />
+    <None Include="Resources\favicon.ico" />
+    <None Include="Resources\WebFormTest.txt" />
+    <None Include="Resources\htmlEnd1.txt" />
+    <None Include="Resources\style2.html" />
+    <None Include="Resources\Loading11.txt" />
+    <None Include="Resources\Macro2.txt" />
+    <Content Include="Salient.Data.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlceca40.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlcecompact40.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlceer40EN.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlceme40.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlceqp40.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlcese40.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SQLite.Interop.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="System.Data.SqlServerCe.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\CompactDbServiceV3.sdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Save1.png" />
+    <None Include="Resources\Save.png" />
+    <None Include="Resources\close.png" />
+    <None Include="Resources\rows1.png" />
+    <None Include="Resources\table.png" />
+    <None Include="Resources\rows.png" />
+    <None Include="Resources\linesplot.png" />
+    <None Include="Resources\Address Book.png" />
+    <None Include="Resources\emailButton.png" />
+    <None Include="Resources\icon_email.png" />
+    <None Include="Resources\htmleditor_preview_icon.png" />
+    <None Include="Resources\pdf-icon.png" />
+    <None Include="Resources\F1Help_7644.png" />
+    <None Include="Resources\CheckOutforEdit_13187.png" />
+    <None Include="Resources\CheckIn_13188.png" />
+    <None Include="Resources\Message_16xLG.png" />
+    <None Include="Resources\refresh_16xLG1.png" />
+    <None Include="Resources\resource_16xLG.png" />
+    <None Include="Resources\Symbols_Attribute_16xLG.png" />
+    <None Include="Resources\KPI_16xLG_colorG.png" />
+    <None Include="Resources\KPI_16xLG_color3.png" />
+    <None Include="Resources\KPI_16xLG_color1.png" />
+    <None Include="Resources\arrow_Next_16xLG_colorG.png" />
+    <None Include="Resources\last ned.png" />
+    <None Include="Resources\Preview.png" />
+    <None Include="Resources\icon_fileTypePdf_16x18px.png" />
+    <None Include="Resources\script_16xLG.png" />
+    <None Include="Resources\arrow_Next_16xLG_colorB.png" />
+    <None Include="Resources\arrow_Next_16xLG_color1.png" />
+    <None Include="Resources\Symbols_Help_and_inclusive_16xLG.png" />
+    <None Include="Resources\Step_16xLG.png" />
+    <None Include="Resources\Services_16xLG.png" />
+    <None Include="Resources\RSReport_16xLG.png" />
+    <None Include="Resources\refresh_16xLG.png" />
+    <None Include="Resources\procedure_16xLG.png" />
+    <None Include="Resources\printer_16xLG1.png" />
+    <None Include="Resources\PencilAngled_16xLG_color.png" />
+    <None Include="Resources\Output_16xLG.png" />
+    <None Include="Resources\Office_Excel_Application_16xLG.png" />
+    <None Include="Resources\list_16xLG.png" />
+    <None Include="Resources\lines_Text_code_16xLG.png" />
+    <None Include="Resources\library_16xLG.png" />
+    <None Include="Resources\KPI_16xLG.png" />
+    <None Include="Resources\graph_highPerformanceComputingChart_5170_16xLG.png" />
+    <None Include="Resources\arrow_Next_16xLG_color.png" />
+    <None Include="Resources\arrow_Next_16xLG.png" />
+    <None Include="Resources\macro_img_sign.png" />
+    <None Include="Resources\macro.png" />
+    <None Include="Resources\MacroQuick1.txt" />
+    <None Include="Resources\ImportData2.txt" />
+    <None Include="Resources\Lefdal_Bg.jpg" />
+    <None Include="Resources\htmlStart31.txt" />
+    <None Include="Resources\htmlStart3.txt" />
+    <None Include="Resources\htmlStart2.txt" />
+    <None Include="Resources\htmlStart1.txt" />
+    <None Include="Resources\MacroService.txt" />
+    <None Include="Resources\Macro1.txt" />
+    <None Include="Resources\Elkjoplogo_Bg.jpg" />
+    <None Include="Resources\ImportData1.txt" />
+    <None Include="Resources\Star.txt" />
+    <None Include="Resources\MacroQuick.txt" />
+    <None Include="Resources\jquery.js" />
+    <None Include="Resources\Loading2.txt" />
+    <None Include="Resources\sk.png" />
+    <None Include="Resources\jquery.tablesorter.js" />
+    <None Include="Resources\jquery.metadata.js" />
+    <None Include="Resources\jquery.min.js" />
+    <None Include="Resources\jquery.tablesorter.min.js" />
+    <None Include="Resources\asc" />
+    <None Include="Resources\desc" />
+    <None Include="Resources\jquery-latest.js" />
+    <None Include="Resources\desc.gif" />
+    <None Include="Resources\asc.gif" />
+    <None Include="Resources\htmlEnd.txt" />
+    <None Include="Resources\Elkjoplogo" />
+    <None Include="Resources\Elkjoplogo.jpg" />
+    <None Include="Resources\Macro.txt" />
+    <None Include="Resources\htmlStart.txt" />
+    <None Include="Resources\KGSAMacro.exe" />
+    <None Include="Resources\ssleay32.dll" />
+    <None Include="Resources\libgcc_s_dw2-1.dll" />
+    <None Include="Resources\mingwm10.dll" />
+    <None Include="Resources\libeay32.dll" />
+    <None Include="Resources\nyElkjopLogo3.bmp" />
+    <None Include="Resources\nyElkjopLogo2.bmp" />
+    <None Include="Resources\nyElkjopLogo.bmp" />
+    <None Include="Resources\Logon.exe" />
+    <None Include="Resources\Down.png" />
+    <None Include="Resources\Up.png" />
+    <None Include="Resources\blatdll.h" />
+    <None Include="Resources\blat.exe" />
+    <None Include="Resources\blat.dll" />
+    <None Include="Resources\blat.lib" />
+    <None Include="Resources\Loading1.txt" />
+    <None Include="Resources\ImportData.txt" />
+    <None Include="splash.bmp" />
+    <None Include="Resources\Loading.txt" />
+    <None Include="Resources\HTMLstyle.txt" />
+    <None Include="Resources\printer_16xLG.png" />
+    <None Include="Resources\crystal_32x32_devices_print_printer.png" />
+    <None Include="Resources\Print_11009.png" />
+    <None Include="Resources\StatusAnnotations_Information_32xLG.png" />
+    <None Include="Resources\112_RightArrowLong_Blue_32x32_72.png" />
+    <None Include="Resources\112_RightArrowLong_Orange_32x32_72.png" />
+    <None Include="Resources\112_UpArrowLong_Green_32x32_72.png" />
+    <None Include="Resources\112_DownArrowLong_Grey_32x32_72.png" />
+    <None Include="Resources\gear_32xLG.png" />
+    <None Include="Resources\Hammer_Builder_32xLG.png" />
+    <None Include="Resources\script_32xLG.png" />
+    <None Include="Resources\Input.bmp" />
+    <None Include="Resources\user_32xLG.png" />
+    <None Include="Resources\test_32x_LG.png" />
+    <None Include="Resources\Team_32xLG.png" />
+    <None Include="Resources\lines_Text_justify_16xLG.png" />
+    <None Include="Resources\KPI_32xLG.png" />
+    <None Include="Resources\graph_highPerformanceComputingChart_5170_32xLG1.png" />
+    <None Include="Resources\graph_highPerformanceComputingChart_5170_32xLG.png" />
+    <None Include="Resources\graph_highPerformanceComputingChart_5170_32xSM.png" />
+    <None Include="Resources\graph_highPerformanceComputingChart_5170_32xMD.png" />
+    <None Include="Resources\Header1.txt" />
+    <None Include="Resources\Changelog.txt" />
+    <None Include="Resources\Header.txt" />
+    <None Include="Resources\TextFile1.txt" />
+    <None Include="Resources\logo.gif" />
+    <None Include="Resources\logoSkjev.bmp" />
+    <None Include="Resources\Save.bmp" />
+    <None Include="Resources\Save1.bmp" />
+    <None Include="Resources\saveHS.png" />
+    <None Include="Resources\book_reportHS.png" />
+    <None Include="Resources\graphhs.png" />
+    <None Include="Resources\DoubleRightArrowHS.png" />
+    <None Include="Resources\PieChart3DHS.png" />
+    <None Include="Resources\PieChartHS.png" />
+    <None Include="Resources\RightArrowHS.png" />
+    <None Include="Resources\305_Close_16x16_72.png" />
+    <None Include="Resources\CalculatorHS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.SQL.Server.Compact.4.0">
+      <Visible>False</Visible>
+      <ProductName>SQL Server Compact 4.0 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="System.Data.SqlServerCe">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.98.1\build\net20\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.98.1\build\net20\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.98.1\build\net20\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.98.1\build\net20\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

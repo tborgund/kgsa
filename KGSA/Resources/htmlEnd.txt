@@ -1,0 +1,75 @@
+<script type='text/javascript' src='jquery.js'></script>
+<script type='text/javascript' src='jquery.metadata.js'></script>
+<script type='text/javascript' src='jquery.tablesorter.js'></script>
+<script type='text/javascript'>
+
+$(document).ready(function() {		
+	$(".tablesorter").tablesorter(
+	{
+		emptyTo: 'zero',
+		stringTo: "zero",
+		widgets: ['zebra'],
+		sortReset   : true,
+		dateFormat : "mm.dd.yyyy"
+	}
+	);   
+});
+
+$(document).ready(function(){
+    $('.image').click(function(){
+		$(this).toggleClass("zoom"); 
+    });
+});
+
+$('.behandlet').click( function() {  
+
+	window.external.callBehandlet( $(this).attr('data'), $(this).text() );
+	if ($(this).text() == 'Ja') {
+		$(this).text('Nei');
+		$(this).parents("tr").removeClass("behandletService");
+	}
+	else {
+		$(this).text('Ja');
+		$(this).parents("tr").addClass("behandletService");
+	}
+	return false;
+});  
+
+function browsepage(s, t) {
+	window.external.callBrowseServicePage( s, t );
+}
+
+$(document).ready(function() {
+    $('form').submit(function() {
+         window.external.callBrowseList($('#state').val());
+         return false;
+    });
+});
+
+function toggleAll(){
+	$(".toggleAll").fadeToggle([400]);
+}
+
+function toggleTable(element_ID){
+	$("#"+element_ID).fadeToggle([400]);
+}
+
+function toggleRow(element_ID){
+	$("."+element_ID).toggle();
+}
+
+$('.Hidetext').show()
+
+$('.Hidegraph').show()
+
+$('.Hideinfo').show()
+
+if (navigator.userAgent != "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/534.34 (KHTML, like Gecko) Qt/4.8.5 Safari/534.34") {
+	$(".hideScreen").hide(),
+	$(".hidePdf").show(),
+	$(".toolbox").show();
+}
+
+</script>
+<!-- jsWeb here -->
+</body></html>

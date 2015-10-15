@@ -1,0 +1,40 @@
+<script type='text/javascript' src='jquery.js'></script>
+<script type='text/javascript' src='jquery.metadata.js'></script>
+<script type='text/javascript' src='jquery.tablesorter.js'></script>
+<script type='text/javascript'>
+
+$(document).ready(function() {		
+	$(".tablesorter").tablesorter(
+	{
+		emptyTo: 'zero',
+		stringTo: "zero",
+		widgets: ['zebra'],
+		sortReset   : true
+	}
+	);   
+});
+
+$(document).ready(function(){
+    $('.image').click(function(){
+            $(this).css('width', function(_ , cur){
+                return cur === '940px' ? '100%' : '940px'
+        });  
+    });
+});
+
+
+function toggleTable(element_ID){
+	$("#"+element_ID).fadeToggle([400]);
+	$("#"+element_ID+"text").text($("#"+element_ID+"text").text() == 'Vis' ? 'Skjul' : 'Vis');
+}
+
+function toggleRow(element_ID){
+	$("."+element_ID).toggle();
+}
+
+$('.Hidetext').show()
+
+$('.Hidegraph').show()
+
+</script>
+</body></html>

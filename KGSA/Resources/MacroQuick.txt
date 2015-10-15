@@ -1,0 +1,9 @@
+Start({elguide}) // Makro for uthenting av kveldstall
+WaitForTitle(elguide) // Vent på at elguide åpner seg
+Wait(5)
+KeyString(brukernavn)
+KeyPress(Enter)
+Password(063076096091137154182008082147210214147164196053)
+KeyPress(Enter)
+Wait(5) // Her må vi være i elguide hovedmenyen, resten blir dynamisk generert
+ImportKveldstall()

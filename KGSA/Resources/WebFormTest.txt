@@ -1,0 +1,53 @@
+<form name="form1" method="post" action="?submit">
+<p>Textarea test:</p>
+<p>
+  <textarea name="textcontent" id="textcontent" cols="60" rows="5"></textarea>
+</p>
+<table width="100%" border="0" cellspacing="5">
+  <tr>
+    <td>Text test 1:</td>
+    <td><input type="text" name="webserverUser" id="webserverUser"></td>
+    <td>Text test 2:</td>
+    <td><input type="text" name="webserverPassword" id="webserverPassword"></td>
+  </tr>
+  <tr>
+    <td>Select test 1:</td>
+    <td><select name="importSetting" id="importSetting">
+      <option value="Normal">Importer bare KG/SA relaterte salg</option>
+      <option value="Full">Importer alle transaksjoner (alle avd.)</option>
+      <option value="FullFavoritt">Importer alle trans. (bare Favoritte avd.)</option>
+    </select></td>
+    <td>Select test 2:</td>
+    <td><select name="sortIndex" id="sortIndex">
+      <option value="0">(ingen sortering)</option>
+      <option value="1">Hitrate (%)</option>
+      <option value="2">Selgerkode</option>
+      <option value="3">Provisjon</option>
+      <option value="4">Brutto</option>
+    </select></td>
+  </tr>
+  <tr>
+    <td>Checkbox test 1:</td>
+    <td><input type="checkbox" name="showInfo" id="showInfo"></td>
+    <td>Checkbox test 2:</td>
+    <td><input type="checkbox" name="storeShowStoreTwo" id="storeShowStoreTwo"></td>
+  </tr>
+  <tr>
+    <td>Radio test 1:</td>
+    <td><input type="radio" name="pdfLandscape" id="pdfLandscape" value="true">
+      Landskap
+        <input type="radio" name="pdfLandscape" id="pdfLandscape2" value="false"> 
+        Portrett
+</td>
+    <td>Radio test 2:</td>
+    <td><input type="radio" name="bestofVisBesteLastYearTotal" id="bestofVisBesteLastYearTotal" value="true">
+      Totalt
+        <input type="radio" name="bestofVisBesteLastYearTotal" id="bestofVisBesteLastYearTotal2" value="false">
+MTD </td>
+  </tr>
+</table>
+<p>
+  <input type="submit" name="Lagre" id="submit" value="Submit">
+</p>
+<p>&nbsp;</p>
+</form>

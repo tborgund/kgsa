@@ -1,0 +1,55 @@
+<html>
+<style id='sheet'>
+
+body
+{
+	display: block;
+	padding: 0;
+	margin: 10;
+	background-color: #ffffff;
+}
+
+.xHeader
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+}
+
+.xContent
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+}
+
+</style>
+<body>
+<span class='xHeader'>Ingen transaksjoner funnet.</span>
+<br>
+<br>
+<span class='xHeader'>Hvordan importere data til programmet?</span>
+
+<span>
+<ol>
+<li class='xContent'>Bruk Elguide program 137 (ranking)</li>
+<li class='xContent'>Velg Transaksjoner, og hopp over sortering.</li>
+<li class='xContent'>IKKE velg kategori eller gruppe, og ikke velg noen varegruppe.</li>
+<li class='xContent'>Ved Avdeling kan du velge din avdeling eller la den være tom. Tar litt lengre tid ved å ikke velge avdeling men det åpner for mulighet til å sammenligne data mellom butikker.</li>
+<li class='xContent'>Velg en fra dato, f.eks. første dag i måneden.</li>
+<li class='xContent'>List utvalg og trykk F12 -> Eksporter -> Navn: irank</li>
+<li class='xContent'>Gå til Verktøy -> Innstillinger. Viktigste i første omgang er Avdeling og sjekke om Elguide eksport lokasjonen, vanligvis C:\irank.csv, er korrekt.</li>
+<li class='xContent'>Importer transaksjonene vi har eksportert fra Elguide med Fil -> Importer .CSV eller 'Importer CSV'-knappen til venstre.</li>
+<li class='xContent'>Siden dette er første gang programmet skal brukes i denne butikken, må selgerkoder settes opp. Gå til fanen Selgere for å legge inn selgerkodene.</li>
+<li class='xContent'>Varekoder på de forskjellige tjenestene som det kjøres ranking mot er lagt inn på forhånd. Ønskes det å endre, legge til eller fjerne varekoder så gjøres det under Verktøy -> Innstillinger -> Varekoder og provisjon.</li>
+<li class='xContent'>Ranking programmet skal nå være klar til bruk. Eksporter nye irank.csv for å holde programmet oppdatert eller sett opp Makro funksjonen.</li>
+<li class='xContent'>For å sende ranking som epost, eller ha det over i Excel/Calc eller andre programmer, enten lagre/åpne som PDF, eller merk tabellen i programmet og kopier, og lim inn innholdet i ønsket program.</li>
+<li class='xContent'>Lykke til!</li>
+</ol>
+</span>
+</body>
+</html>

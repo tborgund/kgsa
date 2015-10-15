@@ -1,0 +1,53 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>KGSA</title>
+<style id='sheet'>
+
+body
+{
+	display: block;
+	padding: 0;
+	margin: 10;
+	background-color: #ffffff;
+}
+
+.xHeader
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+}
+
+.xContent
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+}
+
+</style>
+</head>
+<body>
+<span class='xHeader'>Ingen lagerdata funnet.</span>
+<br>
+<br>
+<span class='xHeader'>Hvordan importere lagerdata til programmet?</span>
+
+<span>
+<ol>
+<li class='xContent'>Bruk Elguide program 115</li>
+<li class='xContent'>Velg din avdeling</li>
+<li class='xContent'>Hopp over dato og trykk Start</li>
+<li class='xContent'>Velg en av rapportene som heter Obsolete lengre ned på listen</li>
+<li class='xContent'>Trykk F9 og velg "Alle avdelinger, alle kategorier"</li>
+<li class='xContent'>Vent til Elguide har eksportert listen</li>
+<li class='xContent'>Velg Fil -> Importer obsolete CSV</li>
+</ol>
+</span>
+</body>
+</html>

@@ -1,0 +1,33 @@
+WaitForTitle(elguide) // Vent på at elguide åpner seg
+Wait(5)
+KeyHoldStart(CONTROL)
+KeyPress(F9)
+KeyHoldEnd(CONTROL) // Passord på CTRL+F9
+Wait(5)
+KeyString(244) // Velger forespørsel program
+KeyPress(Enter) // åpner program
+KeyPress(Down)
+KeyPress(Enter)
+KeyString({avdeling}) // Din avdeling
+KeyString({fraDato}) // Format 
+KeyString({TilDato})
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter) // Start utplukk
+Wait(30)
+KeyPress(F12) // Eksport meny
+KeyPress(Right)
+KeyPress(Enter) // Velg CSV
+KeyPress(Enter) // Lagrer iserv.csv
+Wait(30)
+WaitForTitle(elguide) // Vent på overføringsvindu
+Wait(2)
+KeyPress(F1)
+KeyPress(F1)
+KeyPress(F1)
+KeyPress(F1)
+KeyPress(F1)
+KeyPress(F1)

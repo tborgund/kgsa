@@ -1,0 +1,52 @@
+<html>
+<style id='sheet'>
+
+body
+{
+	display: block;
+	padding: 0;
+	margin: 10;
+	background-color: #ffffff;
+}
+
+.xHeader
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+}
+
+.xContent
+{
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+}
+
+</style>
+<body>
+<span class='xHeader'>Ingen servicer funnet.</span>
+<br>
+<br>
+<span class='xHeader'>Hvordan importere service data til programmet?</span>
+
+<span>
+<ol>
+<li class='xContent'>Bruk Elguide program 244 (Service)</li>
+<li class='xContent'>Velg Log og Transaksjoner.</li>
+<li class='xContent'>Velg din avdeling eller la den være tom for å sammenligne avdelinger.</li>
+<li class='xContent'>Velg en fra-dato. Viktig: Perioden må minst dekke 65 dager tilbake i tid.</li>
+<li class='xContent'>Til-dato velger du dagen i dag.</li>
+<li class='xContent'>Velg Alle servicer og hopp over resten.</li>
+<li class='xContent'>List utvalg og trykk F12 -> Eksporter -> Navn: iserv</li>
+<li class='xContent'>Importer transaksjonene vi har eksportert fra Elguide med "Velg Service CSV" knappen og velg CSV-filen.</li>
+<li class='xContent'>Etter importering vil service oversikten bli vist.</li>
+<li class='xContent'>Lykke til!</li>
+</ol>
+</span>
+</body>
+</html>

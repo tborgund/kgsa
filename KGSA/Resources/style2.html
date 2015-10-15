@@ -1,0 +1,23 @@
+<script type='text/javascript'>
+
+function confirmAction() {
+    var confirmed = confirm("Prosessen er ikke mulig å kanselere etter at den er startet\nEr du sikker?");
+    return confirmed;
+}
+
+function confirmRemove() {
+    var confirmed = confirm("Dette vil slette valgt element.\nEr du sikker?");
+    return confirmed;
+}
+
+$(function () {
+    $("#submit").click(function () {
+        if (confirm("Click OK to continue?")) {
+            $('form#settings').submit();
+        }
+        else
+            event.preventDefault();
+    });
+});
+
+</script>

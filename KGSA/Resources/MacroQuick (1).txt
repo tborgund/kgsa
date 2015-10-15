@@ -1,0 +1,7 @@
+WaitForTitle(elguide) // Vent på at elguide åpner seg
+Wait(5)
+KeyString(brukernavn)
+KeyPress(Enter)
+KeyString(passord)
+KeyPress(Enter)
+Wait(5) // Her må vi være i elguide hovedmenyen, resten blir dynamisk generert

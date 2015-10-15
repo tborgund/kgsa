@@ -1,0 +1,36 @@
+WaitForTitle(elguide) // Vent på at elguide åpner seg
+Wait(5)
+KeyString(brukernavn)
+KeyPress(Enter)
+KeyString(passord)
+KeyPress(Enter)
+Wait(5)
+KeyString(137)
+KeyPress(Enter) // åpner ranking program
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter)
+KeyString({dato}) // Fra-dato
+KeyPress(Enter) // Hopp over til-dato
+KeyPress(Enter)
+KeyPress(Enter)
+KeyPress(Enter) // List!
+Wait(30)
+KeyPress(F12) // Eksport meny
+KeyPress(Right)
+KeyPress(Enter) // Velg CSV
+KeyPress(Enter) // Lagrer irank
+Wait(30)
+WaitForTitle(elguide) // Vent på overføringsvindu
+Wait(2)
+KeyPress(F1)
+KeyPress(F1)
+KeyPress(F1)
+KeyPress(F1)
+KeyPress(F1)
