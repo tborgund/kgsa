@@ -4,29 +4,180 @@ using System.Linq;
 using System.Data;
 using System.Data.SqlServerCe;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using KGSA.Properties;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
-using System.Threading;
 using System.Runtime.CompilerServices;
 
 namespace KGSA
 {
     partial class FormMain
     {
-        // WEB SERVER STUFF STARTER HER
+        public void ShowHideGui_Macro(bool show)
+        {
+            if (show)
+            {
+                // from buttons
+                buttonRankingMakro.Enabled = true;
+                buttonBudgetActionMacroImport.Enabled = true;
+                buttonLagerMakro.Enabled = true;
+                buttonServiceMacro.Enabled = true;
+
+                // from menu
+                hentTransaksjonerToolStripMenuItem.Enabled = true;
+                hentLagervarerToolStripMenuItem.Enabled = true;
+                hentServicerToolStripMenuItem.Enabled = true;
+                kjørAutorankingToolStripMenuItem.Enabled = true;
+                kjørKveldstankingToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                // from buttons
+                buttonRankingMakro.Enabled = false;
+                buttonBudgetActionMacroImport.Enabled = false;
+                buttonLagerMakro.Enabled = false;
+                buttonServiceMacro.Enabled = false;
+
+                // from menu
+                hentTransaksjonerToolStripMenuItem.Enabled = false;
+                hentLagervarerToolStripMenuItem.Enabled = false;
+                hentServicerToolStripMenuItem.Enabled = false;
+                kjørAutorankingToolStripMenuItem.Enabled = false;
+                kjørKveldstankingToolStripMenuItem.Enabled = false;
+            }
+        }
+
+        public void ShowHideGui_FullTrans(bool show)
+        {
+            if (show)
+            {
+                buttonOversikt.Enabled = true;
+                buttonLister.Enabled = true;
+                buttonRankVinnprodukter.Enabled = true;
+                buttonAvdTjenester.Enabled = true;
+                buttonAvdSnittpriser.Enabled = true;
+            }
+            else
+            {
+                buttonOversikt.Enabled = false;
+                buttonLister.Enabled = false;
+                buttonRankVinnprodukter.Enabled = false;
+                buttonAvdTjenester.Enabled = false;
+                buttonAvdSnittpriser.Enabled = false;
+            }
+        }
+
+        public void ShowHideGui_EmptyRanking(bool show)
+        {
+            if (show)
+            {
+                groupRankingPages.Enabled = true;
+                groupRankingChoices.Enabled = true;
+                buttonOpenExcel.Enabled = true;
+                buttonRankingActionOpenPdf.Enabled = true;
+
+                groupBudgetPages.Enabled = true;
+                groupBudgetChoices.Enabled = true;
+                buttonBudgetActionOpenExcel.Enabled = true;
+                buttonBudgetActionOpenPdf.Enabled = true;
+
+                groupGraphPages.Enabled = true;
+                groupGraphChoices.Enabled = true;
+                buttonGraphCopyToClipboard.Enabled = true;
+
+
+                toolStripMenuItemSaveFullPdf.Enabled = true;
+
+                butikkToolStripMenuItem.Enabled = true;
+                dataToolStripMenuItem.Enabled = true;
+                lydOgBildeToolStripMenuItem.Enabled = true;
+                teleToolStripMenuItem.Enabled = true;
+
+                panelDatabaseSearch.Enabled = true;
+            }
+            else
+            {
+                groupRankingPages.Enabled = false;
+                groupRankingChoices.Enabled = false;
+                buttonOpenExcel.Enabled = false;
+                buttonRankingActionOpenPdf.Enabled = false;
+
+                groupBudgetPages.Enabled = false;
+                groupBudgetChoices.Enabled = false;
+                buttonBudgetActionOpenExcel.Enabled = false;
+                buttonBudgetActionOpenPdf.Enabled = false;
+
+                groupGraphPages.Enabled = false;
+                groupGraphChoices.Enabled = false;
+                buttonGraphCopyToClipboard.Enabled = false;
+
+                toolStripMenuItemSaveFullPdf.Enabled = false;
+
+                butikkToolStripMenuItem.Enabled = false;
+                dataToolStripMenuItem.Enabled = false;
+                lydOgBildeToolStripMenuItem.Enabled = false;
+                teleToolStripMenuItem.Enabled = false;
+
+                panelDatabaseSearch.Enabled = false;
+            }
+        }
+
+        public void ShowHideGui_EmptyStore(bool show)
+        {
+            if (show)
+            {
+                groupBoxLagerKat.Enabled = true;
+                groupBoxLagerValg.Enabled = true;
+
+                buttonLagerExcel.Enabled = true;
+                buttonStoreOpenPdf.Enabled = true;
+                buttonLagerOppPrisguide.Enabled = true;
+                buttonLagerOppUkeannonser.Enabled = true;
+            }
+            else
+            {
+                groupBoxLagerKat.Enabled = false;
+                groupBoxLagerValg.Enabled = false;
+
+                buttonLagerExcel.Enabled = false;
+                buttonStoreOpenPdf.Enabled = false;
+                buttonLagerOppPrisguide.Enabled = false;
+                buttonLagerOppUkeannonser.Enabled = false;
+            }
+        }
+
+        public void ShowHideGui_EmptyService(bool show)
+        {
+            if (show)
+            {
+                groupServicePages.Enabled = true;
+                groupServiceOptions.Enabled = true;
+
+                buttonServiceActionOpenPdf.Enabled = true;
+
+                nullstillBehandletMarkeringToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                groupServicePages.Enabled = false;
+                groupServiceOptions.Enabled = false;
+
+                buttonServiceActionOpenPdf.Enabled = false;
+
+                nullstillBehandletMarkeringToolStripMenuItem.Enabled = false;
+            }
+        }
+
+        #region WEB STUFF
         private void StartWebserver()
         {
             try
             {
-                if (appConfig.webserverEnabled && appConfig.webserverPort >= 1024 && appConfig.webserverPort <= 65535 && appConfig.webserverHost != "")
+                if (appConfig.webserverEnabled && appConfig.webserverPort >= 1024 && appConfig.webserverPort <= 65535 && !String.IsNullOrEmpty(appConfig.webserverHost))
                 {
                     server = new KgsaServer(this);
                     server.StartWebserver();
@@ -76,17 +227,18 @@ namespace KGSA
             }
         }
 
-        // WEB SERVER STUFF STOPPER HER
+        #endregion
+
 
         private void OpenSendEmail()
         {
-            if (appConfig.epostAvsender == "" || appConfig.epostSMTPserver == "")
+            if (String.IsNullOrEmpty(appConfig.epostAvsender) || String.IsNullOrEmpty(appConfig.epostSMTPserver))
             {
                 Logg.Log("Mangler epost opplysninger. Sjekk innstillinger!", Color.Red);
                 return;
             }
 
-            FormSendEmail se = new FormSendEmail(this, pickerDato.Value);
+            FormSendEmail se = new FormSendEmail(this);
 
             if (se.ShowDialog() == DialogResult.OK)
             {
@@ -125,10 +277,10 @@ namespace KGSA
                 epostGruppe = "";
 
             string pdf = CreatePDF(rankingType, "", bwAutoRanking);
-            if (pdf != "")
+            if (!String.IsNullOrEmpty(pdf))
             {
                 processing.SetText = "Sender e-post for gruppe \"" + epostGruppe + "\"..";
-                if (!kgsaEmail.Send(pdf, dbTilDT, epostGruppe, se.textBoxTitle.Text, se.textBoxContent.Text))
+                if (!kgsaEmail.Send(pdf, appConfig.dbTo, epostGruppe, se.textBoxTitle.Text, se.textBoxContent.Text))
                     e.Cancel = true;
             }
             else
@@ -194,14 +346,14 @@ namespace KGSA
         {
             try
             {
-                string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+                string newHash = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
 
                 if (stopRanking || IsBusy(false, true) || autoMode)
                     return false;
 
                 if (appConfig.importSetting.StartsWith("Full"))
                 {
-                    BuildToppselgereRanking(true, bw);
+                    BuildToppselgereRanking(true);
                     appConfig.strToppselgere = newHash;
 
                     if (stopRanking || IsBusy(false, true) || autoMode)
@@ -220,13 +372,13 @@ namespace KGSA
                 if (stopRanking || IsBusy(false, true) || autoMode)
                     return false;
 
-                BuildKnowHowRanking(true, bw);
+                BuildKnowHowRanking(true);
                 appConfig.strKnowHow = newHash;
 
                 if (stopRanking || IsBusy(false, true) || autoMode)
                     return false;
 
-                BuildDataRanking(true, bw);
+                BuildDataRanking(true);
                 appConfig.strData = newHash;
 
                 if (stopRanking || IsBusy(false, true) || autoMode)
@@ -244,13 +396,13 @@ namespace KGSA
                 if (stopRanking || IsBusy(false, true) || autoMode)
                     return false;
 
-                BuildListerRanking(true, bw);
+                BuildListerRanking(true);
                 appConfig.strLister = newHash;
 
                 if (stopRanking || IsBusy(false, true) || autoMode)
                     return false;
 
-                BuildVinnRanking(true, bw);
+                BuildVinnRanking(true);
                 appConfig.strVinnprodukter = newHash;
 
                 if (!EmptyStoreDatabase())
@@ -260,19 +412,19 @@ namespace KGSA
                     if (stopRanking || IsBusy(false, true) || autoMode)
                         return false;
 
-                    BuildStoreStatus(true, bw);
+                    BuildStoreStatus(true);
                     appConfig.strObsolete = newHashStore;
 
                     if (stopRanking || IsBusy(false, true) || autoMode)
                         return false;
 
-                    BuildStoreObsoleteList(true, bw);
+                    BuildStoreObsoleteList(true);
                     appConfig.strObsoleteList = newHashStore;
 
                     if (stopRanking || IsBusy(false, true) || autoMode)
                         return false;
 
-                    BuildStoreObsoleteImports(true, bw);
+                    BuildStoreObsoleteImports(true);
                     appConfig.strObsoleteImports = newHashStore;
                 }
 
@@ -559,7 +711,7 @@ namespace KGSA
 
         public void ProgressStop()
         {
-            if (statusStrip.InvokeRequired || buttonOppdater.InvokeRequired || buttonAvdOppdater.InvokeRequired)
+            if (statusStrip.InvokeRequired || buttonOppdater.InvokeRequired)
             {
                 SetProgressStopCallback d = new SetProgressStopCallback(ProgressStop);
                 this.Invoke(d, new object[] { });
@@ -568,8 +720,6 @@ namespace KGSA
             {
                 if (!IsBusy(true, true))
                 {
-                    buttonAvdOppdater.Text = "Oppdater";
-                    buttonAvdOppdater.ForeColor = SystemColors.ControlText;
                     buttonOppdater.ForeColor = SystemColors.ControlText;
                     buttonOppdater.Text = "Oppdater";
                     progressbar.Style = ProgressBarStyle.Continuous;
@@ -582,25 +732,18 @@ namespace KGSA
 
         public void ProgressStart()
         {
-            if (statusStrip.InvokeRequired || buttonOppdater.InvokeRequired || buttonAvdOppdater.InvokeRequired)
+            if (statusStrip.InvokeRequired || buttonOppdater.InvokeRequired)
             {
                 SetProgressStartCallback d = new SetProgressStartCallback(ProgressStart);
                 this.Invoke(d, new object[] { });
             }
             else
             {
-                if (bwAvdeling.IsBusy)
-                {
-                    buttonAvdOppdater.Text = "Stop";
-                    buttonAvdOppdater.ForeColor = Color.Red;
-                }
-
                 if (bwRanking.IsBusy || bwReport.IsBusy)
                 {
                     buttonOppdater.Text = "Stop";
                     buttonOppdater.ForeColor = Color.Red;
                 }
-
                 progressbar.Style = ProgressBarStyle.Marquee;
             }
         }
@@ -616,12 +759,12 @@ namespace KGSA
 
             Logg.Log("Auto: Kjører makro.. [" + macroAttempt + "]");
 
-            DateTime date = dbTilDT;
-            double span = (DateTime.Now - dbTilDT).TotalDays;
+            DateTime date = appConfig.dbTo;
+            double span = (DateTime.Now - appConfig.dbTo).TotalDays;
             if (span > 31)
                 date = DateTime.Now.AddMonths(-1); // Begrens oss til å importere en måned bak i tid
-            if (dbTilDT == DateTime.Now)
-                date = GetFirstDayOfMonth(dbTilDT);
+            if (appConfig.dbTo == DateTime.Now)
+                date = GetFirstDayOfMonth(appConfig.dbTo);
 
             var macroForm = (FormMacro)StartMacro(date, macroProgram, bwAutoRanking, macroAttempt);
             if (macroForm.errorCode != 0)
@@ -691,7 +834,7 @@ namespace KGSA
             // Hvis valgt, avbryt utsending hvis vi ikke har tall fra i går.
             if (appConfig.epostOnlySendUpdated)
             {
-                int dager = (DateTime.Now - dbTilDT).Days;
+                int dager = (DateTime.Now - appConfig.dbTo).Days;
                 Logg.Log("Auto: Kontrollerer dato på sist transaksjon.. (dager: " + dager + ")");
                 if (dager > 1)
                 {
@@ -735,49 +878,49 @@ namespace KGSA
 
             string pdfAlt = CreatePDF("Full", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'Full'..";
-            kgsaEmail.Send(pdfAlt, dbTilDT, "Full", appConfig.epostEmne, appConfig.epostBody);
+            kgsaEmail.Send(pdfAlt, appConfig.dbTo, "Full", appConfig.epostEmne, appConfig.epostBody);
 
             string pdfComputer = CreatePDF("Computer", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'Computer'..";
-            kgsaEmail.Send(pdfComputer, dbTilDT, "Computer", appConfig.epostEmne, appConfig.epostBody);
+            kgsaEmail.Send(pdfComputer, appConfig.dbTo, "Computer", appConfig.epostEmne, appConfig.epostBody);
 
             string pdfAudioVideo = CreatePDF("AudioVideo", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'AudioVideo'..";
-            kgsaEmail.Send(pdfAudioVideo, dbTilDT, "AudioVideo", appConfig.epostEmne, appConfig.epostBody);
+            kgsaEmail.Send(pdfAudioVideo, appConfig.dbTo, "AudioVideo", appConfig.epostEmne, appConfig.epostBody);
 
             string pdfTelecom = CreatePDF("Telecom", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'Telecom'..";
-            kgsaEmail.Send(pdfTelecom, dbTilDT, "Telecom", appConfig.epostEmne, appConfig.epostBody);
+            kgsaEmail.Send(pdfTelecom, appConfig.dbTo, "Telecom", appConfig.epostEmne, appConfig.epostBody);
 
             string pdfCross = CreatePDF("Cross", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'Cross'..";
-            kgsaEmail.Send(pdfCross, dbTilDT, "Cross", appConfig.epostEmne, appConfig.epostBody);
+            kgsaEmail.Send(pdfCross, appConfig.dbTo, "Cross", appConfig.epostEmne, appConfig.epostBody);
 
             string pdfVinn = CreatePDF("Vinnprodukter", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'Vinn'..";
-            kgsaEmail.Send(pdfVinn, dbTilDT, "Vinnprodukter", appConfig.epostEmne, appConfig.epostBody);
+            kgsaEmail.Send(pdfVinn, appConfig.dbTo, "Vinnprodukter", appConfig.epostEmne, appConfig.epostBody);
 
             if (appConfig.ignoreSunday && DateTime.Now.Date.DayOfWeek == DayOfWeek.Sunday)
             {
                 string pdfAltUkestart = CreatePDF("FullUkestart", "", bwAutoRanking);
                 processing.SetText = "Sender e-post for gruppe 'FullUkestart'..";
-                kgsaEmail.Send(pdfAltUkestart, dbTilDT, "FullUkestart", appConfig.epostEmne, appConfig.epostBody);
+                kgsaEmail.Send(pdfAltUkestart, appConfig.dbTo, "FullUkestart", appConfig.epostEmne, appConfig.epostBody);
             }
             else if (!appConfig.ignoreSunday && DateTime.Now.Date.DayOfWeek == DayOfWeek.Monday)
             {
                 string pdfAltUkestart = CreatePDF("FullUkestart", "", bwAutoRanking);
                 processing.SetText = "Sender e-post for gruppe 'FullUkestart'..";
-                kgsaEmail.Send(pdfAltUkestart, dbTilDT, "FullUkestart", appConfig.epostEmne, appConfig.epostBody);
+                kgsaEmail.Send(pdfAltUkestart, appConfig.dbTo, "FullUkestart", appConfig.epostEmne, appConfig.epostBody);
             }
 
-            if (pdfAlt == "" && pdfComputer == "" && pdfAudioVideo == "" && pdfTelecom == "")
+            if (String.IsNullOrEmpty(pdfAlt) && String.IsNullOrEmpty(pdfComputer) && String.IsNullOrEmpty(pdfAudioVideo) && String.IsNullOrEmpty(pdfTelecom))
             {
                 // Feil under pdf generering og sending av epost
                 Logg.Log("Auto: Feil oppstod under generering av PDF og sending av epost. Se logg for detaljer.", Color.Red);
                 return;
             }
 
-            if (appConfig.pdfExport && appConfig.pdfExportFolder != "" && pdfAlt != "")
+            if (appConfig.pdfExport && !String.IsNullOrEmpty(appConfig.pdfExportFolder) && !String.IsNullOrEmpty(pdfAlt))
             {
                 Logg.Log("Auto: Lagrer kopi av PDF til..");
                 try
@@ -933,7 +1076,7 @@ namespace KGSA
 
             Logg.Log("Auto: Importerer data..");
             string extracted = obsolete.Decompress(appConfig.csvElguideExportFolder + @"\wobsolete.zip");
-            if (extracted != "")
+            if (!String.IsNullOrEmpty(extracted))
             {
                 if (obsolete.Import(extracted, bwImportObsolete))
                     e.Result = 0;
@@ -1153,16 +1296,16 @@ namespace KGSA
         {
             try
             {
-                if (!EmptyDatabase())
+                if (!EmptyDatabase() || !EmptyStoreDatabase())
                 {
                     SaveFileDialog SD = new SaveFileDialog();
                     SD.Filter = "PDF Filer (*.pdf)|*.pdf|Vis alle filer (*.*)|*.*";
 
                     string file = "";
                     if (all)
-                        file = "KGSA " + appConfig.Avdeling + " " + pickerDato.Value.ToString("yyy-MM-dd") + ".pdf";
+                        file = "KGSA " + appConfig.Avdeling + " " + pickerRankingDate.Value.ToString("yyy-MM-dd") + ".pdf";
                     else
-                        file = "KGSA " + appConfig.Avdeling + " " + currentPage() + " " + pickerDato.Value.ToString("yyy-MM-dd") + ".pdf";
+                        file = "KGSA " + appConfig.Avdeling + " " + currentPage() + " " + pickerRankingDate.Value.ToString("yyy-MM-dd") + ".pdf";
                     SD.FileName = file;
                     if (all)
                         SD.Title = "Lagre Ranking PDF som";
@@ -1173,7 +1316,7 @@ namespace KGSA
                         try
                         {
                             RunMakePDF(all);
-                            if (filenamePDF != "")
+                            if (!String.IsNullOrEmpty(filenamePDF))
                             {
                                 Logg.Log("PDF ferdig generert.");
                                 if (File.Exists(SD.FileName))
@@ -1221,9 +1364,9 @@ namespace KGSA
 
                     string file = "";
                     if (all)
-                        file = "KGSA Budsjett " + appConfig.Avdeling + " " + pickerDato.Value.ToString("yyy-MM-dd") + ".pdf";
+                        file = "KGSA Budsjett " + appConfig.Avdeling + " " + pickerRankingDate.Value.ToString("yyy-MM-dd") + ".pdf";
                     else
-                        file = "KGSA Budsjett " + appConfig.Avdeling + " " + currentBudgetPage() + " " + pickerDato.Value.ToString("yyy-MM-dd") + ".pdf";
+                        file = "KGSA Budsjett " + appConfig.Avdeling + " " + currentBudgetPage() + " " + pickerRankingDate.Value.ToString("yyy-MM-dd") + ".pdf";
                     SD.FileName = file;
                     if (all)
                         SD.Title = "Lagre Budsjett PDF som";
@@ -1234,7 +1377,7 @@ namespace KGSA
                         try
                         {
                             RunMakeBudgetPDF(all);
-                            if (filenamePDF != "")
+                            if (!String.IsNullOrEmpty(filenamePDF))
                             {
                                 Logg.Log("PDF ferdig generert.");
                                 if (File.Exists(SD.FileName))
@@ -1348,7 +1491,7 @@ namespace KGSA
                 foreach (DataGridViewColumn col in dataGridTransaksjoner.Columns)
                 {
                     if (IgnoreHideColumns & !col.Visible) continue;
-                    if (col.Name == string.Empty) continue;
+                    if (String.IsNullOrEmpty(col.Name)) continue;
                     dtSource.Columns.Add(col.Name, col.ValueType);
                     dtSource.Columns[col.Name].Caption = col.HeaderText;
                 }
@@ -1376,7 +1519,7 @@ namespace KGSA
         {
             try
             {
-                if (pickerDato.InvokeRequired)
+                if (pickerRankingDate.InvokeRequired)
                 {
                     ChangeRankDateTimePickerCallback d = new ChangeRankDateTimePickerCallback(ChangeRankDateTimePicker);
                     this.Invoke(d, new object[] { date, dateMin, dateMax });
@@ -1386,19 +1529,19 @@ namespace KGSA
                     if (dateMin > dateMax)
                         dateMin = dateMax;
 
-                    if (pickerDato.MaxDate > dateMin)
+                    if (pickerRankingDate.MaxDate > dateMin)
                     {
-                        pickerDato.MinDate = rangeMin;
-                        pickerDato.MaxDate = rangeMax;
+                        pickerRankingDate.MinDate = rangeMin;
+                        pickerRankingDate.MaxDate = rangeMax;
                     }
 
-                    pickerDato.MaxDate = dateMax;
-                    pickerDato.MinDate = dateMin;
+                    pickerRankingDate.MaxDate = dateMax;
+                    pickerRankingDate.MinDate = dateMin;
 
                     if (date.Date >= dateMin.Date && date.Date <= dateMax.Date)
-                        pickerDato.Value = date;
+                        pickerRankingDate.Value = date;
                     else
-                        pickerDato.Value = dateMax;
+                        pickerRankingDate.Value = dateMax;
                 }
             }
             catch (Exception ex)
@@ -1615,11 +1758,11 @@ namespace KGSA
                     return;
 
                 if (datoPeriodeFra == default(DateTime))
-                    datoPeriodeFra = dbTilDT; // Endret fra dbFraDT
+                    datoPeriodeFra = appConfig.dbTo; // Endret fra dbFraDT
                 if (datoPeriodeTil == default(DateTime))
-                    datoPeriodeTil = dbTilDT;
+                    datoPeriodeTil = appConfig.dbTo;
 
-                var datovelger = new VelgPeriode();
+                var datovelger = new VelgPeriode(this);
                 if (datovelger.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     datoPeriodeFra = datovelger.dtFra;
@@ -1629,22 +1772,22 @@ namespace KGSA
                         datoPeriodeVelger = true;
 
                         panelNotification.Visible = true;
-                        panelNotificationAvd.Visible = true;
 
                         panelGraphNotification.Visible = true;
 
                         labelNotificationText.Text = "Periode: " + datoPeriodeFra.ToString("dddd d. MMMM yyyy", norway) + " - " + datoPeriodeTil.ToString("dddd d. MMMM yyyy", norway);
-                        labelNotificationTextAvd.Text = "Periode: " + datoPeriodeFra.ToString("dddd d. MMMM yyyy", norway) + " - " + datoPeriodeTil.ToString("dddd d. MMMM yyyy", norway);
 
                         labelGraphNotificationText.Text = "Periode: " + datoPeriodeFra.ToString("dddd d. MMMM yyyy", norway) + " - " + datoPeriodeTil.ToString("dddd d. MMMM yyyy", norway);
 
-                        if (tabControlMain.SelectedTab == tabPageRank || tabControlMain.SelectedTab == tabPageAvd)
+                        if (tabControlMain.SelectedTab == tabPageRank)
                             UpdateRank();
-                        if (tabControlMain.SelectedTab == tabPageGrafikk)
+                        else if (tabControlMain.SelectedTab == tabPageGrafikk)
+                        {
                             if (_graphInitialized)
                                 UpdateGraph();
                             else
                                 InitGraph();
+                        }
                     }
                     else
                         Logg.Log("Fra og til dato var helt lik!", Color.Red);
@@ -1659,42 +1802,21 @@ namespace KGSA
         private void UpdateRank(string katArg = "")
         {
             string page = currentPage();
-            if (katArg == "" && page != "")
+            if (String.IsNullOrEmpty(katArg) && !String.IsNullOrEmpty(page))
                 ClearHash(page);
-
-            if (katArg != "")
-            {
-                // Har fått instruks om å oppdatere en spesifikk side..
-                if (katArg == "Tjenester" || katArg == "Snittpriser") // sjekk om den er under avdelinger..
-                    RunAvd(katArg);
-                else
-                    RunRanking(katArg); // Må være under ranking..
-            }
+            if (!String.IsNullOrEmpty(katArg)) // Har fått instruks om å oppdatere en spesifikk side..
+                RunRanking(katArg);
             else
             {
                 // Har ikke fått instruks om hvilken side, sjekker hvilken side som er synlig..
-                if (page != "") // Har funnet hvilken side vi er på
-                {
-                    if (page == "Tjenester" || page == "Snittpriser") // sjekk om den er under avdelinger..
-                        RunAvd(page);
-                    else
-                        RunRanking(page); // Må være under ranking..
-                }
-                else if (savedPage != "" || savedAvdPage != "") // ..eller sjekk siste åpnet.
-                {
+                if (!String.IsNullOrEmpty(page)) // Har funnet hvilken side vi er på
+                    RunRanking(page);
+                else if (!String.IsNullOrEmpty(savedPage)) // ..eller sjekk siste åpnet.
                     RunRanking(savedPage);
-                    RunAvd(savedAvdPage);
-                }
-                else if (appConfig.savedPage != "" || appConfig.savedAvdPage != "") // eller kanskje den er lagret?
-                {
+                else if (!String.IsNullOrEmpty(appConfig.savedPage)) // eller kanskje den er lagret?
                     RunRanking(appConfig.savedPage);
-                    RunAvd(appConfig.savedAvdPage);
-                }
                 else // OK, vi gir opp og åpner standard side..
-                {
                     RunRanking("Data");
-                    RunAvd("Alle");
-                }
             }
         }
 
@@ -1723,12 +1845,12 @@ namespace KGSA
             }
         }
 
-        public bool readControlState(Control varControl)
+        public bool readControlState()
         {
             if (tabControlMain.InvokeRequired)
             {
                 return (bool)tabControlMain.Invoke(
-                  new Func<Boolean>(() => readControlState(tabControlMain))
+                  new Func<Boolean>(() => readControlState())
                 );
             }
             else
@@ -1756,8 +1878,6 @@ namespace KGSA
                     return "Budget";
                 else if (tabControlMain.SelectedTab == tabPageRank)
                     return "Ranking";
-                else if (tabControlMain.SelectedTab == tabPageAvd)
-                    return "Avdelinger";
                 else if (tabControlMain.SelectedTab == tabPageLog)
                     return "Log";
                 else
@@ -1806,6 +1926,8 @@ namespace KGSA
                         return "MDASDA";
                     else if (str.Contains("budsjettButikk.html"))
                         return "Butikk";
+                    else if (str.Contains("budsjettDaglig.html"))
+                        return "Daglig";
                     else
                         return "";
                 }
@@ -1842,6 +1964,10 @@ namespace KGSA
                         return "Vinnprodukter";
                     else if (str.Contains("rankingVinnprodukterSelger.html"))
                         return "VinnSelger";
+                    else if (str.Contains("rankingAvdTjenester.html"))
+                        return "Tjenester";
+                    else if (str.Contains("rankingAvdSnittpriser.html"))
+                        return "Snittpriser";
                     else
                         return "";
                 }
@@ -1863,17 +1989,7 @@ namespace KGSA
                     else if (str.Contains("storePrisguideOverview.html"))
                         return "LagerPrisguideOversikt";
                     else
-                        return "Obsolete";
-                }
-                else if (curTab == "Avdelinger" && webHTMLAvd.Url != null)
-                {
-                    string str = webHTMLAvd.Url.OriginalString;
-                    if (str.Contains("rankingAvdTjenester.html"))
-                        return "Tjenester";
-                    else if (str.Contains("rankingAvdSnittpriser.html"))
-                        return "Snittpriser";
-                    else
-                        return "Tjenester";
+                        return "";
                 }
                 else
                     return "";
@@ -1908,6 +2024,10 @@ namespace KGSA
                         return BudgetCategory.Kasse;
                     else if (str.Contains("budsjettAftersales.html"))
                         return BudgetCategory.Aftersales;
+                    else if (str.Contains("budsjettDaily.html"))
+                        return BudgetCategory.Aftersales;
+                    else if (str.Contains("budsjettDaglig.html"))
+                        return BudgetCategory.Daglig;
                 }
                 return BudgetCategory.None;
             }
@@ -1946,13 +2066,8 @@ namespace KGSA
                     file = "\"" + settingsPath + "\\budsjettMdaSda.html\" ";
                 else if (currentKat == "Butikk")
                     file = "\"" + settingsPath + "\\budsjettButikk.html\" ";
-            }
-            else if (currentTab == "Avdelinger")
-            {
-                if (currentKat == "Tjenester")
-                    file = "\"" + settingsPath + "\\rankingAvdTjenester.html\" ";
-                else if (currentKat == "Snittpriser")
-                    file = "\"" + settingsPath + "\\rankingAvdSnittpriser.html\" ";
+                else if (currentKat == "Daglig")
+                    file = "\"" + settingsPath + "\\budsjettDaglig.html\" ";
             }
             else
             {
@@ -1998,8 +2113,16 @@ namespace KGSA
                     file += " \"" + htmlStoreWeekly + "\" ";
                 else if (currentKat.Equals("LagerPrisguide") && File.Exists(htmlStorePrisguide))
                     file += " \"" + htmlStorePrisguide + "\" ";
+                else if (currentKat.Equals("LagerUkeAnnonserOversikt") && File.Exists(htmlStoreWeeklyOverview))
+                    file += " \"" + htmlStoreWeeklyOverview + "\" ";
+                else if (currentKat.Equals("LagerPrisguideOversikt") && File.Exists(htmlStorePrisguideOverview))
+                    file += " \"" + htmlStorePrisguideOverview + "\" ";
                 else if (currentKat == "ObsoleteImports" && File.Exists(htmlStoreObsoleteImports))
                     file += " \"" + htmlStoreObsoleteImports + "\" ";
+                else if (currentKat == "Tjenester")
+                    file = "\"" + settingsPath + "\\rankingAvdTjenester.html\" ";
+                else if (currentKat == "Snittpriser")
+                    file = "\"" + settingsPath + "\\rankingAvdSnittpriser.html\" ";
                 else
                     file += " \"" + htmlImport + "\" ";
             }
@@ -2029,7 +2152,9 @@ namespace KGSA
                 file = "\"" + settingsPath + "\\budsjettAftersales.html\" ";
             else if (cat == BudgetCategory.MDASDA)
                 file = "\"" + settingsPath + "\\budsjettMdaSda.html\" ";
- 
+            else if (cat == BudgetCategory.Daglig)
+                file = "\"" + settingsPath + "\\budsjettDaglig.html\" ";
+
             return file;
         }
 
@@ -2046,6 +2171,9 @@ namespace KGSA
                 buttonKnowHow.BackColor = SystemColors.ControlLight;
                 buttonLister.BackColor = SystemColors.ControlLight;
                 buttonRankVinnprodukter.BackColor = SystemColors.ControlLight;
+                buttonAvdTjenester.BackColor = SystemColors.ControlLight;
+                buttonAvdSnittpriser.BackColor = SystemColors.ControlLight;
+
                 if (katArg == "Toppselgere")
                     buttonToppselgere.BackColor = Color.LightSkyBlue;
                 else if (katArg == "Oversikt")
@@ -2064,25 +2192,10 @@ namespace KGSA
                     buttonLister.BackColor = Color.LightSkyBlue;
                 else if (katArg == "Vinnprodukter")
                     buttonRankVinnprodukter.BackColor = Color.LightSkyBlue;
-                this.Update();
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-            }
-        }
-
-        private void HighlightButtonAvd(string katArg = "")
-        {
-            try
-            {
-                buttonAvdTjenester.BackColor = SystemColors.ControlLight;
-                buttonAvdSnittpris.BackColor = SystemColors.ControlLight;
-
-                if (katArg == "Tjenester")
+                else if (katArg == "Tjenester")
                     buttonAvdTjenester.BackColor = Color.LightSkyBlue;
                 else if (katArg == "Snittpriser")
-                    buttonAvdSnittpris.BackColor = Color.LightSkyBlue;
+                    buttonAvdSnittpriser.BackColor = Color.LightSkyBlue;
                 this.Update();
             }
             catch (Exception ex)
@@ -2091,7 +2204,7 @@ namespace KGSA
             }
         }
 
-        private void HighlightBudgetButton(BudgetCategory cat)
+        public void HighlightBudgetButton(BudgetCategory cat)
         {
             try
             {
@@ -2106,6 +2219,7 @@ namespace KGSA
                 buttonBudgetMdaSda.Enabled = appConfig.budgetShowMdasda;
                 buttonBudgetButikk.Enabled = appConfig.budgetShowButikk;
 
+                buttonBudgetDaily.BackColor = SystemColors.ControlLight;
                 buttonBudgetMda.BackColor = SystemColors.ControlLight;
                 buttonBudgetAv.BackColor = SystemColors.ControlLight;
                 buttonBudgetSda.BackColor = SystemColors.ControlLight;
@@ -2137,6 +2251,8 @@ namespace KGSA
                     buttonBudgetMdaSda.BackColor = Color.LightSkyBlue;
                 else if (cat == BudgetCategory.Butikk)
                     buttonBudgetButikk.BackColor = Color.LightSkyBlue;
+                else if (cat == BudgetCategory.Daglig)
+                    buttonBudgetDaily.BackColor = Color.LightSkyBlue;
 
                 this.Update();
             }
@@ -2169,9 +2285,9 @@ namespace KGSA
         /// </summary>
         /// <param name="katArg">Slett spesifikk side</param>
         /// <param name="bg">Kjør bare i bakgrunn (ikke endre UI)</param>
-        private void ClearHash(string katArg = "", bool bg = false)
+        public void ClearHash(string katArg = "", bool bg = false)
         {
-            if (katArg != "")
+            if (!String.IsNullOrEmpty(katArg))
             {
                 if (katArg == "Toppselgere")
                     appConfig.strToppselgere = "";
@@ -2194,9 +2310,9 @@ namespace KGSA
                 else if (katArg == "Vinnprodukter")
                     appConfig.strVinnprodukter = "";
                 else if (katArg == "Tjenester")
-                    appConfig.strAvdTjenester = "";
+                    appConfig.strTjenester = "";
                 else if (katArg == "Snittpriser")
-                    appConfig.strAvdSnittpriser = "";
+                    appConfig.strSnittpriser = "";
                 else if (katArg == "Obsolete")
                     appConfig.strObsolete = "";
                 else if (katArg == "ObsoleteList")
@@ -2220,8 +2336,8 @@ namespace KGSA
                 appConfig.strServiceOversikt = "";
                 appConfig.strLister = "";
                 appConfig.strVinnprodukter = "";
-                appConfig.strAvdTjenester = "";
-                appConfig.strAvdSnittpriser = "";
+                appConfig.strTjenester = "";
+                appConfig.strSnittpriser = "";
                 appConfig.strObsolete = "";
                 appConfig.strObsoleteList = "";
                 appConfig.strLagerWeekly = "";
@@ -2263,6 +2379,8 @@ namespace KGSA
                     appConfig.strBudgetAftersales = "";
                 else if (cat == BudgetCategory.MDASDA)
                     appConfig.strBudgetMdasda = "";
+                else if (cat == BudgetCategory.Daglig)
+                    appConfig.strBudgetDaily = "";
             }
             else
             {
@@ -2275,6 +2393,7 @@ namespace KGSA
                 appConfig.strBudgetKasse = "";
                 appConfig.strBudgetAftersales = "";
                 appConfig.strBudgetMdasda = "";
+                appConfig.strBudgetDaily = "";
             }
             SaveSettings();
             if (!bg && !EmptyDatabase())
@@ -2301,7 +2420,7 @@ namespace KGSA
                 !bwServiceReport.IsBusy && !bwPopulateSk.IsBusy && !bwUpdateBigGraph.IsBusy && !bwAutoImportService.IsBusy &&
                 !bwImportService.IsBusy && !bwRanking.IsBusy && !bwStore.IsBusy && !bwReport.IsBusy && !bwSendEmail.IsBusy &&
                 !bwImport.IsBusy && !bwPDF.IsBusy && !bwAutoRanking.IsBusy && !bwAutoStore.IsBusy && !bwImportObsolete.IsBusy &&
-                !bwMacroRanking.IsBusy && !bwBudget.IsBusy && !bwAvdeling.IsBusy && !appManagerIsBusy && !worker.IsBusy && checkAll)
+                !bwMacroRanking.IsBusy && !bwBudget.IsBusy && !appManagerIsBusy && !worker.IsBusy && checkAll)
                 return false;
 
             if (Loaded && !silent)
@@ -2330,7 +2449,6 @@ namespace KGSA
                 if (bwImportObsolete.IsBusy) strBusy += " bwImportObsolete";
                 if (bwMacroRanking.IsBusy) strBusy += " bwMacroRanking";
                 if (bwBudget.IsBusy) strBusy += " bwBudget";
-                if (bwAvdeling.IsBusy) strBusy += " bwAvdeling";
                 if (appManagerIsBusy) strBusy += " appManagerIsBusy";
                 if (worker.IsBusy) strBusy += " worker";
                 Logg.Debug(strBusy);
@@ -2339,17 +2457,17 @@ namespace KGSA
             return true;
         }
 
-        public static bool EmptyDatabase()
+        public bool EmptyDatabase()
         {
             try
             {
-                if (dbFraDT.Date.Equals(DateTime.Now.Date))
+                if (appConfig.dbFrom.Date.Equals(DateTime.Now.Date))
                     return true;
-                if (dbFraDT == DateTime.MinValue)
+                if (appConfig.dbFrom == DateTime.MinValue)
                     return true;
-                if (dbFraDT > dbTilDT)
+                if (appConfig.dbFrom > appConfig.dbTo)
                     return true;
-                if (dbFraDT.Date == rangeMin.Date)
+                if (appConfig.dbFrom.Date == rangeMin.Date)
                     return true;
                 else
                     return false; // OK det ser ut som databasen er IKKE tom.
@@ -2382,53 +2500,53 @@ namespace KGSA
             {
                 if (!EmptyDatabase())
                 {
-                    var d = pickerDato.Value;
+                    var d = pickerRankingDate.Value;
                     if (m == 1) // gå tilbake en måned
                     {
-                        if (dbFraDT.Date <= d.AddMonths(-1))
-                            pickerDato.Value = d.AddMonths(-1);
+                        if (appConfig.dbFrom.Date <= d.AddMonths(-1))
+                            pickerRankingDate.Value = d.AddMonths(-1);
                         else
-                            pickerDato.Value = dbFraDT;
+                            pickerRankingDate.Value = appConfig.dbFrom;
                     }
                     if (m == 2) // gå tilbake en dag
                     {
                         if (appConfig.ignoreSunday)
                         {
-                            if (dbFraDT.Date <= d.AddDays(-1) && d.AddDays(-1).DayOfWeek != DayOfWeek.Sunday)
-                                pickerDato.Value = d.AddDays(-1);
-                            if (dbFraDT.Date <= d.AddDays(-2) && d.AddDays(-1).DayOfWeek == DayOfWeek.Sunday)
-                                pickerDato.Value = d.AddDays(-2);
+                            if (appConfig.dbFrom.Date <= d.AddDays(-1) && d.AddDays(-1).DayOfWeek != DayOfWeek.Sunday)
+                                pickerRankingDate.Value = d.AddDays(-1);
+                            if (appConfig.dbFrom.Date <= d.AddDays(-2) && d.AddDays(-1).DayOfWeek == DayOfWeek.Sunday)
+                                pickerRankingDate.Value = d.AddDays(-2);
                         }
                         else
                         {
-                            if (dbFraDT.Date <= d.AddDays(-1))
-                                pickerDato.Value = d.AddDays(-1);
+                            if (appConfig.dbFrom.Date <= d.AddDays(-1))
+                                pickerRankingDate.Value = d.AddDays(-1);
                         }
                     }
                     if (m == 3) // gå fram en dag
                     {
                         if (appConfig.ignoreSunday)
                         {
-                            if (dbTilDT.Date >= d.AddDays(1) && d.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
-                                pickerDato.Value = d.AddDays(1);
-                            if (dbTilDT.Date >= d.AddDays(2) && d.AddDays(1).DayOfWeek == DayOfWeek.Sunday)
-                                pickerDato.Value = d.AddDays(2);
+                            if (appConfig.dbTo.Date >= d.AddDays(1) && d.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
+                                pickerRankingDate.Value = d.AddDays(1);
+                            if (appConfig.dbTo.Date >= d.AddDays(2) && d.AddDays(1).DayOfWeek == DayOfWeek.Sunday)
+                                pickerRankingDate.Value = d.AddDays(2);
                         }
                         else
                         {
-                            if (dbTilDT.Date >= d.AddDays(1))
-                                pickerDato.Value = d.AddDays(1);
+                            if (appConfig.dbTo.Date >= d.AddDays(1))
+                                pickerRankingDate.Value = d.AddDays(1);
                         }
                     }
                     if (m == 4) // gå fram en måned
                     {
-                        if (dbTilDT.Date >= d.AddMonths(1))
-                            pickerDato.Value = d.AddMonths(1);
+                        if (appConfig.dbTo.Date >= d.AddMonths(1))
+                            pickerRankingDate.Value = d.AddMonths(1);
                         else
-                            pickerDato.Value = dbTilDT;
+                            pickerRankingDate.Value = appConfig.dbTo;
                     }
-                    d = pickerDato.Value;
-                    if (d.Date >= dbTilDT.Date)
+                    d = pickerRankingDate.Value;
+                    if (d.Date >= appConfig.dbTo.Date)
                     {
                         buttonRankF.Enabled = false; // fremover knapp
                         buttonRankFF.Enabled = false; // fremover knapp
@@ -2438,7 +2556,7 @@ namespace KGSA
                         buttonRankF.Enabled = true; // fremover knapp
                         buttonRankFF.Enabled = true; // fremover knapp
                     }
-                    if (d.Date <= dbFraDT.Date)
+                    if (d.Date <= appConfig.dbFrom.Date)
                     {
                         buttonRankBF.Enabled = false; // bakover knapp
                         buttonRankB.Enabled = false; // bakover knapp
@@ -2453,7 +2571,7 @@ namespace KGSA
                     {
                         if (!IsBusy())
                             UpdateRank();
-                        highlightDate = pickerDato.Value;
+                        highlightDate = pickerRankingDate.Value;
                     }
                 }
             }
@@ -2472,24 +2590,24 @@ namespace KGSA
                     var d = pickerBudget.Value;
                     if (m == 1) // gå tilbake en måned
                     {
-                        if (dbFraDT.Date <= d.AddMonths(-1))
+                        if (appConfig.dbFrom.Date <= d.AddMonths(-1))
                             pickerBudget.Value = d.AddMonths(-1);
                         else
-                            pickerBudget.Value = dbFraDT;
+                            pickerBudget.Value = appConfig.dbFrom;
                     }
 
                     if (m == 2) // gå tilbake en dag
                     {
                         if (appConfig.ignoreSunday)
                         {
-                            if (dbFraDT.Date <= d.AddDays(-1) && d.AddDays(-1).DayOfWeek != DayOfWeek.Sunday)
+                            if (appConfig.dbFrom.Date <= d.AddDays(-1) && d.AddDays(-1).DayOfWeek != DayOfWeek.Sunday)
                                 pickerBudget.Value = d.AddDays(-1);
-                            if (dbFraDT.Date <= d.AddDays(-2) && d.AddDays(-1).DayOfWeek == DayOfWeek.Sunday)
+                            if (appConfig.dbFrom.Date <= d.AddDays(-2) && d.AddDays(-1).DayOfWeek == DayOfWeek.Sunday)
                                 pickerBudget.Value = d.AddDays(-2);
                         }
                         else
                         {
-                            if (dbFraDT.Date <= d.AddDays(-1))
+                            if (appConfig.dbFrom.Date <= d.AddDays(-1))
                                 pickerBudget.Value = d.AddDays(-1);
                         }
                     }
@@ -2497,27 +2615,27 @@ namespace KGSA
                     {
                         if (appConfig.ignoreSunday)
                         {
-                            if (dbTilDT.Date >= d.AddDays(1) && d.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
+                            if (appConfig.dbTo.Date >= d.AddDays(1) && d.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
                                 pickerBudget.Value = d.AddDays(1);
-                            if (dbTilDT.Date >= d.AddDays(2) && d.AddDays(1).DayOfWeek == DayOfWeek.Sunday)
+                            if (appConfig.dbTo.Date >= d.AddDays(2) && d.AddDays(1).DayOfWeek == DayOfWeek.Sunday)
                                 pickerBudget.Value = d.AddDays(2);
                         }
                         else
                         {
-                            if (dbTilDT.Date >= d.AddDays(1))
+                            if (appConfig.dbTo.Date >= d.AddDays(1))
                                 pickerBudget.Value = d.AddDays(1);
                         }
                     }
 
                     if (m == 4) // gå fram en måned
                     {
-                        if (dbTilDT.Date >= d.AddMonths(1))
+                        if (appConfig.dbTo.Date >= d.AddMonths(1))
                             pickerBudget.Value = d.AddMonths(1);
                         else
-                            pickerBudget.Value = dbTilDT;
+                            pickerBudget.Value = appConfig.dbTo;
                     }
                     d = pickerBudget.Value;
-                    if (d.Date >= dbTilDT.Date)
+                    if (d.Date >= appConfig.dbTo.Date)
                     {
                         buttonBudgetFF.Enabled = false; // fremover knapp
                         buttonBudgetF.Enabled = false;
@@ -2527,7 +2645,7 @@ namespace KGSA
                         buttonBudgetFF.Enabled = true; // fremover knapp
                         buttonBudgetF.Enabled = true;
                     }
-                    if (d.Date <= dbFraDT.Date)
+                    if (d.Date <= appConfig.dbFrom.Date)
                     {
                         buttonBudgetBF.Enabled = false; // bakover knapp
                         buttonBudgetB.Enabled = false;
@@ -2555,7 +2673,7 @@ namespace KGSA
         {
             try
             {
-                string datoStr = (autoMode) ? datoStr = dbTilDT.ToString("yyy-MM-dd") : pickerDato.Value.ToString("yyy-MM-dd");
+                string datoStr = (autoMode) ? datoStr = appConfig.dbTo.ToString("yyy-MM-dd") : pickerRankingDate.Value.ToString("yyy-MM-dd");
                 string sourceFiles = "";
                 string destinationFile = "";
                 string graphStr1 = settingsPath + @"\rankingGrafOversikt.html";
@@ -2565,8 +2683,8 @@ namespace KGSA
                 string graphStr4 = settingsPath + @"\rankingGrafNettbrett.html";
                 string graphStr5 = settingsPath + @"\rankingGrafAudioVideo.html";
                 string graphStr6 = settingsPath + @"\rankingGrafTele.html";
-                string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
-                string newHashBudget = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+                string newHash = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+                string newHashBudget = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
                 string newHashStore = appConfig.Avdeling + pickerLagerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
                 string newHashService = appConfig.Avdeling + pickerServiceDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
 
@@ -2574,13 +2692,13 @@ namespace KGSA
                 Logg.Log("Klargjør filer for konvertering..");
                 processing.SetText = "Klargjør filer for konvertering..";
 
-                if (type != "")
+                if (!String.IsNullOrEmpty(type))
                 {
                     if (type == "Vinnprodukter")
                     {
                         if (appConfig.pdfVisVinnprodukter)
                         {
-                            BuildVinnRanking(true, bw);
+                            BuildVinnRanking(true);
                             appConfig.strVinnprodukter = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingVinnprodukter.html\" ";
                         }
@@ -2650,7 +2768,7 @@ namespace KGSA
                             if (File.Exists(htmlBudgetMdasda))
                                 sourceFiles += " \"" + settingsPath + "\\budsjettMdaSda.html\" ";
                         }
-                        if (sourceFiles == "")
+                        if (String.IsNullOrEmpty(sourceFiles))
                         {
                             Logg.Log("Ingen budsjett er klar til eksportering til PDF. Opprett nye budsjett og/eller sjekk over budsjett innstillinger.", Color.Red);
                             return "";
@@ -2660,7 +2778,7 @@ namespace KGSA
                     {
                         if (appConfig.pdfVisKnowHow)
                         {
-                            BuildKnowHowRanking(true, bw);
+                            BuildKnowHowRanking(true);
                             appConfig.strKnowHow = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingKnowHow.html\" ";
                             if (appConfig.graphKnowHow && appConfig.pdfExpandedGraphs)
@@ -2671,7 +2789,7 @@ namespace KGSA
                         }
                         if (appConfig.pdfVisVinnprodukter)
                         {
-                            BuildVinnRanking(true, bw);
+                            BuildVinnRanking(true);
                             appConfig.strVinnprodukter = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingVinnprodukter.html\" ";
                         }
@@ -2693,7 +2811,7 @@ namespace KGSA
                         }
                         if (appConfig.pdfVisVinnprodukter)
                         {
-                            BuildVinnRanking(true, bw);
+                            BuildVinnRanking(true);
                             appConfig.strVinnprodukter = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingVinnprodukter.html\" ";
                         }
@@ -2713,7 +2831,7 @@ namespace KGSA
                         }
                         if (appConfig.pdfVisVinnprodukter)
                         {
-                            BuildVinnRanking(true, bw);
+                            BuildVinnRanking(true);
                             appConfig.strVinnprodukter = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingVinnprodukter.html\" ";
                         }
@@ -2733,7 +2851,7 @@ namespace KGSA
                         }
                         if (appConfig.pdfVisVinnprodukter)
                         {
-                            BuildVinnRanking(true, bw);
+                            BuildVinnRanking(true);
                             appConfig.strVinnprodukter = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingVinnprodukter.html\" ";
                         }
@@ -2742,7 +2860,7 @@ namespace KGSA
                     {
                         if (appConfig.pdfVisKnowHow)
                         {
-                            BuildKnowHowRanking(true, bw);
+                            BuildKnowHowRanking(true);
                             appConfig.strKnowHow = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingKnowHow.html\" ";
                             if (appConfig.graphKnowHow && appConfig.pdfExpandedGraphs)
@@ -2788,7 +2906,7 @@ namespace KGSA
                         }
                         if (appConfig.pdfVisVinnprodukter)
                         {
-                            BuildVinnRanking(true, bw);
+                            BuildVinnRanking(true);
                             appConfig.strVinnprodukter = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingVinnprodukter.html\" ";
                         }
@@ -2797,7 +2915,7 @@ namespace KGSA
                     {
                         if (appConfig.pdfVisLister)
                         {
-                            BuildListerRanking(true, bw);
+                            BuildListerRanking(true);
                             appConfig.strLister = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingLister.html\" ";
                         }
@@ -2808,7 +2926,7 @@ namespace KGSA
                         {
                             if (appConfig.pdfVisToppselgere)
                             {
-                                BuildToppselgereRanking(true, bw);
+                                BuildToppselgereRanking(true);
                                 appConfig.strToppselgere = newHash;
                                 sourceFiles += " \"" + settingsPath + "\\rankingToppselgere.html\" ";
                             }
@@ -2837,7 +2955,7 @@ namespace KGSA
                         }
                         if (appConfig.pdfVisKnowHow)
                         {
-                            BuildKnowHowRanking(true, bw);
+                            BuildKnowHowRanking(true);
                             appConfig.strKnowHow = newHash;
                             sourceFiles += " \"" + settingsPath + "\\rankingKnowHow.html\" ";
                             if (appConfig.graphKnowHow && appConfig.pdfExpandedGraphs)
@@ -2885,26 +3003,26 @@ namespace KGSA
                         {
                             if (appConfig.pdfVisLister)
                             {
-                                BuildListerRanking(true, bw);
+                                BuildListerRanking(true);
                                 appConfig.strLister = newHash;
                                 sourceFiles += " \"" + settingsPath + "\\rankingLister.html\" ";
                             }
                             if (appConfig.pdfVisVinnprodukter)
                             {
-                                BuildVinnRanking(true, bw);
+                                BuildVinnRanking(true);
                                 appConfig.strVinnprodukter = newHash;
                                 sourceFiles += " \"" + settingsPath + "\\rankingVinnprodukter.html\" ";
                             }
                             if (appConfig.pdfVisTjenester)
                             {
-                                BuildAvdTjenester(true, bw);
-                                appConfig.strAvdTjenester = newHash;
+                                BuildAvdTjenester(true);
+                                appConfig.strTjenester = newHash;
                                 sourceFiles += " \"" + settingsPath + "\\rankingAvdTjenester.html\" ";
                             }
                             if (appConfig.pdfVisSnittpriser)
                             {
-                                BuildAvdSnittpriser(true, bw);
-                                appConfig.strAvdSnittpriser = newHash;
+                                BuildAvdSnittpriser(true);
+                                appConfig.strSnittpriser = newHash;
                                 sourceFiles += " \"" + settingsPath + "\\rankingAvdSnittpriser.html\" ";
                             }
                         }
@@ -2912,25 +3030,25 @@ namespace KGSA
                         {
                             if (appConfig.pdfVisObsolete)
                             {
-                                BuildStoreStatus(true, bw);
+                                BuildStoreStatus(true);
                                 appConfig.strObsolete = newHashStore;
                                 sourceFiles += " \"" + htmlStoreObsolete + "\" ";
                             }
                             if (appConfig.pdfVisObsoleteList)
                             {
-                                BuildStoreObsoleteList(true, bw);
+                                BuildStoreObsoleteList(true);
                                 appConfig.strObsoleteList = newHashStore;
                                 sourceFiles += " \"" + htmlStoreObsoleteList + "\" ";
                             }
                             if (appConfig.pdfVisWeekly)
                             {
-                                BuildStoreWeeklyOverview(true, bw);
+                                BuildStoreWeeklyOverview(true);
                                 appConfig.strLagerWeeklyOverview = newHashStore;
                                 sourceFiles += " \"" + htmlStoreWeeklyOverview + "\" ";
                             }
                             if (appConfig.pdfVisPrisguide)
                             {
-                                BuildStorePrisguideOverview(true, bw);
+                                BuildStorePrisguideOverview(true);
                                 appConfig.strLagerPrisguideOverview = newHashStore;
                                 sourceFiles += " \"" + htmlStorePrisguideOverview + "\" ";
                             }
@@ -2943,18 +3061,8 @@ namespace KGSA
                         }
                     }
                     destinationFile = "\"" + System.IO.Path.GetTempPath() + "TjenesteRanking " + type + " " + appConfig.Avdeling + " " + datoStr + ".pdf\"";
-                    if (type == "Quick")
-                    {
-                        sourceFiles = "\"" + settingsPath + "\\rankingQuick.html\" ";
-                        destinationFile = "\"" + settingsTemp + "\\Kveldstall " + appConfig.Avdeling + " " + datoStr + ".pdf\"";
-                        //destinationFile = "\"" + System.IO.Path.GetTempPath() + "Kveldstall " + appConfig.Avdeling + " " + datoStr + ".pdf\"";
-                        datoStr = DateTime.Now.ToString("yyy-MM-dd"); // Overstyr dato til dagens dato.
-
-                        if (appConfig.quickInclService && service.dbServiceDatoFra.Date != service.dbServiceDatoTil.Date)
-                            sourceFiles += " \"" + htmlServiceOversikt + "\" ";
-                    }
                 }
-                else if (file != "")
+                else if (!String.IsNullOrEmpty(file))
                 {
                     sourceFiles = file;
                     destinationFile = "\"" + settingsTemp + "\\KGSA " + appConfig.Avdeling + " " + currentPage() + " " + datoStr + ".pdf\"";
@@ -2969,7 +3077,7 @@ namespace KGSA
                     return "";
                 }
 
-                if (sourceFiles == "")
+                if (String.IsNullOrEmpty(sourceFiles))
                 {
                     Logg.Log("Error: Har ikke data fra alle kategoriene til å lage en fullstendig rapport.", Color.Red);
                     return ""; // mangler filer
@@ -3061,7 +3169,7 @@ namespace KGSA
                         if (!appConfig.storeObsoleteSortBy.Contains("tblUkurans."))
                             appConfig.storeObsoleteSortBy = "tblUkurans.UkuransProsent";
 
-                        if (appConfig.visningNull == "")
+                        if (String.IsNullOrEmpty(appConfig.visningNull))
                             appConfig.visningNull = "&nbsp;"; // visningNull som "" ødelegger CSS styles i tabellen, sett som &nbsp;
 
                         if (appConfig.varekoder == null)
@@ -3414,12 +3522,20 @@ namespace KGSA
                 {
                     Logg.Log("Databasen er tom. Importer transaksjoner fra Elguide!");
 
+                    labelRankingLastDateBig.ForeColor = SystemColors.ControlText;
+                    labelRankingLastDateBig.Text = "(tom)";
+                    labelRankingLastDate.ForeColor = SystemColors.ControlText;
+                    labelRankingLastDate.Text = "";
+
+                    labelGraphLastDateBig.ForeColor = SystemColors.ControlText;
+                    labelGraphLastDateBig.Text = "(tom)";
+                    labelGraphLastDate.ForeColor = SystemColors.ControlText;
+                    labelGraphLastDate.Text = "";
+
                     webHTML.Navigate(htmlImport);
-                    webHTMLAvd.Navigate(htmlImport);
-                    groupBoxRankingKategori.Enabled = false;
-                    groupBoxRankingValg.Enabled = false;
-                    panelDatabaseSearch.Enabled = false;
-                    buttonSkAuto.Enabled = false;
+
+                    ShowHideGui_EmptyRanking(false);
+
                     buttonOppdater.BackColor = SystemColors.ControlLight;
                     buttonOppdater.ForeColor = SystemColors.ControlText;
                     DataTable DT = (DataTable)dataGridTransaksjoner.DataSource;
@@ -3429,13 +3545,34 @@ namespace KGSA
                 }
                 else
                 {
-                    groupBoxRankingKategori.Enabled = true;
-                    groupBoxRankingValg.Enabled = true;
-                    panelDatabaseSearch.Enabled = true;
-                    buttonSkAuto.Enabled = true;
+                    labelRankingLastDateBig.Text = appConfig.dbTo.ToString("dddd", norway);
+                    labelRankingLastDate.Text = appConfig.dbTo.ToString("d. MMM", norway);
+
+                    labelGraphLastDateBig.Text = appConfig.dbTo.ToString("dddd", norway);
+                    labelGraphLastDate.Text = appConfig.dbTo.ToString("d. MMM", norway);
+
+                    if ((DateTime.Now - appConfig.dbTo).Days >= 3)
+                    {
+                        labelRankingLastDateBig.ForeColor = Color.Red;
+                        labelRankingLastDate.ForeColor = Color.Red;
+
+                        labelGraphLastDateBig.ForeColor = Color.Red;
+                        labelGraphLastDate.ForeColor = Color.Red;
+                    }
+                    else
+                    {
+                        labelRankingLastDateBig.ForeColor = SystemColors.ControlText;
+                        labelRankingLastDate.ForeColor = SystemColors.ControlText;
+
+                        labelGraphLastDateBig.ForeColor = SystemColors.ControlText;
+                        labelGraphLastDate.ForeColor = SystemColors.ControlText;
+                    }
+
+                    ShowHideGui_EmptyRanking(true);
+
                     if (!autoMode)
                         UpdateRank();
-                    highlightDate = dbTilDT;
+                    highlightDate = appConfig.dbTo;
                     moveDate(0, true);
                     InitDB();
                     topgraph = new TopGraph(this);
@@ -3461,16 +3598,16 @@ namespace KGSA
                 if (EmptyDatabase() || !appConfig.experimental)
                 {
                     webBudget.Navigate(htmlImport);
-                    groupBoxBudgetKategori.Enabled = false;
-                    groupBoxBudgetValg.Enabled = false;
+                    groupBudgetPages.Enabled = false;
+                    groupBudgetChoices.Enabled = false;
 
                     buttonBudgetUpdate.BackColor = SystemColors.ControlLight;
                     buttonBudgetUpdate.ForeColor = SystemColors.ControlText;
                 }
                 else
                 {
-                    groupBoxBudgetKategori.Enabled = true;
-                    groupBoxBudgetValg.Enabled = true;
+                    groupBudgetPages.Enabled = true;
+                    groupBudgetChoices.Enabled = true;
 
                     budget = new BudgetObj(this);
 
@@ -3542,7 +3679,7 @@ namespace KGSA
 
                 if (File.Exists(html))
                 {
-                    string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+                    string newHash = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
                     if (newHash == oldHash)
                     {
                         buttonOppdater.BackColor = SystemColors.ControlLight;
@@ -3591,6 +3728,8 @@ namespace KGSA
                     html = htmlBudgetKasse;
                 else if (cat == BudgetCategory.Aftersales)
                     html = htmlBudgetAftersales;
+                else if (cat == BudgetCategory.Daglig)
+                    html = htmlBudgetDaily;
                 else
                     return false;
 
@@ -3636,7 +3775,7 @@ namespace KGSA
 
                 if (File.Exists(html))
                 {
-                    string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+                    string newHash = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
                     if (newHash == oldHash)
                     {
                         buttonServiceOppdater.BackColor = SystemColors.ControlLight;
@@ -3670,8 +3809,8 @@ namespace KGSA
             try
             {
                 string dateFormat = "dd/MM/yyyy HH:mm:ss";
-                dbFraDT = DateTime.Now;
-                dbTilDT = rangeMin;
+                appConfig.dbFrom = DateTime.Now;
+                //dbTilDT = rangeMin;
 
                 if (appConfig.dbFrom == null || appConfig.dbTo == null
                     || appConfig.dbFrom == DateTime.MinValue || appConfig.dbTo == DateTime.MinValue
@@ -3682,17 +3821,16 @@ namespace KGSA
 
                     SqlCeCommand cmd = new SqlCeCommand("SELECT MIN(Dato) AS Expr1 FROM tblSalg WHERE (Avdeling = '" + appConfig.Avdeling + "')", connection);
                     string temp = cmd.ExecuteScalar().ToString();
-                    if (temp != "")
-                        dbFraDT = DateTime.ParseExact(temp, dateFormat, FormMain.norway);
-                        //dbFraDT = Convert.ToDateTime(temp);
+                    if (!String.IsNullOrEmpty(temp))
+                        appConfig.dbFrom = DateTime.ParseExact(temp, dateFormat, FormMain.norway);
 
                     cmd = new SqlCeCommand("SELECT MAX(Dato) AS Expr1 FROM tblSalg WHERE (Avdeling = '" + appConfig.Avdeling + "')", connection);
                     temp = cmd.ExecuteScalar().ToString();
-                    if (temp != "")
-                        dbTilDT = DateTime.ParseExact(temp, dateFormat, FormMain.norway);
-                        //dbTilDT = Convert.ToDateTime(temp);
+                    if (!String.IsNullOrEmpty(temp))
+                        appConfig.dbTo = DateTime.ParseExact(temp, dateFormat, FormMain.norway);
 
                     openXml.ClearDatabase();
+                    database.ClearCacheTables(); // slett month cache tables
 
                     if (newInstall)
                     {
@@ -3700,11 +3838,6 @@ namespace KGSA
                         ClearBudgetHash(BudgetCategory.None, true);
                         newInstall = false;
                     }
-                }
-                else
-                {
-                    dbFraDT = appConfig.dbFrom;
-                    dbTilDT = appConfig.dbTo;
                 }
 
                 if (!autoMode)
@@ -3714,22 +3847,19 @@ namespace KGSA
                     bwHentAvdelinger.RunWorkerAsync();
                 }
 
-                appConfig.dbTo = dbTilDT;
-                appConfig.dbFrom = dbFraDT;
-                database.ClearCacheTables(); // slett month cache tables
 
-                if (dbFraDT.Date != DateTime.Now.Date && dbTilDT.Date != DateTime.Now.Date && dbFraDT.Date > rangeMin.Date && dbTilDT.Date > rangeMin.Date)
+                if (appConfig.dbFrom.Date != DateTime.Now.Date && appConfig.dbTo.Date != DateTime.Now.Date && appConfig.dbFrom.Date > rangeMin.Date && appConfig.dbTo.Date > rangeMin.Date)
                 {
                     try
                     {
-                        if (dbFraDT.Date != DateTime.Now.Date && dbTilDT.Date != DateTime.Now.Date)
+                        if (appConfig.dbFrom.Date != DateTime.Now.Date && appConfig.dbTo.Date != DateTime.Now.Date)
                         {
-                            if (dbTilDT.DayOfWeek == DayOfWeek.Sunday && appConfig.ignoreSunday && dbFraDT.Date != dbTilDT.Date) { dbTilDT = dbTilDT.AddDays(-1); }
+                            if (appConfig.dbTo.DayOfWeek == DayOfWeek.Sunday && appConfig.ignoreSunday && appConfig.dbFrom.Date != appConfig.dbTo.Date) { appConfig.dbTo = appConfig.dbTo.AddDays(-1); }
 
-                            ChangeRankDateTimePicker(dbTilDT, dbFraDT, dbTilDT);
-                            ChangeBudgetDateTimePicker(dbTilDT, dbFraDT, dbTilDT);
-                            StatusInformation.Text = "Database:  " + dbFraDT.ToString("d. MMMM yyyy", norway) + "  -  " + dbTilDT.ToString("d. MMMM yyyy", norway) + "  ";
-                            Logg.Log("Databasen har transaksjoner mellom " + dbFraDT.ToString("d. MMMM yyyy", norway) + " og " + dbTilDT.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
+                            ChangeRankDateTimePicker(appConfig.dbTo, appConfig.dbFrom, appConfig.dbTo);
+                            ChangeBudgetDateTimePicker(appConfig.dbTo, appConfig.dbFrom, appConfig.dbTo);
+                            StatusInformation.Text = "Database:  " + appConfig.dbFrom.ToString("d. MMMM yyyy", norway) + "  -  " + appConfig.dbTo.ToString("d. MMMM yyyy", norway) + "  ";
+                            Logg.Log("Databasen har transaksjoner mellom " + appConfig.dbFrom.ToString("d. MMMM yyyy", norway) + " og " + appConfig.dbTo.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
                         }
                     }
                     catch
@@ -3738,7 +3868,6 @@ namespace KGSA
                         ChangeBudgetDateTimePicker(DateTime.Now, rangeMin, rangeMax);
                         StatusInformation.Text = "Database: N/A  ";
                     }
-
                 }
                 else
                 {
@@ -3751,8 +3880,8 @@ namespace KGSA
             catch
             {
                 Logg.Log("Feil ved lasting av databasen, eller databasen er tom.", Color.Red);
-                dbFraDT = DateTime.Now;
-                dbTilDT = DateTime.Now;
+                appConfig.dbFrom = DateTime.Now;
+                appConfig.dbTo = DateTime.Now;
                 ChangeRankDateTimePicker(DateTime.Now, rangeMin, rangeMax);
                 ChangeBudgetDateTimePicker(DateTime.Now, rangeMin, rangeMax);
                 StatusInformation.Text = "Database: N/A  ";
@@ -3811,7 +3940,7 @@ namespace KGSA
                     if (!nullstill && Loaded)
                         RefillDB();
 
-                    if (dbFraDT.Date == dbTilDT.Date)
+                    if (appConfig.dbFrom.Date == appConfig.dbTo.Date)
                     {
                         pickerDBFra.MinDate = rangeMin;
                         pickerDBFra.MaxDate = rangeMax;
@@ -3822,12 +3951,12 @@ namespace KGSA
                     }
                     else
                     {
-                        pickerDBFra.MinDate = dbFraDT;
-                        pickerDBFra.MaxDate = dbTilDT;
-                        pickerDBFra.Value = dbFraDT;
-                        pickerDBTil.MinDate = dbFraDT;
-                        pickerDBTil.MaxDate = dbTilDT;
-                        pickerDBTil.Value = dbTilDT;
+                        pickerDBFra.MinDate = appConfig.dbFrom;
+                        pickerDBFra.MaxDate = appConfig.dbTo;
+                        pickerDBFra.Value = appConfig.dbFrom;
+                        pickerDBTil.MinDate = appConfig.dbFrom;
+                        pickerDBTil.MaxDate = appConfig.dbTo;
+                        pickerDBTil.Value = appConfig.dbTo;
                         textBoxSearchTerm.Text = "";
                     }
                     transInitialized = true;
@@ -3840,7 +3969,7 @@ namespace KGSA
             }
         }
 
-        public void SearchDB(bool search = false)
+        public void SearchDB()
         {
             try
             {
@@ -3856,10 +3985,10 @@ namespace KGSA
                 DateTime dtTil = pickerDBTil.Value;
                 string skR = "";
                 string vgR = "";
-                if (sk != "" && sk != "ALLE")
+                if (!String.IsNullOrEmpty(sk) && sk != "ALLE")
                     skR = " (Selgerkode = '" + sk + "') ";
 
-                if (vg != "" && vg != "ALLE")
+                if (!String.IsNullOrEmpty(vg) && vg != "ALLE")
                     vgR = " (Varegruppe = '" + vg + "') ";
 
                 if (vg == "[Kitchen]")
@@ -3888,15 +4017,15 @@ namespace KGSA
 
                 string arg = "";
 
-                if (sk != "")
+                if (!String.IsNullOrEmpty(sk))
                     arg += " AND " + skR;
 
-                if (vg != "")
+                if (!String.IsNullOrEmpty(vg))
                     arg += " AND " + vgR;
 
                 string searchArg = "";
                 var searchString = textBoxSearchTerm.Text;
-                if (searchString != "")
+                if (!String.IsNullOrEmpty(searchString))
                     searchArg = " AND (Varekode LIKE '%" + searchString + "%' OR Selgerkode LIKE '%" + searchString + "%' OR Bilagsnr LIKE '%" + searchString + "%') ";
 
                 string cmd = "SELECT SalgID, Selgerkode, Bilagsnr, Varegruppe, Varekode, Dato, Antall, Btokr, Salgspris, Mva FROM tblSalg WHERE (Avdeling = '" +  appConfig.Avdeling + "') AND (Dato >= '" + dtFra.ToString("yyy-MM-dd") +
@@ -3957,22 +4086,22 @@ namespace KGSA
                 if (EmptyDatabase())
                     return;
 
-                pickerDBFra.MinDate = dbFraDT; pickerDBFra.MaxDate = dbTilDT; pickerDBTil.MinDate = dbFraDT; pickerDBTil.MaxDate = dbTilDT;
+                pickerDBFra.MinDate = appConfig.dbFrom; pickerDBFra.MaxDate = appConfig.dbTo; pickerDBTil.MinDate = appConfig.dbFrom; pickerDBTil.MaxDate = appConfig.dbTo;
 
-                pickerDBTil.Value = pickerDato.Value;
+                pickerDBTil.Value = pickerRankingDate.Value;
                 if (month) // Dato, måned eller dag
                 {
-                    if (GetFirstDayOfMonth(pickerDato.Value) <= dbFraDT)
-                        pickerDBFra.Value = dbFraDT;
+                    if (GetFirstDayOfMonth(pickerRankingDate.Value) <= appConfig.dbFrom)
+                        pickerDBFra.Value = appConfig.dbFrom;
                     else
-                        pickerDBFra.Value = GetFirstDayOfMonth(pickerDato.Value);
-                    if (pickerDato.Value.Month == dbTilDT.Month && pickerDato.Value.Year == dbTilDT.Year)
-                        pickerDBTil.Value = pickerDato.Value;
+                        pickerDBFra.Value = GetFirstDayOfMonth(pickerRankingDate.Value);
+                    if (pickerRankingDate.Value.Month == appConfig.dbTo.Month && pickerRankingDate.Value.Year == appConfig.dbTo.Year)
+                        pickerDBTil.Value = pickerRankingDate.Value;
                     else
-                        pickerDBTil.Value = GetLastDayOfMonth(pickerDato.Value);
+                        pickerDBTil.Value = GetLastDayOfMonth(pickerRankingDate.Value);
                 }
                 else
-                    pickerDBFra.Value = pickerDato.Value;
+                    pickerDBFra.Value = pickerRankingDate.Value;
 
                 if (bwPopulateSk.IsBusy)
                     do
@@ -4010,7 +4139,7 @@ namespace KGSA
                     if (data == "Kitchen")
                         comboDBvaregruppe.SelectedIndex = 6;
                 }
-                else if (type == "")
+                else if (String.IsNullOrEmpty(type))
                 {
                     if (page == "Data")
                         comboDBvaregruppe.SelectedIndex = 1;
@@ -4040,7 +4169,7 @@ namespace KGSA
             {
                 if (kat == "selgerkode")
                 {
-                    if (pickerDato.Value.Date != DateTime.Now.Date && !filtrer)
+                    if (pickerRankingDate.Value.Date != DateTime.Now.Date && !filtrer)
                     {
                         comboDBselgerkode.SelectedIndex = 0;
                         comboDBvaregruppe.SelectedIndex = 0;
@@ -4065,7 +4194,7 @@ namespace KGSA
                 }
                 else if (kat == "varegruppe")
                 {
-                    if (pickerDato.Value.Date != DateTime.Now.Date && !filtrer)
+                    if (pickerRankingDate.Value.Date != DateTime.Now.Date && !filtrer)
                     {
                         comboDBselgerkode.SelectedIndex = 0;
                         comboDBvaregruppe.SelectedIndex = 0;
@@ -4088,9 +4217,9 @@ namespace KGSA
                         Logg.Log("Ingenting å søke etter.", Color.Red);
                     }
                 }
-                else if (kat == "search" && searchArg != "")
+                else if (kat == "search" && !String.IsNullOrEmpty(searchArg))
                 {
-                    if (pickerDato.Value.Date != DateTime.Now.Date && !filtrer)
+                    if (pickerRankingDate.Value.Date != DateTime.Now.Date && !filtrer)
                     {
                         comboDBselgerkode.SelectedIndex = 0;
                         comboDBvaregruppe.SelectedIndex = 0;
@@ -4111,7 +4240,7 @@ namespace KGSA
         {
             TransPopulateSelgere();
 
-            if (sk != "")
+            if (!String.IsNullOrEmpty(sk))
             {
                 try
                 {
@@ -4350,10 +4479,6 @@ namespace KGSA
                 favorittAvdelingerToolStripMenuItem.Checked = appConfig.favVis;
                 grafikkToolStripMenuItem.Checked = appConfig.graphVis;
                 rabattToolStripMenuItem.Checked = appConfig.kolRabatt;
-                if (appConfig.rankingAvdelingShowAll)
-                    visBareAngitteAvdelingerToolStripMenuItem.Checked = true;
-                else
-                    visBareAngitteAvdelingerToolStripMenuItem.Checked = false;
                 if (appConfig.rankingCompareLastyear > 0)
                     sammenligningToolStripMenuItem.Checked = true;
                 else
@@ -4372,7 +4497,6 @@ namespace KGSA
                     lagreBudsjettPDFToolStripMenuItem.Visible = true;
 
                     toolStripSeparatorGetBudget.Visible = true;
-                    nyBudsjettToolStripMenuItem.Visible = true;
 
                     androidAppToolStripMenuItem.Visible = true;
                     toolStripSeparator13.Visible = true;
@@ -4385,7 +4509,6 @@ namespace KGSA
                     lagreBudsjettPDFToolStripMenuItem.Visible = false;
 
                     toolStripSeparatorGetBudget.Visible = false;
-                    nyBudsjettToolStripMenuItem.Visible = false;
 
                     androidAppToolStripMenuItem.Visible = false;
                     toolStripSeparator13.Visible = false;
@@ -4417,17 +4540,12 @@ namespace KGSA
                 comboBox_GraphLengde.SelectedIndex = appConfig.graphLengthIndex;
                 checkBox_GraphHitrateMTD.Checked = appConfig.graphHitrateMTD;
                 checkBox_GraphZoom.Checked = appConfig.graphScreenZoom;
-
-                // Oppdater ranking avdeling modus
-                if (appConfig.rankingAvdelingMode >= 0)
-                    comboBoxAvdMode.SelectedIndex = appConfig.rankingAvdelingMode;
                     
                 // Aktiver makro knapper og meny hvis relevante makro innstillinger er tilstede.
-                if (!appConfig.macroElguide.Equals("") && !appConfig.epostAvsender.Equals("")
-                    && !appConfig.epostSMTPserver.Equals("") && appConfig.epostSMTPport > 0
-                    && !appConfig.epostEmne.Equals("") && !appConfig.csvElguideExportFolder.Equals(""))
+                if (!String.IsNullOrEmpty(appConfig.macroElguide) && !String.IsNullOrEmpty(appConfig.epostAvsender)
+                    && !String.IsNullOrEmpty(appConfig.epostSMTPserver) && appConfig.epostSMTPport > 0
+                    && !String.IsNullOrEmpty(appConfig.epostEmne) && !String.IsNullOrEmpty(appConfig.csvElguideExportFolder))
                 {
-                    makroToolStripMenuItemMakro.Enabled = true;
                     try {
                         if (File.Exists(macroProgramService))
                             buttonServiceMacro.Enabled = true;
@@ -4439,18 +4557,11 @@ namespace KGSA
                     }
                     try {
                         if (File.Exists(macroProgram))
-                        {
                             buttonRankingMakro.Enabled = true;
-                            buttonAvdMacroImport.Enabled = true;
-                        }
                         else
-                        {
                             buttonRankingMakro.Enabled = false;
-                            buttonAvdMacroImport.Enabled = false;
-                        }
                     } catch (Exception ex) {
                         buttonRankingMakro.Enabled = false;
-                        buttonAvdMacroImport.Enabled = false;
                         Logg.Unhandled(ex);
                     }
                     try {
@@ -4464,17 +4575,11 @@ namespace KGSA
                     }
                 }
                 else
-                {
-                    makroToolStripMenuItemMakro.Enabled = false;
-                    buttonRankingMakro.Enabled = false;
-                    buttonAvdMacroImport.Enabled = false;
-                    buttonLagerMakro.Enabled = false;
-                    buttonServiceMacro.Enabled = false;
-                }
+                    ShowHideGui_Macro(false);
 
                 // Aktiver send ranking data meny hvis..
-                if (!appConfig.epostAvsender.Equals("") && !appConfig.epostSMTPserver.Equals("")
-                    && appConfig.epostSMTPport > 0 && !appConfig.epostEmne.Equals("") && !EmptyDatabase())
+                if (!String.IsNullOrEmpty(appConfig.epostAvsender) && !String.IsNullOrEmpty(appConfig.epostSMTPserver)
+                    && appConfig.epostSMTPport > 0 && !String.IsNullOrEmpty(appConfig.epostEmne) && !EmptyDatabase())
                 {
                     toolMenuSendrank.Enabled = true;
                 }
@@ -4525,8 +4630,8 @@ namespace KGSA
                 if (!EmptyDatabase())
                 {
                     SetStatusInfo("db", "ranking", "Transaksjoner fra "
-                        + dbFraDT.ToString("d. MMMM yyyy", norway) + " til "
-                        + dbTilDT.ToString("d. MMMM yyyy", norway), dbTilDT);
+                        + appConfig.dbFrom.ToString("d. MMMM yyyy", norway) + " til "
+                        + appConfig.dbTo.ToString("d. MMMM yyyy", norway), appConfig.dbTo);
                 }
                 else
                     SetStatusInfo("db", "ranking", "", DateTime.MinValue);
@@ -4546,7 +4651,7 @@ namespace KGSA
                     SetStatusInfo("db", "service", "", DateTime.MinValue);
 
                 if (appConfig.webserverEnabled && appConfig.webserverPort > 0
-                    && appConfig.webserverPort <= 65535 && !appConfig.webserverHost.Equals(""))
+                    && appConfig.webserverPort <= 65535 && !String.IsNullOrEmpty(appConfig.webserverHost))
                 {
                     if (server != null)
                     {
@@ -4578,19 +4683,11 @@ namespace KGSA
                 }
 
                 if (appConfig.importSetting.StartsWith("Full"))
-                {
-                    buttonOversikt.Enabled = true;
-                    buttonToppselgere.Enabled = true;
-                    groupBoxRankingKategoriAvd.Enabled = true;
-                }
+                    ShowHideGui_FullTrans(true);
                 else
-                {
-                    buttonOversikt.Enabled = false;
-                    buttonToppselgere.Enabled = false;
-                    groupBoxRankingKategoriAvd.Enabled = false;
-                }
+                    ShowHideGui_FullTrans(false);
 
-                if (appConfig.savedTab != "")
+                if (!String.IsNullOrEmpty(appConfig.savedTab))
                     foreach (TabPage tab in tabControlMain.TabPages)
                         if (tab.Text == appConfig.savedTab)
                             tabControlMain.SelectedTab = tab;
@@ -4879,7 +4976,7 @@ namespace KGSA
                 saveFileDB.InitialDirectory = Convert.ToString(Environment.SpecialFolder.MyDocuments);
                 saveFileDB.Filter = "Compact database (*.SDF)|*.sdf|Alle filer (*.*)|*.*";
                 saveFileDB.FilterIndex = 1;
-                saveFileDB.FileName = "KGSA " + databaseVersion + " " + dbFraDT.ToString("yyMMd") + "-" + dbTilDT.ToString("yyMMd");
+                saveFileDB.FileName = "KGSA " + databaseVersion + " " + appConfig.dbFrom.ToString("yyMMd") + "-" + appConfig.dbTo.ToString("yyMMd");
 
                 if (saveFileDB.ShowDialog() == DialogResult.OK)
                 {

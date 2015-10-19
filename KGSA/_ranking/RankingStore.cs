@@ -312,7 +312,7 @@ namespace KGSA
             var hashId = random.Next(999, 99999);
             var doc = new List<string>();
             doc.Add("<br><table style='width:100%'><tr><td>");
-            doc.Add("<span class='Subtitle'>Ukeannonser for uke " + week + "</span>");
+            doc.Add("<h3>Ukeannonser for uke " + week + "</h3>");
 
             doc.Add("<div class='toolbox hidePdf'>");
             doc.Add("<a class='GuiButton hidePdf' onclick='toggleTable(" + hashId + ");' href='#'>Vis / Skjul</a><br>");
@@ -468,7 +468,7 @@ namespace KGSA
                     "De mest populære produkter på Prisguide.no - " + dtPick.ToString("dddd d. MMMM yyyy", norway));
 
                 doc.Add("<br><table style='width:100%'><tr><td>");
-                doc.Add("<span class='Subtitle'>De mest populære produktene på Prisguide.no - Uke " + main.database.GetIso8601WeekOfYear(dtPick) + "</span>");
+                doc.Add("<h2>De mest populære produktene på Prisguide.no - Uke " + main.database.GetIso8601WeekOfYear(dtPick) + "</h2>");
 
                 doc.Add("<div class='toolbox hidePdf'>");
                 doc.Add("<a class='GuiButton hidePdf' onclick='toggleTable(" + hashId + ");' href='#'>Vis / Skjul</a><br>");
@@ -510,9 +510,9 @@ namespace KGSA
                         doc.Add("<td class='text-cat'><a href='#external=http://www.prisguide.no/produkt/" + table.Rows[i]["PrisguideId"] + "'>"
                             + table.Rows[i]["ProductCode"] + "</a></td>");
 
-                    if (status == 0 && !tekst.Equals(""))
+                    if (status == 0 && !String.IsNullOrEmpty(tekst))
                         doc.Add("<td class='text-cat'>" + ForkortTekst(tekst, 27) + "</td>");
-                    else if (status == 0 && tekst.Equals(""))
+                    else if (status == 0 && String.IsNullOrEmpty(tekst))
                         doc.Add("<td class='text-cat' style='color:#454545;text-align: center;'>Ingen produktinfo</td>");
                     else
                         doc.Add("<td class='text-cat' style='color:#454545;text-align: center;'>" + PrisguideProduct.GetStatusStatic(status) + "</td>");
@@ -605,7 +605,7 @@ namespace KGSA
                     "De mest populære produkter på Prisguide.no - " + dtPick.ToString("dddd d. MMMM yyyy", norway));
 
                 doc.Add("<br><table style='width:100%'><tr><td>");
-                doc.Add("<span class='Subtitle'>Prisguide.no oppdateringer</span>");
+                doc.Add("<h3>Prisguide.no oppdateringer</h3>");
 
                 doc.Add("<div class='toolbox hidePdf'>");
                 doc.Add("<a class='GuiButton hidePdf' onclick='toggleTable(" + hashId + ");' href='#'>Vis / Skjul</a><br>");
@@ -899,7 +899,7 @@ namespace KGSA
                         main.openXml.SaveDocument(dt, "ObsoleteList", sKat, dtPick, "LagerUkurans " + sKat.ToUpper() + " - " + dtPick.ToString("dddd d. MMMM yyyy", norway));
 
                         doc.Add("<br><table style='width:100%'><tr><td>");
-                        doc.Add("<span class='Subtitle'>" + sKat + " utgåtte varer: " + filter + "</span>");
+                        doc.Add("<h2>" + sKat + " utgåtte varer: " + filter + "</h2>");
 
                         doc.Add("<div class='toolbox hidePdf'>");
                         doc.Add("<a class='GuiButton hidePdf' onclick='toggleTable(" + hashId + ");' href='#'>Vis / Skjul</a><br>");

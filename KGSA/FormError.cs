@@ -28,7 +28,7 @@ namespace KGSA
             this.Text = "KGSA (" + FormMain.version + ") - Kritisk feil";
 
             labelErrorTitle.Text = tittel;
-            if (detaljer != "")
+            if (!String.IsNullOrEmpty(detaljer))
                 textBoxErrorMessage.Text = detaljer + Environment.NewLine;
             textBoxErrorMessage.Text += "Unntak beskjed: " + ex.Message;
             textBoxErrorMessage.Text += Environment.NewLine + "Unntak: " + ex.ToString();

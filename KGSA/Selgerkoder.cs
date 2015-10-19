@@ -145,7 +145,9 @@ namespace KGSA
         {
             try
             {
-                string SQL = "SELECT Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Avdeling = '" + main.appConfig.Avdeling + "') AND (Dato >= '" + FormMain.dbTilDT.AddMonths(-2).ToString("yyy-MM-dd") + "') AND (Dato <= '" + FormMain.dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC";
+                string SQL = "SELECT Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Avdeling = '"
+                    + main.appConfig.Avdeling + "') AND (Dato >= '" + main.appConfig.dbTo.AddMonths(-2).ToString("yyy-MM-dd")
+                    + "') AND (Dato <= '" + main.appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC";
                 DataTable dtSel = main.database.GetSqlDataTable(SQL);
                 if (dtSel != null)
                 {
@@ -176,7 +178,9 @@ namespace KGSA
         {
             try
             {
-                string SQL = "SELECT Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Avdeling = '" + avdArg + "') AND (Dato >= '" + FormMain.dbTilDT.AddMonths(-2).ToString("yyy-MM-dd") + "') AND (Dato <= '" + FormMain.dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC";
+                string SQL = "SELECT Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Avdeling = '"
+                    + avdArg + "') AND (Dato >= '" + main.appConfig.dbTo.AddMonths(-2).ToString("yyy-MM-dd")
+                    + "') AND (Dato <= '" + main.appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC";
                 DataTable dtSel = main.database.GetSqlDataTable(SQL);
                 if (dtSel != null)
                 {
@@ -298,7 +302,7 @@ namespace KGSA
             // Selgerkode, Kategori, Provisjon
             List<string> selgere = new List<string> ();
 
-            if (katArg != "")
+            if (!String.IsNullOrEmpty(katArg))
             {
                 if (katArg == "Computing")
                     katArg = "Data";
@@ -477,7 +481,7 @@ namespace KGSA
                 string result = (string)cmd.ExecuteScalar();
                 cmd.Dispose();
 
-                if (result != "")
+                if (!String.IsNullOrEmpty(result))
                     return result;
 
                 return "";

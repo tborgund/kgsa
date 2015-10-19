@@ -5,7 +5,7 @@ using System.Text;
 
 namespace KGSA
 {
-    class TimeWatch
+    public class TimeWatch
     {
         DateTime time;
         DateTime update;

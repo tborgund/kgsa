@@ -191,7 +191,7 @@ namespace KGSA
             }
 
             string wobsoleteDecompressed = Decompress(wobsoleteFile);
-            if (wobsoleteDecompressed.Equals(""))
+            if (String.IsNullOrEmpty(wobsoleteDecompressed))
             {
                 Logg.Log("Import: Feil under utpakking av CSV", Color.Red);
                 return false;
@@ -623,7 +623,7 @@ namespace KGSA
                         if (bw.CancellationPending)
                             return false;
 
-                    if (!File.Exists(file) || file == "")
+                    if (!File.Exists(file) || String.IsNullOrEmpty(file))
                         throw new IOException("Fant ikke fil eller ble nektet tilgang: " + file);
 
                     Logg.Log("Leser " + file + "..");
@@ -870,13 +870,6 @@ namespace KGSA
             {
                 Logg.Unhandled(ex);
             }
-        }
-
-        private static string GetTempFilename(string ext)
-        {
-            string name = Path.GetRandomFileName();
-            name = Path.ChangeExtension(name, ext);
-            return name;
         }
 
         public static long FromDateTimeToInteger(DateTime date)

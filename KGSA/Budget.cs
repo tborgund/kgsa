@@ -991,7 +991,7 @@ namespace KGSA
 
     public enum BudgetType { TA, Strom, Finans, Rtgsa, Acc, Inntjening, Omsetning, Kvalitet, Effektivitet, Vinnprodukt }
 
-    public enum BudgetCategory { MDA, AudioVideo, SDA, Tele, Data, Cross, Kasse, Aftersales, MDASDA, None, Butikk }
+    public enum BudgetCategory { MDA, AudioVideo, SDA, Tele, Data, Cross, Kasse, Aftersales, MDASDA, None, Butikk, Daglig }
 
     public static class BudgetCategoryClass
     {
@@ -1017,7 +1017,9 @@ namespace KGSA
                 return "MDASDA";
             if (cat == BudgetCategory.Butikk)
                 return "Butikk";
-            
+            if (cat == BudgetCategory.Daglig)
+                return "Daglig";
+
             return "";
         }
 

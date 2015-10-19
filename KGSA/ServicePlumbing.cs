@@ -53,7 +53,7 @@ namespace KGSA
         {
             try
             {
-                if (arg == "")
+                if (String.IsNullOrEmpty(arg))
                     return main.appConfig.visningNull;
 
                 decimal var = Math.Round(Convert.ToDecimal(arg), 2);
@@ -175,17 +175,17 @@ namespace KGSA
 
                 SqlCeCommand cmd = new SqlCeCommand("SELECT MIN(DatoMottat) AS Expr1 FROM tblService WHERE (Avdeling = '" + main.appConfig.Avdeling + "')", main.connection);
                 string temp = cmd.ExecuteScalar().ToString();
-                if (temp != "")
+                if (!String.IsNullOrEmpty(temp))
                     this.dbServiceDatoFra = DateTime.ParseExact(temp, dateFormat, FormMain.norway);
 
                 cmd = new SqlCeCommand("SELECT MAX(DatoMottat) AS Expr1 FROM tblService WHERE (Avdeling = '" + main.appConfig.Avdeling + "')", main.connection);
                 temp = cmd.ExecuteScalar().ToString();
-                if (temp != "")
+                if (!String.IsNullOrEmpty(temp))
                     this.dbServiceDatoTil = DateTime.ParseExact(temp, dateFormat, FormMain.norway);
 
                 cmd = new SqlCeCommand("SELECT MAX(DatoTid) AS Expr1 FROM tblServiceLogg", main.connection);
                 temp = cmd.ExecuteScalar().ToString();
-                if (temp != "")
+                if (!String.IsNullOrEmpty(temp))
                     this.dbServiceDato = DateTime.ParseExact(temp, dateFormat, FormMain.norway);
             }
             catch(Exception ex)

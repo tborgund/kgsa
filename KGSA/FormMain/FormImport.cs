@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlServerCe;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using FileHelpers;
-using KGSA.Properties;
-using System.Data.SqlClient;
-using System.Collections.Generic;
 using System.Drawing;
 using System.ComponentModel;
 
@@ -27,12 +19,12 @@ namespace KGSA
 
             Logg.Log("Auto: Kjører makro.. [" + macroAttempt + "]");
 
-            DateTime date = dbTilDT;
-            double span = (DateTime.Now - dbTilDT).TotalDays;
+            DateTime date = appConfig.dbTo;
+            double span = (DateTime.Now - appConfig.dbTo).TotalDays;
             if (span > 31)
                 date = DateTime.Now.AddMonths(-1); // Begrens oss til å importere en måned bak i tid
-            if (dbTilDT == DateTime.Now)
-                date = GetFirstDayOfMonth(dbTilDT);
+            if (appConfig.dbTo == DateTime.Now)
+                date = GetFirstDayOfMonth(appConfig.dbTo);
 
             var macroForm = (FormMacro)StartMacro(date, macroProgram, bwMacroRanking, macroAttempt);
             if (macroForm.errorCode != 0)
@@ -157,7 +149,7 @@ namespace KGSA
                         ProgressStart();
                         processing.SetText = "Utpakking..";
                         string extracted = obsolete.Decompress(fdlg.FileName);
-                        if (extracted != "")
+                        if (!String.IsNullOrEmpty(extracted))
                             RunObsoleteImport(extracted);
                         else
                         {
@@ -195,7 +187,7 @@ namespace KGSA
             string str = (string)e.Argument;
             bool complete = false;
 
-            if (str != "" && str != null)
+            if (!String.IsNullOrEmpty(str))
                 complete = obsolete.Import(str, bwImportObsolete);
             else
                 complete = obsolete.Import(appConfig.csvElguideExportFolder + @"\obsolete.csv", bwImportObsolete);
@@ -294,7 +286,10 @@ namespace KGSA
                         if (importMng.importReadErrors > 0)
                             errorsStr = "\nLese feil: " + importMng.importReadErrors + "\nSe logg for detaljer.\n";
 
-                        if (MessageBox.Show("Importering fullført!\n" + errorsStr + "\n" + importMng.importCount.ToString("#,##0") + " transaksjoner tok " + tid + " sekunder.\nSiste dag: " + dbTilDT.ToShortDateString() + "\n\nVil du oppdatere gjeldene ranking?", "KGSA - Importering", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                        if (MessageBox.Show("Importering fullført!\n" + errorsStr + "\n" + importMng.importCount.ToString("#,##0")
+                            + " transaksjoner tok " + tid + " sekunder.\nSiste dag: " + appConfig.dbTo.ToShortDateString()
+                            + "\n\nVil du oppdatere gjeldene ranking?", "KGSA - Importering", MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
                             Reload(true); // forced update
                     }
                 }
@@ -333,7 +328,7 @@ namespace KGSA
         /// <returns>Form som ble brukt for å hente ut returkoder</returns>
         public Form StartMacro(DateTime dateArg, string macroProgramArg, BackgroundWorker bw, int attemptsArg = 0, bool ignoreExtraWait = false)
         {
-            Form form = new FormMacro(appConfig, dateArg, macroProgramArg, attemptsArg, ignoreExtraWait, bw);
+            Form form = new FormMacro(this, dateArg, macroProgramArg, attemptsArg, ignoreExtraWait, bw);
             form.StartPosition = FormStartPosition.CenterScreen;
             form.ShowDialog();
 

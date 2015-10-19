@@ -139,7 +139,6 @@ namespace KGSA
                 comboBoxQuickMinuteSaturday.SelectedIndex = main.appConfig.epostMinuteQuickSaturday;
                 comboBoxQuickHourSunday.SelectedIndex = main.appConfig.epostHourQuickSunday;
                 comboBoxQuickMinuteSunday.SelectedIndex = main.appConfig.epostMinuteQuickSunday;
-                checkBoxQuickIncService.Checked = main.appConfig.quickInclService;
                 checkMacroImportQuickSales.Checked = main.appConfig.macroImportQuickSales;
 
                 // MAKRO - Lager makro program
@@ -204,7 +203,7 @@ namespace KGSA
 
                 try
                 {
-                    if (!main.appConfig.epostAvsender.Equals("") && !main.appConfig.epostSMTPserver.Equals("") &&
+                    if (!String.IsNullOrEmpty(main.appConfig.epostAvsender) && !String.IsNullOrEmpty(main.appConfig.epostSMTPserver) &&
                         main.appConfig.epostSMTPport > 0)
                     {
                         if (kgsaEmail.emailDb.Rows.Count == 0)
@@ -339,7 +338,6 @@ namespace KGSA
                 main.appConfig.epostHourQuickSunday = comboBoxQuickHourSunday.SelectedIndex;
                 main.appConfig.epostMinuteQuickSaturday = comboBoxQuickMinuteSaturday.SelectedIndex;
                 main.appConfig.epostMinuteQuickSunday = comboBoxQuickMinuteSunday.SelectedIndex;
-                main.appConfig.quickInclService = checkBoxQuickIncService.Checked;
                 main.appConfig.macroImportQuickSales = checkMacroImportQuickSales.Checked;
 
                 // MAKRO - Makro program Automatisk lager import
@@ -441,7 +439,7 @@ namespace KGSA
 
                 ClearMessageTimer();
 
-                if (str != "" && !noLog)
+                if (!String.IsNullOrEmpty(str) && !noLog)
                     Logg.Log(str, c, true);
             }
             catch
@@ -632,7 +630,7 @@ namespace KGSA
                 DateTime date = DateTime.Now;
                 date = date.AddDays(-2);
 
-                FormMacro form = new FormMacro(main.appConfig, date, FormMain.macroProgram, 0, true, bwMacro);
+                FormMacro form = new FormMacro(main, date, FormMain.macroProgram, 0, true, bwMacro);
                 form.StartPosition = FormStartPosition.CenterScreen;
                 form.ShowDialog();
                 if (form.errorCode != 0)

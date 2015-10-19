@@ -1,30 +1,24 @@
-Versjon 2.8 - 14.10.2015
+Versjon 3.0 - 17.10.2015
 
-Veldig mange endringer siden sist versjon var utgitt. Alt for mange å nevne alle her :)
+Veldig mange endringer siden sist versjon var utgitt.
 Det har blitt trimmet ned på flesket og fjernet noen funksjoner som var lite brukt.
 Retting av problemer rundt dialog-bokser om nedlasting av HTML sider ved åpning av programmet er beskrevet i Readme.txt dokumentet under kjente problemer.
 
 Først det som er fjernet helt:
 - Eksportering av bilder for fremvisning er fjernet helt. Svært vanskelig å få til riktig og alt for mye arbeid ved å holde det ved like.
-- Magrin mål under selgeroversikt fjernet. Lite brukt, lite brukervennlig, liten grunn til å beholde bare fordi.
-- Sjekk etter ny versjon på nettet fjernet. Ubrukelig siden brannmur normalt blokkerer for sjekken.
+- Margin mål under selgeroversikt fjernet. Lite brukt, lite brukervennlig, liten grunn til å beholde bare fordi.
+- Sjekk etter ny versjon på nettet fjernet. Ubrukelig siden brannmur normalt blokkerer den.
 - Automatisk opplåsning av arbeidstasjon. Fungerte bare på WinXP arbeidsstasjoner.
 
 Hva som er nytt:
 - Lager har to nye sider: Ukenytt fra Elkjop.no og Prisguide.no sammenligning av populære produkter mot lager.
+- Budsjett har en ny side: Daglig budsjett, henter tall fra 136 (samme som Kveldstall) og med mulighet for henting av budsjett fra e-post som inneholder C810 rapport.
+- Ranking har to nye sider: En ny type ranking some tar med seg alle avdelinger i en og samme tabell. Tjenester og Snittpriser.
 - Importering er 10 x raskere og bruker mye mindre minne enn før. Vil klare større importering enn før.
-- Ny makro innstillings panel. Forenkler hele prosessen med å sette opp makroer for automasjon. Finnes under Avansert menyen.
-- Ny avdelings ranking tab. En ny type ranking some tar med seg alle avdelinger i en og samme tabell. Tjenester og Snittpriser er to nye ranking lister.
+- Ny makro innstillings panel. Forenkler hele prosessen med å sette opp makroer for automasjon. Finnes under egen makro meny.
 - Det er nå mulig å se og endre hovedprodukt- og tilbehørsvaregrupper under Verktøy -> Innstillinger -> Avansert.
 - Lagt til (valgbar) total for sist uke for butikk. Har med snittsalg, tjeneste hitrate og tilbehør SoB.
 - Ny gruppe i Adresseboken: "Full (Ukestart)" - Mottakerene i denne gruppen sendes det samme som "Full" gruppen, men bare på Mandag (eller Søndag hvis Søndag ignorers).
-
-Eksperimentelle funksjoner:
-- Webtjener og Budsjett er fortsatt eksperimentelle funksjoner som inntil videre ikke er tatt frem i lyset. (må aktiveres via Innstillinger)
-Budsjett funksjonen for avdelingsledere (lik excel-arkene som noen varehus bruker) for oppfølging av selgere fungere so-so.
-Er ikke blitt brukt nok til å vite om det fungerer tilfredstillene.
-- Android App er til bruk for en Android app jeg jobber med for varebeholdning og vareinformasjon.
-Usikkert om denne har en fremtid. Appen er ikke tilgjengelig.
 
 Bugfixes og småendringer:
 - [fix] Toppselgerer siste-åpningsdag vises ikke korrekt med stjerner som den skal. Bruker nå nyere versjon av Internet Explorer for visning av sider.
@@ -35,7 +29,7 @@ Bugfixes og småendringer:
 - [fix] Bakgrunnsjobb starter selv om databasen er tom.
 - [fix] Innstillinger lagres ikke automatisk ved å lukke vinduet som før, må velge OK eller Lagre for å lagre innstillingene, som det var egentlig ment.
 - [fix] Windows 10 - Konvertering av dato feiler ved import på Windows 10 maskiner.
-- Oppdatert butikk navn og lagt til 7 nye butikker.
+- Rettet på butikk-navn og lagt til 7 nye.
 
 Versjon 2.7 - 23.02.2015
 

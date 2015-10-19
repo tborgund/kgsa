@@ -31,7 +31,9 @@ namespace KGSA
                     processing.SetValue = 5;
                     Logg.Status("Legger til [Kasse] selgere..");
                     processing.SetText = "Legger til [Kasse] selgere..";
-                    using (DataTable dt = database.GetSqlDataTable("SELECT TOP 3 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + dbTilDT.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
+                    using (DataTable dt = database.GetSqlDataTable("SELECT TOP 3 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Avdeling = '"
+                        + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '"
+                        + appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
                     {
                         List<string> selgere = new List<string>();
                         if (dt.Rows.Count > 0)
@@ -49,7 +51,10 @@ namespace KGSA
                 var dataselgere = "";
                 Logg.Status("Legger til [Data] selgere..");
                 processing.SetText = "Legger til [Data] selgere..";
-                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Varegruppe = '534' OR Varegruppe = '533') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + dbTilDT.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
+                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg "
+                    + " WHERE (Varegruppe = '534' OR Varegruppe = '533') AND (Avdeling = '" + appConfig.Avdeling.ToString()
+                    + "') AND (Dato >= '" + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '"
+                    + appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
                 {
                     List<string> selgere = new List<string>();
                     if (dt.Rows.Count > 0)
@@ -72,7 +77,9 @@ namespace KGSA
                 processing.SetValue = 30;
                 Logg.Status("Legger til [AudioVideo] selgere..");
                 processing.SetText = "Legger til [AudioVideo] selgere..";
-                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Varegruppe = '224') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + dbTilDT.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
+                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg "
+                    + " WHERE (Varegruppe = '224') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '"
+                    + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
                 {
                     List<string> selgere = new List<string>();
                     if (dt.Rows.Count > 0)
@@ -92,7 +99,10 @@ namespace KGSA
                 processing.SetValue = 45;
                 Logg.Status("Legger til [Tele] selgere..");
                 processing.SetText = "Legger til [Tele] selgere..";
-                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Varegruppe = '431') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + dbTilDT.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
+                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall "
+                    + " FROM tblSalg WHERE (Varegruppe = '431') AND (Avdeling = '" + appConfig.Avdeling.ToString()
+                    + "') AND (Dato >= '" + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '"
+                    + appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
                 {
                     List<string> selgere = new List<string>();
                     if (dt.Rows.Count > 0)
@@ -112,7 +122,10 @@ namespace KGSA
                 processing.SetValue = 60;
                 Logg.Status("Legger til [Data] selgere..");
                 processing.SetText = "Legger til [Data] selgere..";
-                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Varegruppe = '580') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + dbTilDT.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
+                using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE "
+                    + " (Varegruppe = '580') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '"
+                    + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '"
+                    + appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
                 {
                     List<string> selgere = new List<string>();
                     if (dt.Rows.Count > 0)
@@ -144,9 +157,15 @@ namespace KGSA
                 {
                     Logg.Status("Legger til [SDA] og [MDA] selgere..");
                     processing.SetText = "Legger til [SDA] og [MDA] selgere..";
-                    using (DataTable dtMda = database.GetSqlDataTable("SELECT TOP 20 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Varegruppe LIKE '3%') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + dbTilDT.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
+                    using (DataTable dtMda = database.GetSqlDataTable("SELECT TOP 20 Selgerkode, SUM(Antall) AS Antall "
+                        + " FROM tblSalg WHERE (Varegruppe LIKE '3%') AND (Avdeling = '" + appConfig.Avdeling.ToString()
+                        + "') AND (Dato >= '" + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '"
+                        + appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC"))
                     {
-                        DataTable dtSda = database.GetSqlDataTable("SELECT TOP 20 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Varegruppe LIKE '1%') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + dbTilDT.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '" + dbTilDT.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC");
+                        DataTable dtSda = database.GetSqlDataTable("SELECT TOP 20 Selgerkode, SUM(Antall) AS Antall "
+                            + " FROM tblSalg WHERE (Varegruppe LIKE '1%') AND (Avdeling = '" + appConfig.Avdeling.ToString()
+                            + "') AND (Dato >= '" + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '"
+                            + appConfig.dbTo.ToString("yyy-MM-dd") + "') GROUP BY Selgerkode ORDER BY Antall DESC");
                         List<string> selgereMda = new List<string>();
                         List<string> selgereSda = new List<string>();
                         if (dtMda.Rows.Count > 0)
@@ -213,7 +232,7 @@ namespace KGSA
                 bindingSourceSk.EndEdit();
 
                 var msg = sKoder.DeleteDuplicates();
-                if (msg != "")
+                if (!String.IsNullOrEmpty(msg))
                 {
                     Logg.Log(msg, Color.Red);
                     MessageBox.Show(msg, "KGSA - Advarsel", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -254,7 +273,7 @@ namespace KGSA
         }
 
 
-        private void SelgerkoderPopulateSelgere(bool select = false)
+        private void SelgerkoderPopulateSelgere()
         {
             try
             {

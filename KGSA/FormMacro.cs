@@ -18,16 +18,15 @@ namespace KGSA
 {
     public partial class FormMacro : Form
     {
-        public AppSettings appConfig;
+        FormMain main;
         private Timer tm;
         private List<string> program;
         private bool ignoreExtraWait;
         delegate void SetTextCallback(string str, Color? c = null, bool nosave = false);
         BackgroundWorker bwMaster;
         BackgroundWorker bwMacro = new BackgroundWorker();
+        //public DataTable tableQuick = getTable();
 
-        public DataTable tableQuick = getTable();
-        public KveldstallInfo KveldstallInfo = new KveldstallInfo();
         public DateTime Dato { get; set; }
         public int errorCode { get; set; }
         // errorCode forklaring:
@@ -40,13 +39,15 @@ namespace KGSA
         public string errorMessage { get; set; }
         public int macroAttempt { get; set; }
 
-        public FormMacro(AppSettings app, DateTime dateArg, string programArg, int macroAttemptArg, bool argIgnoreExtraWait, BackgroundWorker bwArg)
+        public FormMacro(FormMain form, DateTime dateArg, string programArg, int macroAttemptArg, bool argIgnoreExtraWait, BackgroundWorker bwArg)
         {
+            this.main = form;
+            main.tableMacroQuick = getTable();
             this.bwMaster = bwArg;
-            this.appConfig = app;
             this.Dato = dateArg;
             this.macroAttempt = macroAttemptArg;
             this.ignoreExtraWait = argIgnoreExtraWait;
+
             errorCode = 0;
             errorMessage = "";
 
@@ -62,7 +63,7 @@ namespace KGSA
             }
 
             InitializeComponent();
-            if (appConfig.macroShowWarning)
+            if (main.appConfig.macroShowWarning)
                 panelWarning.Visible = true;
             else
                 this.Height = 95;
@@ -86,8 +87,9 @@ namespace KGSA
                 if (macroAttempt >= 3)
                     KillElguideProcesses();
 
-                int latency = Convert.ToInt32((1000 * appConfig.macroLatency) + (macroAttempt * 300)); // beregn forsinkelse
+                int latency = Convert.ToInt32((1000 * main.appConfig.macroLatency) + (macroAttempt * 300)); // beregn forsinkelse
                 int extraWait = 0;
+
                 double span = (DateTime.Now - Dato).TotalDays;
                 if (span > 3 && !ignoreExtraWait)
                     extraWait = Convert.ToInt32(span * 5); // Legg til 5 ekstra sekunder pr. dag.    
@@ -147,17 +149,6 @@ namespace KGSA
                                 return;
                             }
                         }
-                        else if (programLine.StartsWith("ImportAllSales"))
-                        {
-                            string strAvdeling = Regex.Match(programLine, @"\(([^)]*)\)").Groups[1].Value;
-
-                            Message("[" + i + "] Importerer salgs data for " + strAvdeling + "..");
-
-                            System.Threading.Thread.Sleep(2000);
-
-                            if (0 != ImportAllSalesCSV(Convert.ToInt32(strAvdeling)))
-                                Error(3, "Feil oppstod under importering av Salgs CSV.");
-                        }
                         else if (programLine.StartsWith("FindProcess"))
                         {
                             string process = Regex.Match(programLine, @"\(([^)]*)\)").Groups[1].Value;
@@ -199,7 +190,7 @@ namespace KGSA
                                 wait = 0;
                             decimal delay = value + wait;
 
-                            var teller = Math.Round(delay * appConfig.macroLatency, 0);
+                            var teller = Math.Round(delay * main.appConfig.macroLatency, 0);
                             Message("[" + i + "] Vent i " + teller + " sekunder.");
 
                             while (teller > 0)
@@ -304,6 +295,11 @@ namespace KGSA
                             GenerateCommandsQuick();
                             System.Threading.Thread.Sleep(latency / 2);
                         }
+                        else
+                        {
+                            Message("[" + i + "] Ukjent kommando: " + programLine);
+                            System.Threading.Thread.Sleep(latency / 2);
+                        }
 
                         if (i + 1 == program.Count)
                         {
@@ -365,7 +361,7 @@ namespace KGSA
                 program.Add("ImportNow(" + FormMain.Favoritter[f] + ")");
             }
 
-            if (appConfig.macroImportQuickSales)
+            if (main.appConfig.macroImportQuickSales)
             {
                 program.Add("Wait(3)");
                 program.Add("KeyString(136)");
@@ -433,7 +429,7 @@ namespace KGSA
                 string file = array[0];
                 string row = array[1];
 
-                DataTable dt = ImportRows(appConfig.csvElguideExportFolder + @"\" + file.ToLower() + ".csv");
+                DataTable dt = ImportRows(main.appConfig.csvElguideExportFolder + @"\" + file.ToLower() + ".csv");
 
                 int rows = 0;
                 for (int i = 0; i < dt.Rows.Count; i++)
@@ -452,7 +448,7 @@ namespace KGSA
                         Keys key_restored = (Keys)Enum.Parse(typeof(Keys), key);
                         Message("[X] KeyPress: " + key);
                         InputSimulator.SimulateKeyPress((VirtualKeyCode)key_restored);
-                        int latency = Convert.ToInt32((1000 * appConfig.macroLatency) + (macroAttempt * 300)); // beregn forsinkelse
+                        int latency = Convert.ToInt32((1000 * main.appConfig.macroLatency) + (macroAttempt * 300)); // beregn forsinkelse
                         System.Threading.Thread.Sleep(latency / 2);
 
                         if (bwMaster != null)
@@ -527,7 +523,7 @@ namespace KGSA
             for (int i = 0; i < program.Count; i++)
             {
                 if (program[i].Contains("{elguide}"))
-                    program[i] = program[i].Replace("{elguide}", appConfig.macroElguide);
+                    program[i] = program[i].Replace("{elguide}", main.appConfig.macroElguide);
                 if (program[i].Contains("{dato}"))
                     program[i] = program[i].Replace("{dato}", Dato.ToString("ddMMyy"));
                 if (program[i].Contains("{Dato}"))
@@ -537,33 +533,33 @@ namespace KGSA
                 if (program[i].Contains("{tildato}"))
                     program[i] = program[i].Replace("{tildato}", Dato.ToString("ddMMyy"));
                 if (program[i].Contains("{avdeling}"))
-                    program[i] = program[i].Replace("{avdeling}", appConfig.Avdeling.ToString());
+                    program[i] = program[i].Replace("{avdeling}", main.appConfig.Avdeling.ToString());
                 if (program[i].Contains("{Avdeling}"))
-                    program[i] = program[i].Replace("{Avdeling}", appConfig.Avdeling.ToString());
+                    program[i] = program[i].Replace("{Avdeling}", main.appConfig.Avdeling.ToString());
                 if (program[i].StartsWith("Start"))
                     missingStart = false;
             }
             if (missingStart)
-                program.Insert(0, "Start(" + appConfig.macroElguide + ")");
+                program.Insert(0, "Start(" + main.appConfig.macroElguide + ")");
         }
 
         private int ImportCSV(int avdArg)
         {
             try
             {
-                if (!File.Exists(appConfig.csvElguideExportFolder + "inego.csv"))
+                if (!File.Exists(main.appConfig.csvElguideExportFolder + "inego.csv"))
                 {
                     Message("Fant ikke CSV.", Color.Red);
                     return 1;
                 }
 
-                else if (File.GetLastWriteTime(appConfig.csvElguideExportFolder + "inego.csv").Date != DateTime.Now.Date)
+                else if (File.GetLastWriteTime(main.appConfig.csvElguideExportFolder + "inego.csv").Date != DateTime.Now.Date)
                 {
                     Message("Eksport mislyktes, CSV ikke oppdatert!", Color.Red);
                     return 1;
                 }
 
-                string[] Lines = File.ReadAllLines(appConfig.csvElguideExportFolder + "inego.csv");
+                string[] Lines = File.ReadAllLines(main.appConfig.csvElguideExportFolder + "inego.csv");
                 string[] Fields;
                 Fields = Lines[0].Split(new char[] { ';' });
                 int Cols = Fields.GetLength(0);
@@ -594,7 +590,7 @@ namespace KGSA
                     {
                         // Vi er i row før totalen.
                         i++;
-                        DataRow rowTot = tableQuick.NewRow();
+                        DataRow rowTot = main.tableMacroQuick.NewRow();
                         rowTot["Favoritt"] = avdArg;
                         rowTot["Avdeling"] = "TOTAL";
                         rowTot["Salg"] = Convert.ToInt32(dt.Rows[i][1].ToString());
@@ -603,11 +599,11 @@ namespace KGSA
                         rowTot["Fortjeneste"] = Convert.ToDecimal(dt.Rows[i][4].ToString());
                         rowTot["Margin"] = Convert.ToDouble(dt.Rows[i][5].ToString());
                         rowTot["Rabatt"] = Convert.ToDecimal(dt.Rows[i][6].ToString());
-                        tableQuick.Rows.Add(rowTot);
+                        main.tableMacroQuick.Rows.Add(rowTot);
                         break;
                     }
 
-                    DataRow row = tableQuick.NewRow();
+                    DataRow row = main.tableMacroQuick.NewRow();
                     row["Favoritt"] = avdArg;
                     string tmp = dt.Rows[i][0].ToString().Substring(1, 1);
                     if (tmp == "1")
@@ -625,124 +621,31 @@ namespace KGSA
                     if (tmp == "9")
                         tmp = "Other";
                     row["Avdeling"] = tmp;
-                    if (dt.Rows[i][1].ToString() != "")
+                    if (!String.IsNullOrEmpty(dt.Rows[i][1].ToString()))
                         row["Salg"] = Convert.ToInt32(dt.Rows[i][1].ToString());
                     else
                         row["Salg"] = 0;
-                    if (dt.Rows[i][2].ToString() != "")
+                    if (!String.IsNullOrEmpty(dt.Rows[i][2].ToString()))
                         row["Omsetn"] = Convert.ToDecimal(dt.Rows[i][2].ToString());
                     else
                         row["Omsetn"] = 0;
-                    if (dt.Rows[i][3].ToString() != "")
+                    if (!String.IsNullOrEmpty(dt.Rows[i][3].ToString()))
                         row["Fritt"] = Convert.ToDecimal(dt.Rows[i][3].ToString());
                     else
                         row["Fritt"] = 0;
-                    if (dt.Rows[i][4].ToString() != "")
+                    if (!String.IsNullOrEmpty(dt.Rows[i][4].ToString()))
                         row["Fortjeneste"] = Convert.ToDecimal(dt.Rows[i][4].ToString());
                     else
                         row["Fortjeneste"] = 0;
-                    if (dt.Rows[i][5].ToString() != "")
+                    if (!String.IsNullOrEmpty(dt.Rows[i][5].ToString()))
                         row["Margin"] = Convert.ToDouble(dt.Rows[i][5].ToString());
                     else
                         row["Margin"] = 0;
-                    if (dt.Rows[i][6].ToString() != "")
+                    if (!String.IsNullOrEmpty(dt.Rows[i][6].ToString()))
                         row["Rabatt"] = Convert.ToDecimal(dt.Rows[i][6].ToString());
                     else
                         row["Rabatt"] = 0;
-                    tableQuick.Rows.Add(row);
-                }
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Message("Unntak i import funksjon. Exception: " + ex.ToString(), Color.Red);
-                return 3;
-            }
-        }
-
-        private int ImportAllSalesCSV(int avdArg)
-        {
-            try
-            {
-                string[] listOfFiles = new string[] { "inegoAV.csv", "inegoTele.csv", "inegoComp.csv" };
-
-                foreach (string file in listOfFiles)
-                {
-                    if (!File.Exists(appConfig.csvElguideExportFolder + file))
-                    {
-                        Message("Fant ikke " + file, Color.Red);
-                        return 1;
-                    }
-                    else if (File.GetLastWriteTime(appConfig.csvElguideExportFolder + file).Date != DateTime.Now.Date)
-                    {
-                        Message("Avbryter importering av " + file + " fordi filen er ikke oppdatert!", Color.Red);
-                        return 1;
-                    }
-
-                    string[] Lines = File.ReadAllLines(appConfig.csvElguideExportFolder + file);
-                    string[] Fields;
-                    Fields = Lines[0].Split(new char[] { ';' });
-                    int Cols = Fields.GetLength(0);
-                    DataTable dt = new DataTable();
-                    //1st row must be column names; force lower case to ensure matching later on.
-                    for (int i = 0; i < Cols; i++)
-                        dt.Columns.Add(Fields[i].ToLower(), typeof(string));
-                    DataRow Row;
-                    for (int i = 1; i < Lines.GetLength(0); i++)
-                    {
-                        Fields = Lines[i].Split(new char[] { ';' });
-                        Row = dt.NewRow();
-                        for (int f = 0; f < Cols; f++)
-                            Row[f] = Fields[f];
-                        dt.Rows.Add(Row);
-                    }
-
-                    if (dt.Rows.Count < 2)
-                    {
-                        errorCode = 1;
-                        errorMessage = "Sales CSV fil (" + file + ") var for kort. " + dt.Rows.Count + " linjer.";
-                        return 1;
-                    }
-
-                    for (int i = 0; i < dt.Rows.Count; i++)
-                    {
-
-                        if (dt.Rows[i][0].ToString().Contains("580"))
-                        {
-                            KveldstallArray salg = new KveldstallArray();
-                            salg.Type = "Computing";
-                            salg.Antall = Convert.ToInt32(dt.Rows[i][1].ToString());
-                            salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
-                            salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
-                            KveldstallInfo.Salg.Add(salg);
-                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
-                            continue;
-                        }
-
-                        if (dt.Rows[i][0].ToString().Contains("480"))
-                        {
-                            KveldstallArray salg = new KveldstallArray();
-                            salg.Type = "Telecom";
-                            salg.Antall = Convert.ToInt32(dt.Rows[i][1].ToString());
-                            salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
-                            salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
-                            KveldstallInfo.Salg.Add(salg);
-                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
-                            continue;
-                        }
-
-                        if (dt.Rows[i][0].ToString().Contains("280"))
-                        {
-                            KveldstallArray salg = new KveldstallArray();
-                            salg.Type = "AudioVideo";
-                            salg.Antall = Convert.ToInt32(dt.Rows[i][1].ToString());
-                            salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
-                            salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
-                            KveldstallInfo.Salg.Add(salg);
-                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
-                            continue;
-                        }
-                    }
+                    main.tableMacroQuick.Rows.Add(row);
                 }
                 return 0;
             }
@@ -918,18 +821,18 @@ namespace KGSA
 
     }
 
-    public class KveldstallInfo
+    public class DailyBudgetMacroInfo
     {
         public int Avdeling;
         public DateTime Dato;
-        public List<KveldstallArray> Salg { get; set; }
-        public KveldstallInfo()
+        public List<DailyBudgetMacroInfoItem> Salg { get; set; }
+        public DailyBudgetMacroInfo()
         {
-            Salg = new List<KveldstallArray> { };
+            Salg = new List<DailyBudgetMacroInfoItem> { };
         }
     }
 
-    public class KveldstallArray
+    public class DailyBudgetMacroInfoItem
     {
         public string Type;
         public int Antall;

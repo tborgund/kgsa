@@ -92,7 +92,6 @@
             this.checkBoxAutoService = new System.Windows.Forms.CheckBox();
             this.tabPageAutoKveldstall = new System.Windows.Forms.TabPage();
             this.checkMacroImportQuickSales = new System.Windows.Forms.CheckBox();
-            this.checkBoxQuickIncService = new System.Windows.Forms.CheckBox();
             this.label70 = new System.Windows.Forms.Label();
             this.comboBoxQuickMinuteSunday = new System.Windows.Forms.ComboBox();
             this.comboBoxQuickHourSunday = new System.Windows.Forms.ComboBox();
@@ -111,6 +110,7 @@
             this.comboBoxQuickHour = new System.Windows.Forms.ComboBox();
             this.checkBoxSendQuickRanking = new System.Windows.Forms.CheckBox();
             this.tabPageAutoLager = new System.Windows.Forms.TabPage();
+            this.checkBoxAutoStoreOnline = new System.Windows.Forms.CheckBox();
             this.label110 = new System.Windows.Forms.Label();
             this.comboBoxAutoStoreMinute = new System.Windows.Forms.ComboBox();
             this.label111 = new System.Windows.Forms.Label();
@@ -136,7 +136,6 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
-            this.checkBoxAutoStoreOnline = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPageWizard.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -903,7 +902,6 @@
             // tabPageAutoKveldstall
             // 
             this.tabPageAutoKveldstall.Controls.Add(this.checkMacroImportQuickSales);
-            this.tabPageAutoKveldstall.Controls.Add(this.checkBoxQuickIncService);
             this.tabPageAutoKveldstall.Controls.Add(this.label70);
             this.tabPageAutoKveldstall.Controls.Add(this.comboBoxQuickMinuteSunday);
             this.tabPageAutoKveldstall.Controls.Add(this.comboBoxQuickHourSunday);
@@ -934,22 +932,12 @@
             this.checkMacroImportQuickSales.AutoSize = true;
             this.checkMacroImportQuickSales.Checked = true;
             this.checkMacroImportQuickSales.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkMacroImportQuickSales.Location = new System.Drawing.Point(19, 284);
+            this.checkMacroImportQuickSales.Location = new System.Drawing.Point(19, 259);
             this.checkMacroImportQuickSales.Name = "checkMacroImportQuickSales";
             this.checkMacroImportQuickSales.Size = new System.Drawing.Size(271, 17);
             this.checkMacroImportQuickSales.TabIndex = 14;
             this.checkMacroImportQuickSales.Text = "Importer også KnowHow tjeneste salg for din butikk.";
             this.checkMacroImportQuickSales.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxQuickIncService
-            // 
-            this.checkBoxQuickIncService.AutoSize = true;
-            this.checkBoxQuickIncService.Location = new System.Drawing.Point(19, 258);
-            this.checkBoxQuickIncService.Name = "checkBoxQuickIncService";
-            this.checkBoxQuickIncService.Size = new System.Drawing.Size(141, 17);
-            this.checkBoxQuickIncService.TabIndex = 13;
-            this.checkBoxQuickIncService.Text = "Inkluder service oversikt";
-            this.checkBoxQuickIncService.UseVisualStyleBackColor = true;
             // 
             // label70
             // 
@@ -1216,6 +1204,16 @@
             this.tabPageAutoLager.TabIndex = 7;
             this.tabPageAutoLager.Text = "Automatisk lager";
             this.tabPageAutoLager.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxAutoStoreOnline
+            // 
+            this.checkBoxAutoStoreOnline.AutoSize = true;
+            this.checkBoxAutoStoreOnline.Location = new System.Drawing.Point(19, 102);
+            this.checkBoxAutoStoreOnline.Name = "checkBoxAutoStoreOnline";
+            this.checkBoxAutoStoreOnline.Size = new System.Drawing.Size(278, 17);
+            this.checkBoxAutoStoreOnline.TabIndex = 66;
+            this.checkBoxAutoStoreOnline.Text = "Aktiver automatisk import fra Prisguide.no og Ukenytt.";
+            this.checkBoxAutoStoreOnline.UseVisualStyleBackColor = true;
             // 
             // label110
             // 
@@ -1500,16 +1498,6 @@
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             // 
-            // checkBoxAutoStoreOnline
-            // 
-            this.checkBoxAutoStoreOnline.AutoSize = true;
-            this.checkBoxAutoStoreOnline.Location = new System.Drawing.Point(19, 102);
-            this.checkBoxAutoStoreOnline.Name = "checkBoxAutoStoreOnline";
-            this.checkBoxAutoStoreOnline.Size = new System.Drawing.Size(278, 17);
-            this.checkBoxAutoStoreOnline.TabIndex = 66;
-            this.checkBoxAutoStoreOnline.Text = "Aktiver automatisk import fra Prisguide.no og Ukenytt.";
-            this.checkBoxAutoStoreOnline.UseVisualStyleBackColor = true;
-            // 
             // FormSettingsMacro
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1600,7 +1588,6 @@
         private System.Windows.Forms.CheckBox checkBoxAutoService;
         private System.Windows.Forms.TabPage tabPageAutoKveldstall;
         private System.Windows.Forms.CheckBox checkMacroImportQuickSales;
-        private System.Windows.Forms.CheckBox checkBoxQuickIncService;
         private System.Windows.Forms.Label label70;
         private System.Windows.Forms.ComboBox comboBoxQuickMinuteSunday;
         private System.Windows.Forms.ComboBox comboBoxQuickHourSunday;

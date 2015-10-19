@@ -173,8 +173,8 @@ namespace KGSA
         public string strAudioVideo { get; set; }
         public string strTele { get; set; }
         public string strOversikt { get; set; }
-        public string strAvdTjenester { get; set; }
-        public string strAvdSnittpriser { get; set; }
+        public string strTjenester { get; set; }
+        public string strSnittpriser { get; set; }
         public string strBudgetMda { get; set; }
         public string strBudgetAv { get; set; }
         public string strBudgetSda { get; set; }
@@ -185,6 +185,7 @@ namespace KGSA
         public string strBudgetAftersales { get; set; }
         public string strBudgetMdasda { get; set; }
         public string strBudgetButikk { get; set; }
+        public string strBudgetDaily { get; set; }
         public string strToppselgere { get; set; }
         public string strLister { get; set; }
         public string strVinnprodukter { get; set; }
@@ -222,10 +223,6 @@ namespace KGSA
         public string epostPOP3password { get; set; }
         public int epostPOP3port { get; set; }
         public bool epostPOP3ssl { get; set; }
-        /// <summary>
-        /// This puts a hard upper limit on how many e-mail headers to search through
-        /// </summary>
-        public int epostPOP3searchLimit { get; set; }
         public bool epostBrukBcc { get; set; }
         public string epostEmne { get; set; }
         public string epostEmneQuick { get; set; }
@@ -259,7 +256,6 @@ namespace KGSA
         // Ny graf innstillinger slutt
 
         // Ny Service auto import start
-        public bool quickInclService { get; set; }
         public int serviceAutoImportMinutter { get; set; }
         public int serviceAutoImportFraIndex { get; set; }
         public int serviceAutoImportTilIndex { get; set; }
@@ -588,7 +584,6 @@ namespace KGSA
             epostPOP3server = "pop.elkjop.int";
             epostSMTPport = 995;
             epostSMTPssl = false;
-            epostPOP3searchLimit = 500;
 
             serviceAutoImportMinutter = 60;
             serviceAutoImportFraIndex = 8;

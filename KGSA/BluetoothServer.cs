@@ -193,17 +193,17 @@ namespace KGSA
                             break;
 
                         if (!clientAccepted) // Client is not initialized, run init routine..
-                            this.clientAccepted = serverInitConnectionRoutine(stream, client);
+                            this.clientAccepted = serverInitConnectionRoutine(stream);
 
                         string strServerMsg = waitForMessage(stream);
                         if (strServerMsg.StartsWith(CMD_UPDATE_PRODUCT))
                         {
-                            if (!serverUpdateRoutine(stream, client, strServerMsg, dataFilename))
+                            if (!serverUpdateRoutine(stream, strServerMsg, dataFilename))
                                 break;
                         }
                         if (strServerMsg.StartsWith(CMD_UPDATE_INVENTORY))
                         {
-                            if (!serverUpdateRoutine(stream, client, strServerMsg, inventoryFilename))
+                            if (!serverUpdateRoutine(stream, strServerMsg, inventoryFilename))
                                 break;
                         }
                         if (strServerMsg.StartsWith(CMD_GOODBYE))
@@ -253,7 +253,7 @@ namespace KGSA
             }
         }
 
-        internal bool serverInitConnectionRoutine(Stream stream, BluetoothClient client)
+        internal bool serverInitConnectionRoutine(Stream stream)
         {
             try
             {
@@ -290,12 +290,12 @@ namespace KGSA
             return false;
         }
 
-        internal bool serverUpdateRoutine(Stream stream, BluetoothClient client, string strClientMsg, string filenameArg)
+        internal bool serverUpdateRoutine(Stream stream, string strClientMsg, string filenameArg)
         {
             try
             {
                 string[] lines = strClientMsg.Split(';');
-                if (lines == null || lines.Length != 2 || lines[1].Equals(""))
+                if (lines == null || lines.Length != 2 || String.IsNullOrEmpty(lines[1]))
                 {
                     Logg.BtServer("(" + this.clientName + ") Kommunikasjons problem. Kobler fra..");
                     return false;

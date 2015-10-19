@@ -122,7 +122,6 @@
             this.checkBoxPDFweekly = new System.Windows.Forms.CheckBox();
             this.checkBoxPDFsnittpriser = new System.Windows.Forms.CheckBox();
             this.checkBoxPDFtjenester = new System.Windows.Forms.CheckBox();
-            this.label141 = new System.Windows.Forms.Label();
             this.label136 = new System.Windows.Forms.Label();
             this.checkBoxPdfVisBudget = new System.Windows.Forms.CheckBox();
             this.label49 = new System.Windows.Forms.Label();
@@ -424,9 +423,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.errorMessage = new System.Windows.Forms.Label();
-            this.numericEpostPOP3searchLimit = new System.Windows.Forms.NumericUpDown();
-            this.label42 = new System.Windows.Forms.Label();
-            this.label48 = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
             this.tabPageGenerelt.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -518,7 +514,6 @@
             this.groupBox16.SuspendLayout();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericEpostPOP3searchLimit)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControlMain
@@ -1506,7 +1501,6 @@
             this.groupBox15.Controls.Add(this.checkBoxPDFweekly);
             this.groupBox15.Controls.Add(this.checkBoxPDFsnittpriser);
             this.groupBox15.Controls.Add(this.checkBoxPDFtjenester);
-            this.groupBox15.Controls.Add(this.label141);
             this.groupBox15.Controls.Add(this.label136);
             this.groupBox15.Controls.Add(this.checkBoxPdfVisBudget);
             this.groupBox15.Controls.Add(this.label49);
@@ -1537,7 +1531,7 @@
             // 
             this.label41.AutoSize = true;
             this.label41.ForeColor = System.Drawing.Color.ForestGreen;
-            this.label41.Location = new System.Drawing.Point(119, 303);
+            this.label41.Location = new System.Drawing.Point(119, 276);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(25, 13);
             this.label41.TabIndex = 55;
@@ -1547,7 +1541,7 @@
             // 
             this.label40.AutoSize = true;
             this.label40.ForeColor = System.Drawing.Color.ForestGreen;
-            this.label40.Location = new System.Drawing.Point(255, 303);
+            this.label40.Location = new System.Drawing.Point(255, 276);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(25, 13);
             this.label40.TabIndex = 54;
@@ -1556,7 +1550,7 @@
             // checkBoxPDFprisguide
             // 
             this.checkBoxPDFprisguide.AutoSize = true;
-            this.checkBoxPDFprisguide.Location = new System.Drawing.Point(180, 302);
+            this.checkBoxPDFprisguide.Location = new System.Drawing.Point(180, 275);
             this.checkBoxPDFprisguide.Name = "checkBoxPDFprisguide";
             this.checkBoxPDFprisguide.Size = new System.Drawing.Size(69, 17);
             this.checkBoxPDFprisguide.TabIndex = 53;
@@ -1566,7 +1560,7 @@
             // checkBoxPDFweekly
             // 
             this.checkBoxPDFweekly.AutoSize = true;
-            this.checkBoxPDFweekly.Location = new System.Drawing.Point(50, 302);
+            this.checkBoxPDFweekly.Location = new System.Drawing.Point(50, 275);
             this.checkBoxPDFweekly.Name = "checkBoxPDFweekly";
             this.checkBoxPDFweekly.Size = new System.Drawing.Size(63, 17);
             this.checkBoxPDFweekly.TabIndex = 52;
@@ -1576,7 +1570,7 @@
             // checkBoxPDFsnittpriser
             // 
             this.checkBoxPDFsnittpriser.AutoSize = true;
-            this.checkBoxPDFsnittpriser.Location = new System.Drawing.Point(180, 229);
+            this.checkBoxPDFsnittpriser.Location = new System.Drawing.Point(50, 204);
             this.checkBoxPDFsnittpriser.Name = "checkBoxPDFsnittpriser";
             this.checkBoxPDFsnittpriser.Size = new System.Drawing.Size(72, 17);
             this.checkBoxPDFsnittpriser.TabIndex = 51;
@@ -1586,27 +1580,18 @@
             // checkBoxPDFtjenester
             // 
             this.checkBoxPDFtjenester.AutoSize = true;
-            this.checkBoxPDFtjenester.Location = new System.Drawing.Point(50, 229);
+            this.checkBoxPDFtjenester.Location = new System.Drawing.Point(180, 181);
             this.checkBoxPDFtjenester.Name = "checkBoxPDFtjenester";
             this.checkBoxPDFtjenester.Size = new System.Drawing.Size(70, 17);
             this.checkBoxPDFtjenester.TabIndex = 50;
             this.checkBoxPDFtjenester.Text = "Tjenester";
             this.checkBoxPDFtjenester.UseVisualStyleBackColor = true;
             // 
-            // label141
-            // 
-            this.label141.AutoSize = true;
-            this.label141.Location = new System.Drawing.Point(25, 206);
-            this.label141.Name = "label141";
-            this.label141.Size = new System.Drawing.Size(51, 13);
-            this.label141.TabIndex = 49;
-            this.label141.Text = "Avdeling:";
-            // 
             // label136
             // 
             this.label136.AutoSize = true;
             this.label136.ForeColor = System.Drawing.Color.ForestGreen;
-            this.label136.Location = new System.Drawing.Point(274, 359);
+            this.label136.Location = new System.Drawing.Point(120, 378);
             this.label136.Name = "label136";
             this.label136.Size = new System.Drawing.Size(25, 13);
             this.label136.TabIndex = 48;
@@ -1615,7 +1600,7 @@
             // checkBoxPdfVisBudget
             // 
             this.checkBoxPdfVisBudget.AutoSize = true;
-            this.checkBoxPdfVisBudget.Location = new System.Drawing.Point(204, 358);
+            this.checkBoxPdfVisBudget.Location = new System.Drawing.Point(50, 377);
             this.checkBoxPdfVisBudget.Name = "checkBoxPdfVisBudget";
             this.checkBoxPdfVisBudget.Size = new System.Drawing.Size(64, 17);
             this.checkBoxPdfVisBudget.TabIndex = 32;
@@ -1625,7 +1610,7 @@
             // label49
             // 
             this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(177, 336);
+            this.label49.Location = new System.Drawing.Point(25, 353);
             this.label49.Name = "label49";
             this.label49.Size = new System.Drawing.Size(48, 13);
             this.label49.TabIndex = 31;
@@ -1664,7 +1649,7 @@
             // label118
             // 
             this.label118.AutoSize = true;
-            this.label118.Location = new System.Drawing.Point(25, 336);
+            this.label118.Location = new System.Drawing.Point(25, 300);
             this.label118.Name = "label118";
             this.label118.Size = new System.Drawing.Size(46, 13);
             this.label118.TabIndex = 27;
@@ -1673,7 +1658,7 @@
             // label117
             // 
             this.label117.AutoSize = true;
-            this.label117.Location = new System.Drawing.Point(25, 255);
+            this.label117.Location = new System.Drawing.Point(25, 228);
             this.label117.Name = "label117";
             this.label117.Size = new System.Drawing.Size(37, 13);
             this.label117.TabIndex = 26;
@@ -1691,7 +1676,7 @@
             // checkBoxPDFobsoleteList
             // 
             this.checkBoxPDFobsoleteList.AutoSize = true;
-            this.checkBoxPDFobsoleteList.Location = new System.Drawing.Point(180, 279);
+            this.checkBoxPDFobsoleteList.Location = new System.Drawing.Point(180, 252);
             this.checkBoxPDFobsoleteList.Name = "checkBoxPDFobsoleteList";
             this.checkBoxPDFobsoleteList.Size = new System.Drawing.Size(88, 17);
             this.checkBoxPDFobsoleteList.TabIndex = 24;
@@ -1701,7 +1686,7 @@
             // checkBoxPDFobsolete
             // 
             this.checkBoxPDFobsolete.AutoSize = true;
-            this.checkBoxPDFobsolete.Location = new System.Drawing.Point(50, 279);
+            this.checkBoxPDFobsolete.Location = new System.Drawing.Point(50, 252);
             this.checkBoxPDFobsolete.Name = "checkBoxPDFobsolete";
             this.checkBoxPDFobsolete.Size = new System.Drawing.Size(84, 17);
             this.checkBoxPDFobsolete.TabIndex = 23;
@@ -1711,7 +1696,7 @@
             // checkBoxPdfVisService
             // 
             this.checkBoxPdfVisService.AutoSize = true;
-            this.checkBoxPdfVisService.Location = new System.Drawing.Point(50, 358);
+            this.checkBoxPdfVisService.Location = new System.Drawing.Point(50, 322);
             this.checkBoxPdfVisService.Name = "checkBoxPdfVisService";
             this.checkBoxPdfVisService.Size = new System.Drawing.Size(102, 17);
             this.checkBoxPdfVisService.TabIndex = 8;
@@ -3447,9 +3432,6 @@
             // 
             // groupBox28
             // 
-            this.groupBox28.Controls.Add(this.label48);
-            this.groupBox28.Controls.Add(this.label42);
-            this.groupBox28.Controls.Add(this.numericEpostPOP3searchLimit);
             this.groupBox28.Controls.Add(this.label138);
             this.groupBox28.Controls.Add(this.label130);
             this.groupBox28.Controls.Add(this.textBoxEpostPOP3server);
@@ -3463,7 +3445,7 @@
             this.groupBox28.Controls.Add(this.checkBoxPOP3UseSsl);
             this.groupBox28.Location = new System.Drawing.Point(6, 129);
             this.groupBox28.Name = "groupBox28";
-            this.groupBox28.Size = new System.Drawing.Size(630, 132);
+            this.groupBox28.Size = new System.Drawing.Size(630, 117);
             this.groupBox28.TabIndex = 3;
             this.groupBox28.TabStop = false;
             this.groupBox28.Text = "POP3         ";
@@ -3568,9 +3550,9 @@
             this.groupBox20.Controls.Add(this.label96);
             this.groupBox20.Controls.Add(this.label68);
             this.groupBox20.Controls.Add(this.textBoxEpostNesteMelding);
-            this.groupBox20.Location = new System.Drawing.Point(6, 267);
+            this.groupBox20.Location = new System.Drawing.Point(6, 252);
             this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(630, 144);
+            this.groupBox20.Size = new System.Drawing.Size(630, 159);
             this.groupBox20.TabIndex = 2;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "Annet";
@@ -4845,46 +4827,6 @@
             this.errorMessage.Size = new System.Drawing.Size(0, 13);
             this.errorMessage.TabIndex = 33;
             // 
-            // numericEpostPOP3searchLimit
-            // 
-            this.numericEpostPOP3searchLimit.Location = new System.Drawing.Point(109, 87);
-            this.numericEpostPOP3searchLimit.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericEpostPOP3searchLimit.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericEpostPOP3searchLimit.Name = "numericEpostPOP3searchLimit";
-            this.numericEpostPOP3searchLimit.Size = new System.Drawing.Size(76, 20);
-            this.numericEpostPOP3searchLimit.TabIndex = 48;
-            this.numericEpostPOP3searchLimit.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            // 
-            // label42
-            // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(19, 89);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(79, 13);
-            this.label42.TabIndex = 49;
-            this.label42.Text = "Begrens søk til:";
-            // 
-            // label48
-            // 
-            this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(191, 89);
-            this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(45, 13);
-            this.label48.TabIndex = 50;
-            this.label48.Text = "e-poster";
-            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -5033,7 +4975,6 @@
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericEpostPOP3searchLimit)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -5385,7 +5326,6 @@
         private System.Windows.Forms.CheckBox checkRankAvdShowAll;
         private System.Windows.Forms.CheckBox checkBoxPDFsnittpriser;
         private System.Windows.Forms.CheckBox checkBoxPDFtjenester;
-        private System.Windows.Forms.Label label141;
         private System.Windows.Forms.TabPage tabPageAvansert;
         private System.Windows.Forms.GroupBox groupBox37;
         private System.Windows.Forms.Label label153;
@@ -5435,8 +5375,5 @@
         private System.Windows.Forms.CheckBox checkBoxPDFweekly;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label40;
-        private System.Windows.Forms.Label label48;
-        private System.Windows.Forms.Label label42;
-        private System.Windows.Forms.NumericUpDown numericEpostPOP3searchLimit;
     }
 }

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OpenPop.Mime;
 using OpenPop.Mime.Header;
 using OpenPop.Pop3;
 using OpenPop.Pop3.Exceptions;
-using OpenPop.Common.Logging;
 using Message = OpenPop.Mime.Message;
 using iTextSharp.text.pdf;
 using System.Drawing;
@@ -14,7 +12,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.IO;
 using System.Data;
-using iTextSharp.text.pdf.parser;
 
 namespace KGSA
 {
@@ -27,16 +24,17 @@ namespace KGSA
         private int limitEmailAttempts = 5;
         private int countEmailAttempts = 0;
         private bool maxEmailAttemptsReached = false;
-        private KpiBudget testBudget;
+        private bool runInBackground = true;
 
-        private DateTime findDate;
+        private DateTime selectedDate;
 
-        public BudgetImporter(FormMain form)
+        public BudgetImporter(FormMain form, DateTime date)
         {
-            this.main = form;
+            selectedDate = date;
+            main = form;
         }
 
-        public void StartAsyncDownloadBudget(DateTime date, BackgroundWorker bw)
+        public void StartAsyncDownloadBudget(BackgroundWorker bw, bool runInBackground = true)
         {
             worker = bw;
             worker.DoWork += new DoWorkEventHandler(bwDownload_DoWork);
@@ -45,42 +43,44 @@ namespace KGSA
             worker.WorkerSupportsCancellation = true;
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwDownload_Completed);
 
-            this.findDate = date;
-            this.maxEmailAttemptsReached = false;
-            this.countEmailAttempts = 0;
+            maxEmailAttemptsReached = false;
+            countEmailAttempts = 0;
 
             main.processing.SetVisible = true;
             main.processing.SetText = "Forbereder..";
             main.processing.SetProgressStyle = ProgressBarStyle.Marquee;
+            this.runInBackground = runInBackground;
             worker.RunWorkerAsync();
             main.processing.SetBackgroundWorker = worker;
         }
 
         public void bwDownload_DoWork(object sender, DoWorkEventArgs e)
         {
-            FormMain.appManagerIsBusy = true;
-
             if (FindAndDownloadBudget(worker))
             {
                 e.Result = true;
-                Logg.Log("Dagens budsjett for " + this.findDate.ToShortDateString() + " er lastet ned og lagret", Color.Green);
+                Logg.Log("Dagens budsjett for " + selectedDate.ToShortDateString() + " er lastet ned og lagret", Color.Green);
                 return;
             }
-
             e.Result = false;
         }
 
         public void bwDownload_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
-            FormMain.appManagerIsBusy = false;
-
             main.ProgressStop();
             if (!e.Cancelled && e.Error == null && (bool)e.Result)
             {
-
-
-                main.processing.SetText = "Ferdig!";
-                main.processing.HideDelayed();
+                if (runInBackground)
+                    main.RunBudget(BudgetCategory.Daglig);
+                main.processing.SetVisible = false;
+            }
+            else if (!e.Cancelled && e.Error == null && !(bool)e.Result)
+            {
+                main.processing.SetVisible = false;
+                if (runInBackground)
+                    Logg.Log("Fant ikke dagens budsjett i innboks " + main.appConfig.epostPOP3username + ". Sjekk logg for detaljer.", Color.Red);
+                else
+                    Logg.Alert("Fant ikke dagens budsjett i innboks " + main.appConfig.epostPOP3username + ".\nSjekk logg for detaljer.", "Nedlasting av Dagens budsjett", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (e.Cancelled || (worker != null && worker.CancellationPending))
             {
@@ -90,26 +90,10 @@ namespace KGSA
             }
             else
                 main.processing.SetVisible = false;
+
+            this.runInBackground = true;
         }
 
-        private DataTable tableQuickBudget;
-
-        public void MakeBudgetPage_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Logg.Log("Henter budsjett..");
-            tableQuickBudget = new DataTable();
-            tableQuickBudget = ImportElguideBudget(main.appConfig.Avdeling);
-
-            Logg.Log("Åpner budsjett side..");
-            e.Result = main.MakeQuickHtml(tableQuickBudget);
-        }
-
-        public void MakeBudgetPage_Completed(object sender, RunWorkerCompletedEventArgs e)
-        {
-            main.ProgressStop();
-            if ((bool)e.Result)
-                Logg.Log("Ferdig generert dagens kveldstall", Color.Green);
-        }
 
         public DataTable ImportElguideBudget(int avdeling)
         {
@@ -199,27 +183,27 @@ namespace KGSA
                     if (tmp == "9")
                         tmp = "Other";
                     row["Avdeling"] = tmp;
-                    if (table.Rows[i][1].ToString() != "")
+                    if (!String.IsNullOrEmpty(table.Rows[i][1].ToString()))
                         row["Salg"] = Convert.ToInt32(table.Rows[i][1].ToString());
                     else
                         row["Salg"] = 0;
-                    if (table.Rows[i][2].ToString() != "")
+                    if (!String.IsNullOrEmpty(table.Rows[i][2].ToString()))
                         row["Omsetn"] = Convert.ToDecimal(table.Rows[i][2].ToString());
                     else
                         row["Omsetn"] = 0;
-                    if (table.Rows[i][3].ToString() != "")
+                    if (!String.IsNullOrEmpty(table.Rows[i][3].ToString()))
                         row["Fritt"] = Convert.ToDecimal(table.Rows[i][3].ToString());
                     else
                         row["Fritt"] = 0;
-                    if (table.Rows[i][4].ToString() != "")
+                    if (!String.IsNullOrEmpty(table.Rows[i][4].ToString()))
                         row["Fortjeneste"] = Convert.ToDecimal(table.Rows[i][4].ToString());
                     else
                         row["Fortjeneste"] = 0;
-                    if (table.Rows[i][5].ToString() != "")
+                    if (!String.IsNullOrEmpty(table.Rows[i][5].ToString()))
                         row["Margin"] = Convert.ToDouble(table.Rows[i][5].ToString());
                     else
                         row["Margin"] = 0;
-                    if (table.Rows[i][6].ToString() != "")
+                    if (!String.IsNullOrEmpty(table.Rows[i][6].ToString()))
                         row["Rabatt"] = Convert.ToDecimal(table.Rows[i][6].ToString());
                     else
                         row["Rabatt"] = 0;
@@ -232,6 +216,101 @@ namespace KGSA
             {
                 Logg.Unhandled(ex);
                 Logg.Log("Uventet feil under importering av CSV fra avdeling " + avdeling + ". Feilmelding: " + ex.Message, Color.Red);
+            }
+            return null;
+        }
+
+        public DailyBudgetMacroInfo ImportElguideServices()
+        {
+            try
+            {
+                DailyBudgetMacroInfo budgetInfo = new DailyBudgetMacroInfo();
+
+                string[] listOfFiles = new string[] { "inegoAV.csv", "inegoTele.csv", "inegoComp.csv" };
+
+                foreach (string file in listOfFiles)
+                {
+                    if (!File.Exists(main.appConfig.csvElguideExportFolder + file))
+                    {
+                        Logg.Log("Fant ikke " + file, Color.Red);
+                        return null;
+                    }
+                    else if (File.GetLastWriteTime(main.appConfig.csvElguideExportFolder + file).Date != DateTime.Now.Date)
+                    {
+                        Logg.Log("Avbryter importering av " + file + " fordi filen er ikke oppdatert!", Color.Red);
+                        return null;
+                    }
+
+                    string[] Lines = File.ReadAllLines(main.appConfig.csvElguideExportFolder + file);
+                    string[] Fields;
+                    Fields = Lines[0].Split(new char[] { ';' });
+                    int Cols = Fields.GetLength(0);
+                    DataTable dt = new DataTable();
+                    //1st row must be column names; force lower case to ensure matching later on.
+                    for (int i = 0; i < Cols; i++)
+                        dt.Columns.Add(Fields[i].ToLower(), typeof(string));
+                    DataRow Row;
+                    for (int i = 1; i < Lines.GetLength(0); i++)
+                    {
+                        Fields = Lines[i].Split(new char[] { ';' });
+                        Row = dt.NewRow();
+                        for (int f = 0; f < Cols; f++)
+                            Row[f] = Fields[f];
+                        dt.Rows.Add(Row);
+                    }
+
+                    if (dt.Rows.Count < 2)
+                    {
+                        Logg.Log("Sales CSV fil (" + file + ") var for kort. " + dt.Rows.Count + " linjer.", Color.Red);
+                        return null;
+                    }
+
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+
+                        if (dt.Rows[i][0].ToString().Contains("580"))
+                        {
+                            DailyBudgetMacroInfoItem salg = new DailyBudgetMacroInfoItem();
+                            salg.Type = "Computing";
+                            salg.Antall = Convert.ToInt32(dt.Rows[i][1].ToString());
+                            salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
+                            salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
+                            budgetInfo.Salg.Add(salg);
+                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
+                            continue;
+                        }
+
+                        if (dt.Rows[i][0].ToString().Contains("480"))
+                        {
+                            DailyBudgetMacroInfoItem salg = new DailyBudgetMacroInfoItem();
+                            salg.Type = "Telecom";
+                            salg.Antall = Convert.ToInt32(dt.Rows[i][1].ToString());
+                            salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
+                            salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
+                            budgetInfo.Salg.Add(salg);
+                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
+                            continue;
+                        }
+
+                        if (dt.Rows[i][0].ToString().Contains("280"))
+                        {
+                            DailyBudgetMacroInfoItem salg = new DailyBudgetMacroInfoItem();
+                            salg.Type = "AudioVideo";
+                            salg.Antall = Convert.ToInt32(dt.Rows[i][1].ToString());
+                            salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
+                            salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
+                            budgetInfo.Salg.Add(salg);
+                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
+                            continue;
+                        }
+                    }
+                }
+                return budgetInfo;
+            }
+            catch (Exception ex)
+            {
+                Logg.Unhandled(ex);
+                Logg.Log("Feil oppstod under importering av tjeneste CSV fra Elguide", Color.Red);
             }
             return null;
         }
@@ -268,31 +347,25 @@ namespace KGSA
                         return false;
                     }
 
-                    int max = main.appConfig.epostPOP3searchLimit;
-                    if (max <= 0)
-                        max = 100;
-                    if (count < max)
-                        max = count;
-
-                    main.processing.SetText = "Søker i innboks: " + main.appConfig.epostPOP3username;
-                    Logg.Log("Søker i innboks etter C810 rapport, opp til " + max + " meldinger..");
-                    for (int i = 1; i < max + 1; i++)
+                    main.processing.SetText = "Søker i innboks.. (totalt " + count + " meldinger)";
+                    Logg.Log("Søker i innboks.. (totalt " + count + " meldinger)");
+                    for (int i = count + 1; i-- > 1;)
                     {
-                        if (attachmentFound || this.maxEmailAttemptsReached)
+                        if (attachmentFound || maxEmailAttemptsReached)
                             break;
 
                         if (bw != null)
                             if (bw.CancellationPending)
                                 break;
 
-                        Logg.Debug("Sjekker meldingshode " + i + " av " + max + "..");
+                        Logg.Debug("Sjekker meldingshode " + (count - i + 1) + "..");
                         MessageHeader header = client.GetMessageHeaders(i);
                         if (HeaderMatch(header))
                         {
-                            if (header.DateSent.Date != this.findDate.Date)
+                            if (header.DateSent.Date != selectedDate.Date)
                             {
                                 Logg.Debug("Fant C810 e-post med annen dato: " + header.DateSent.ToShortDateString()
-                                    + " ser etter: " + findDate.ToShortDateString() + " Emne: \"" + header.Subject
+                                    + " ser etter: " + selectedDate.ToShortDateString() + " Emne: \"" + header.Subject
                                     + "\" Fra: \"" + header.From.MailAddress + "\"");
                                 continue;
                             }
@@ -326,10 +399,10 @@ namespace KGSA
 
                 if (attachmentFound)
                     return true;
-                else if (!attachmentFound && this.maxEmailAttemptsReached)
+                else if (!attachmentFound && maxEmailAttemptsReached)
                     Logg.Log("Maksimum antall e-post nedlastninger er overgått. Innboks søk er avsluttet", Color.Red);
                 else
-                    Logg.Log("Fant ingen C810 e-post med budsjett for dato " + findDate.ToShortDateString() + ". Innboks søk er avsluttet", Color.Red);
+                    Logg.Log("Fant ingen C810 e-post med budsjett for dato " + selectedDate.ToShortDateString() + ". Innboks søk er avsluttet", Color.Red);
             }
             catch (PopServerNotFoundException)
             {
@@ -341,8 +414,13 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Log("Feil ved henting av epost. Beskjed: " + ex.Message);
-                Logg.Unhandled(ex);
+                if (ex.Message.Contains("Authentication failed") || ex.Message.Contains("credentials"))
+                    Logg.Log("Feil brukernavn eller passord angitt for " + main.appConfig.epostPOP3username + ". Sjekk e-post innstillinger!", Color.Red);
+                else
+                {
+                    Logg.Unhandled(ex);
+                    Logg.Log("Feil ved henting av epost. Beskjed: " + ex.Message);
+                }
             }
             return false;
         }
@@ -357,13 +435,12 @@ namespace KGSA
                 if (SaveBudget(kpiBudget))
                 {
                     Logg.Debug("Budsjett lagret til databasen");
-                    testBudget = kpiBudget;
                     return true;
                 }
             }
-            this.countEmailAttempts++;
-            if (this.countEmailAttempts > this.limitEmailAttempts)
-                this.maxEmailAttemptsReached = true;
+            countEmailAttempts++;
+            if (countEmailAttempts > limitEmailAttempts)
+                maxEmailAttemptsReached = true;
 
             Logg.Log("Vedlegget '" + attachment.FileName + "' fra e-posten: \""
                 + subject + "\" fra: \"" + address + "\" sendt: " + sentDate.ToShortDateString() + " er ugyldig, feil eller var ikke av typen C810");
@@ -466,7 +543,7 @@ namespace KGSA
                     lines[i] = lines[i].Trim().Replace("[(", string.Empty).Replace(")]TJ", string.Empty).Replace(" ", string.Empty).Replace("/", string.Empty);
 
                 var budget = new KpiBudget();
-                budget.Date = this.findDate;
+                budget.Date = selectedDate;
 
                 for (int i = 0; i < lines.Count; i++)
                 {
@@ -553,9 +630,9 @@ namespace KGSA
         public KpiBudgetElement() { }
         public void Insert(string typeArg, decimal salesArg, decimal gmArg)
         {
-            this.type = typeArg;
-            this.Sales = salesArg;
-            this.GM = gmArg;
+            type = typeArg;
+            Sales = salesArg;
+            GM = gmArg;
 
             try
             {

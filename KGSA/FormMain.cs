@@ -8,14 +8,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using KGSA.Properties;
-using System.Text.RegularExpressions;
-using System.Drawing.Imaging;
-using System.Text;
 using System.Drawing.Printing;
-using System.Net;
 using Microsoft.Win32;
 
 namespace KGSA
@@ -28,7 +22,7 @@ namespace KGSA
     {
         #region Variables
         #region Static variables
-        public static string version = "v2.8";
+        public static string version = "v3.0";
         public static string settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA";
         public static string settingsFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA\Settings.xml";
         public static string settingsTemp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA\Temp";
@@ -72,6 +66,7 @@ namespace KGSA
         public static string htmlBudgetAftersales = settingsPath + @"\budsjettAftersales.html";
         public static string htmlBudgetMdasda = settingsPath + @"\budsjettMdaSda.html";
         public static string htmlBudgetButikk = settingsPath + @"\budsjettButikk.html";
+        public static string htmlBudgetDaily = settingsPath + @"\budsjettDaglig.html";
 
         public static string htmlRapport = settingsPath + @"\rankingRapport.html";
         public static string htmlPeriode = settingsPath + @"\rankingPeriode.html";
@@ -119,7 +114,6 @@ namespace KGSA
         BackgroundWorker bwAutoImportService = new BackgroundWorker();
         BackgroundWorker bwImportService = new BackgroundWorker();
         BackgroundWorker bwRanking = new BackgroundWorker();
-        BackgroundWorker bwAvdeling = new BackgroundWorker();
         BackgroundWorker bwBudget = new BackgroundWorker();
         BackgroundWorker bwStore = new BackgroundWorker();
         BackgroundWorker bwReport = new BackgroundWorker();
@@ -145,7 +139,7 @@ namespace KGSA
         public DateTime timerNextRun = rangeMin;
         public readonly Timer timerAutoQuick = new Timer();
         public DateTime timerNextRunQuick = rangeMin;
-        private TimeWatch timewatch = new TimeWatch();
+        public TimeWatch timewatch = new TimeWatch();
         private bool Loaded;
         public static CultureInfo norway = new CultureInfo("nb-NO");
 
@@ -153,8 +147,8 @@ namespace KGSA
         private DateTime chkBudgetPicker;
         private DateTime chkServicePicker;
         private DateTime chkStorePicker;
-        public static DateTime dbFraDT = DateTime.Now;
-        public static DateTime dbTilDT = DateTime.Now;
+        //public static DateTime dbFraDT = DateTime.Now;
+        //public static DateTime dbTilDT = DateTime.Now;
         public static DateTime rangeMin = new DateTime(2000, 1, 1, 0, 0, 0);
         public static DateTime rangeMax = DateTime.Now.AddYears(1);
         public static DateTime highlightDate = rangeMin;
@@ -163,7 +157,6 @@ namespace KGSA
         private int lagretAvdeling = 0;
         public Avdeling avdeling = new Avdeling();
         public string savedPage = "";
-        public string savedAvdPage = "";
         public string savedTab = "";
         public BudgetCategory savedBudgetPage = BudgetCategory.None;
         public string savedStorePage = "";
@@ -191,6 +184,7 @@ namespace KGSA
         public SqlCeConnection connection = new SqlCeConnection(SqlConStr);
         BluetoothServer blueServer = null;
         public KgsaTools tools;
+        public DataTable tableMacroQuick = null;
 
         #endregion
         public FormMain(string[] arrayArgs)
@@ -352,16 +346,13 @@ namespace KGSA
                 if (lagretAvdeling != appConfig.Avdeling) // Hvis favoritt-velger er benyttet, lagre avdelingsnummer som var sist satt i innstillinger.
                     appConfig.Avdeling = lagretAvdeling;
 
-                if (savedPage != "") // Lagre siste viste rankingside
+                if (!String.IsNullOrEmpty(savedPage)) // Lagre siste viste rankingside
                     appConfig.savedPage = savedPage;
-
-                if (savedAvdPage != "") // Lagre siste viste avdelings rankinging side
-                    appConfig.savedAvdPage = savedAvdPage;
 
                 if (savedBudgetPage != BudgetCategory.None) // Lagre siste viste budsjett side
                     appConfig.savedBudgetPage = savedBudgetPage;
 
-                if (savedStorePage != "") // Lagre siste viste rankingside
+                if (!String.IsNullOrEmpty(savedStorePage)) // Lagre siste viste rankingside
                     appConfig.savedStorePage = savedStorePage;
 
                 appConfig.savedTab = tabControlMain.SelectedTab.Text;
@@ -466,12 +457,6 @@ namespace KGSA
             bwRanking.WorkerReportsProgress = true;
             bwRanking.WorkerSupportsCancellation = true;
             bwRanking.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwRanking_Completed);
-
-            bwAvdeling.DoWork += new DoWorkEventHandler(bwAvdeling_DoWork);
-            bwAvdeling.ProgressChanged += new ProgressChangedEventHandler(bwProgressReport_ProgressChanged);
-            bwAvdeling.WorkerReportsProgress = true;
-            bwAvdeling.WorkerSupportsCancellation = true;
-            bwAvdeling.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwAvdeling_Completed);
 
             bwVinnSelger.DoWork += new DoWorkEventHandler(bwVinnSelger_DoWork);
             bwVinnSelger.ProgressChanged += new ProgressChangedEventHandler(bwProgressReport_ProgressChanged);
@@ -816,8 +801,6 @@ namespace KGSA
             string curTab = readCurrentTab();
             if (curTab == "Ranking")
                 webHTML.ShowPrintDialog();
-            if (curTab == "Avdelinger")
-                webHTMLAvd.ShowPrintDialog();
             else if (curTab == "Budget")
                 webBudget.ShowPrintDialog();
             else if (curTab == "Service")
@@ -955,11 +938,6 @@ namespace KGSA
             if (curTab == "Ranking")
             {
                 webHTML.ShowPrintPreviewDialog();
-                return;
-            }
-            if (curTab == "Avdelinger")
-            {
-                webHTMLAvd.ShowPrintPreviewDialog();
                 return;
             }
             else if (curTab == "Budget")
@@ -1179,12 +1157,12 @@ namespace KGSA
 
         private void pickerButikk_DropDown(object sender, EventArgs e)
         {
-            chkPicker = pickerDato.Value;
+            chkPicker = pickerRankingDate.Value;
         }
 
         private void pickerButikk_CloseUp(object sender, EventArgs e)
         {
-            if (chkPicker != pickerDato.Value)
+            if (chkPicker != pickerRankingDate.Value)
                 moveDate(0, true);
         }
 
@@ -1339,7 +1317,7 @@ namespace KGSA
                     if (area > -1 && area <= days && a > -1)
                     {
                         DateTime d = d2.AddDays(-a);
-                        if (d.Month == dbTilDT.Month && highlightDate != d)
+                        if (d.Month == appConfig.dbTo.Month && highlightDate != d)
                         {
                             highlightDate = d;
                             graphPanelTop.Invalidate();
@@ -1355,7 +1333,7 @@ namespace KGSA
 
         private void graphPanelTop_MouseLeave(object sender, EventArgs e)
         {
-            highlightDate = pickerDato.Value;
+            highlightDate = pickerRankingDate.Value;
             graphPanelTop.Invalidate();
         }
 
@@ -1683,26 +1661,21 @@ namespace KGSA
         private void buttonNotification_Click(object sender, EventArgs e)
         {
             panelNotification.Visible = false;
-            panelNotificationAvd.Visible = false;
-
             labelNotificationText.Text = "";
-            labelNotificationTextAvd.Text = "";
-
             panelGraphNotification.Visible = false;
-
             labelGraphNotificationText.Text = "";
 
             datoPeriodeVelger = false;
 
             if (tabControlMain.SelectedTab == tabPageRank)
                 UpdateRank(savedPage);
-            else if (tabControlMain.SelectedTab == tabPageAvd)
-                UpdateRank(savedAvdPage);
-            if (tabControlMain.SelectedTab == tabPageGrafikk)
+            else if (tabControlMain.SelectedTab == tabPageGrafikk)
+            {
                 if (_graphInitialized)
                     UpdateGraph();
                 else
                     InitGraph();
+            }
         }
 
         private void button18_Click_2(object sender, EventArgs e)
@@ -1745,7 +1718,7 @@ namespace KGSA
         private void dateServicePicker_CloseUp(object sender, EventArgs e)
         {
             if (chkServicePicker != pickerServiceDato.Value)
-                moveDateService(0, true);
+                moveDateService(0);
         }
 
         private void buttonServiceOppdater_Click(object sender, EventArgs e)
@@ -2081,7 +2054,7 @@ namespace KGSA
         {
             try
             {
-                if (e.FormattedValue.ToString() == "" && e.ColumnIndex < 3)
+                if (String.IsNullOrEmpty(e.FormattedValue.ToString()) && e.ColumnIndex < 3)
                 {
                     Logg.Status("Feltet kan ikke være tomt! Eller har du ikke oppdatert databasen?", Color.Red);
                     e.Cancel = true;
@@ -2113,12 +2086,6 @@ namespace KGSA
             }
         }
 
-        private void importerServicerMedMakroToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy(true))
-                delayedAutoServiceImport();
-        }
-
         private void rabattToolStripMenuItem_Click(object sender, EventArgs e)
         {
             processing.SetVisible = true;
@@ -2142,7 +2109,7 @@ namespace KGSA
 
         private void epostToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormEmailAddressbook emailForm = new FormEmailAddressbook(this);
+            FormEmailAddressbook emailForm = new FormEmailAddressbook();
             emailForm.ShowDialog(this);
         }
 
@@ -2217,11 +2184,6 @@ namespace KGSA
         {
             if (!IsBusy())
                 ImportWobsoleteCsvZip();
-        }
-
-        private void button39_Click(object sender, EventArgs e)
-        {
-                velgObsoleteCSV();
         }
 
         private void button38_Click(object sender, EventArgs e)
@@ -2517,11 +2479,6 @@ namespace KGSA
                 RunBudget(BudgetCategory.MDASDA);
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            RunOpenPDF();
-        }
-
         private void buttonBudgetFF_Click(object sender, EventArgs e)
         {
             moveBudgetDate(4, true);
@@ -2584,137 +2541,6 @@ namespace KGSA
             form.Dispose();
         }
 
-        private void pickerDato_ValueChanged(object sender, EventArgs e)
-        {
-            // Copy changes to date picker to other control under Avdeling
-
-            // Check to see if we don't input invalid Min-Max date.
-            if (pickerDato.Value > pickerDatoAvd.MaxDate || pickerDato.Value < pickerDatoAvd.MinDate)
-            {
-                pickerDatoAvd.MinDate = rangeMin;
-                pickerDatoAvd.MaxDate = rangeMax;
-                pickerDatoAvd.Value = DateTime.Now;
-            }
-
-            pickerDatoAvd.MinDate = pickerDato.MinDate;
-            pickerDatoAvd.MaxDate = pickerDato.MaxDate;
-            pickerDatoAvd.Value = pickerDato.Value;
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            // Send user to tab Ranking and focus datetime picker after clicking link
-            tabControlMain.SelectedTab = tabPageRank;
-            pickerDato.Focus();
-        }
-
-        private void buttonAvdTjenester_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-                RunAvd("Tjenester");
-        }
-
-        private void buttonAvdOppdater_Click(object sender, EventArgs e)
-        {
-            if (!bwAvdeling.IsBusy)
-                UpdateRank();
-            else if (buttonAvdOppdater.Text == "Stop" && bwAvdeling.IsBusy)
-                stopRanking = true;
-            else if (buttonAvdOppdater.Text == "Stop" && !bwAvdeling.IsBusy)
-                ProgressStop();
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxAvdMode.SelectedIndex != -1)
-                appConfig.rankingAvdelingMode = comboBoxAvdMode.SelectedIndex;
-        }
-
-        private void buttonAvdSnittpris_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-                RunAvd("Snittpriser");
-        }
-
-        private void buttonAvdOpenPdf_Click(object sender, EventArgs e)
-        {
-            RunOpenPDF();
-        }
-
-        private void buttonAvdSavePdf_Click(object sender, EventArgs e)
-        {
-            if (IsBusy())
-                return;
-
-            savePDF(false);
-        }
-
-        private void visBareAngitteAvdelingerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!appConfig.rankingAvdelingShowAll)
-            {
-                appConfig.rankingAvdelingShowAll = true;
-                visBareAngitteAvdelingerToolStripMenuItem.Checked = false;
-            }
-            else
-            {
-                appConfig.rankingAvdelingShowAll = false;
-                visBareAngitteAvdelingerToolStripMenuItem.Checked = true;
-            }
-            processing.SetVisible = true;
-            processing.SetText = "Oppdaterer..";
-            SaveSettings();
-            Reload(true);
-            processing.SetVisible = false;
-        }
-
-        private void visToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            tabControlMain.SelectedTab = tabPageAvd;
-        }
-
-        private void buttonNotificationAvd_Click(object sender, EventArgs e)
-        {
-            panelNotification.Visible = false;
-            panelNotificationAvd.Visible = false;
-
-            labelNotificationText.Text = "";
-            labelNotificationTextAvd.Text = "";
-
-            panelGraphNotification.Visible = false;
-
-            labelGraphNotificationText.Text = "";
-
-            datoPeriodeVelger = false;
-
-            if (tabControlMain.SelectedTab == tabPageRank)
-                UpdateRank(savedPage);
-            else if (tabControlMain.SelectedTab == tabPageAvd)
-                UpdateRank(savedAvdPage);
-            if (tabControlMain.SelectedTab == tabPageGrafikk)
-                if (_graphInitialized)
-                    UpdateGraph();
-                else
-                    InitGraph();
-        }
-
-        private void button4_Click_2(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-                velgDato();
-        }
-
-        private void webHTMLAvd_Navigating(object sender, WebBrowserNavigatingEventArgs e)
-        {
-            NavigateWeb(e);
-        }
-
-        private void buttonAvdOpenExcel_Click(object sender, EventArgs e)
-        {
-            if (openXml != null)
-                openXml.OpenDocument(pickerDato.Value);
-        }
-
         private void importerTransaksjonerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!IsBusy(true))
@@ -2764,7 +2590,7 @@ namespace KGSA
         private void buttonOpenExcel_Click(object sender, EventArgs e)
         {
             if (openXml != null)
-                openXml.OpenDocument(pickerDato.Value);
+                openXml.OpenDocument(pickerRankingDate.Value);
         }
 
         private void importerEANToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2775,12 +2601,6 @@ namespace KGSA
                 worker = new BackgroundWorker();
                 app.ImportEan(worker);
             }
-        }
-
-        private void oppdaterAlleRankingSiderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy(true))
-                RunCreateHtml();
         }
 
         private void buttonLagerExcel_Click(object sender, EventArgs e)
@@ -2819,33 +2639,6 @@ namespace KGSA
                 btAutoToolStripMenuItem.Checked = true;
             appConfig.blueServerIsEnabled = btAutoToolStripMenuItem.Checked;
             Logg.Log("Bluetooth server er satt til å starte automatisk ved programstart");
-        }
-
-        private void btAutoInvToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (btAutoInvToolStripMenuItem.Checked)
-                btAutoInvToolStripMenuItem.Checked = false;
-            else
-                btAutoInvToolStripMenuItem.Checked = true;
-            appConfig.blueInventoryAutoUpdate = btAutoInvToolStripMenuItem.Checked;
-        }
-
-        private void btAutoDataToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (btAutoDataToolStripMenuItem.Checked)
-                btAutoDataToolStripMenuItem.Checked = false;
-            else
-                btAutoDataToolStripMenuItem.Checked = true;
-            appConfig.blueProductAutoUpdate = btAutoDataToolStripMenuItem.Checked;
-        }
-
-        private void btAutoEanToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (btAutoEanToolStripMenuItem.Checked)
-                btAutoEanToolStripMenuItem.Checked = false;
-            else
-                btAutoEanToolStripMenuItem.Checked = true;
-            appConfig.blueEanAutoUpdate = btAutoEanToolStripMenuItem.Checked;
         }
 
         private void oppdaterAltToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2940,25 +2733,9 @@ namespace KGSA
         {
             if (!IsBusy())
             {
-                BudgetImporter kpi = new BudgetImporter(this);
+                BudgetImporter kpi = new BudgetImporter(this, DateTime.Now);
                 worker = new BackgroundWorker();
-                kpi.StartAsyncDownloadBudget(DateTime.Now, worker);
-            }
-        }
-
-        private void visDagensBudsjettToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-            {
-                BudgetImporter budgetImporter = new BudgetImporter(this);
-
-                worker = new BackgroundWorker();
-                worker.DoWork += new DoWorkEventHandler(budgetImporter.MakeBudgetPage_DoWork);
-                worker.ProgressChanged += new ProgressChangedEventHandler(bwProgressReport_ProgressChanged);
-                worker.WorkerReportsProgress = true;
-                worker.WorkerSupportsCancellation = false;
-                worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(budgetImporter.MakeBudgetPage_Completed);
-                worker.RunWorkerAsync();
+                kpi.StartAsyncDownloadBudget(worker, false);
             }
         }
 
@@ -2998,13 +2775,135 @@ namespace KGSA
             {
                 string currentTab = readCurrentTab();
                 if (currentTab.Equals("Avdelinger"))
-                    openXml.OpenDocument(pickerDato.Value);
+                    openXml.OpenDocument(pickerRankingDate.Value);
                 else if (currentTab.Equals("Store"))
                     openXml.OpenDocument(pickerLagerDato.Value);
                 else if (currentTab.Equals("Ranking"))
-                    openXml.OpenDocument(pickerDato.Value);
+                    openXml.OpenDocument(pickerRankingDate.Value);
                 else
                     Logg.Log("Kan ikke åpne regneark for gjeldene side. Velg en annen.", Color.Red);
+            }
+        }
+
+        private void buttonBudgetMacro_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy(true))
+                startDelayedDailyImport();
+        }
+
+        private void buttonBudgetDaily_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+                RunBudget(BudgetCategory.Daglig);
+        }
+
+        private void buttonAvdTjenester_Click_1(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+                RunRanking("Tjenester");
+        }
+
+        private void buttonAvdSnittpriser_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+                RunRanking("Snittpriser");
+        }
+
+        private void buttonBudgetActionImportCsv_Click(object sender, EventArgs e)
+        {
+            RunImport();
+        }
+
+        private void buttonBudgetActionOpenExcel_Click(object sender, EventArgs e)
+        {
+            if (openXml != null)
+                openXml.OpenDocument(pickerRankingDate.Value);
+        }
+
+        private void buttonBudgetActionMacroImport_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy(true))
+                delayedMacroRankingImport();
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            RunOpenPDF();
+        }
+
+        private void buttonBudgetActionOpenPdf_Click(object sender, EventArgs e)
+        {
+            RunOpenPDF();
+        }
+
+        private void buttonStoreOpenPdf_Click(object sender, EventArgs e)
+        {
+            RunOpenPDF();
+        }
+
+        private void button4_Click_3(object sender, EventArgs e)
+        {
+            RunOpenPDF();
+        }
+
+        private void kjørAutorankingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+                delayedAutoRanking();
+        }
+
+        private void kjørKveldstankingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+                startDelayedAutoQuickImport();
+        }
+
+        private void hentServicerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy(true))
+                delayedAutoServiceImport();
+        }
+
+        private void hentLagervarerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy(true))
+                delayedAutoStore();
+        }
+
+        private void hentTransaksjonerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy(true))
+                delayedMacroRankingImport();
+        }
+
+        private void makroInnstillingerToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+            {
+                FormSettingsMacro form = new FormSettingsMacro(this);
+                if (form.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                {
+                    SaveSettings();
+                    UpdateUi();
+                }
+
+                form.Dispose();
+            }
+        }
+
+        private void budsjettToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+                OpenBudgetSettings();
+        }
+
+        private void buttonBudgetActionBudgetImport_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+            {
+                BudgetImporter importer = new BudgetImporter(this, DateTime.Now);
+                worker = new BackgroundWorker();
+                importer.StartAsyncDownloadBudget(worker, false);
             }
         }
     }

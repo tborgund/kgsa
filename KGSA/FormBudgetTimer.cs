@@ -12,16 +12,14 @@ namespace KGSA
 {
     public partial class FormBudgetTimer : Form
     {
-        AppSettings appConfig;
         DataSet ds;
         SqlCeDataAdapter da;
         SqlCeConnection con = new SqlCeConnection(FormMain.SqlConStr);
         BudgetInfo budgetInfo;
         int budgetId;
 
-        public FormBudgetTimer(AppSettings app, BudgetInfo info, int id)
+        public FormBudgetTimer(BudgetInfo info, int id)
         {
-            this.appConfig = app;
             this.budgetInfo = info;
             this.budgetId = id;
             InitializeComponent();

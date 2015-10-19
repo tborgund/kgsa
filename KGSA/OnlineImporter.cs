@@ -137,8 +137,8 @@ namespace KGSA
 
                 TimeWatch tw = new TimeWatch();
                 tw.Start();
-
-                string data = DownloadDocument(urlPrisguide + main.appConfig.onlinePrisguidePagesToImport);
+                string data = FetchPage(urlPrisguide + main.appConfig.onlinePrisguidePagesToImport);
+                //string data = DownloadDocument(urlPrisguide + main.appConfig.onlinePrisguidePagesToImport);
                 if (data == null)
                 {
                     Logg.Log("Error: Nedlastet data er NULL!", Color.Red);
@@ -376,7 +376,8 @@ namespace KGSA
                     if (bw.CancellationPending)
                         return new List<ProductCode> { };
 
-                string data = DownloadDocument(url);
+                string data = FetchPage(url);
+                //string data = DownloadDocument(url);
                 if (data == null || data.Length < 8000)
                 {
                     Logg.Log("Feil oppstod under nedlasting av side: " + url + " Størrelse: " + data.Length, Color.Red);
@@ -399,7 +400,7 @@ namespace KGSA
                 foreach (HtmlNode node in nodes)
                 {
                     HtmlNode codeNode = node.SelectSingleNode("div[1]/div[1]/small");
-                    if (codeNode == null || codeNode.InnerText == null || codeNode.InnerText.Equals(""))
+                    if (codeNode == null || String.IsNullOrEmpty(codeNode.InnerText))
                     {
                         Logg.Log("Klarte ikke lese en varekode fra produktsiden. Er ignorert", Color.Red);
                         continue;
@@ -410,11 +411,11 @@ namespace KGSA
                     productCode.productCategory = category;
 
                     HtmlNode stockNode = node.SelectSingleNode("div[1]/div[2]/div[2]/span[2]");
-                    if (stockNode != null && stockNode.InnerText != null && !stockNode.InnerText.Equals("") && stockNode.InnerText.Contains("P&aring; nettlager"))
+                    if (stockNode != null && !String.IsNullOrEmpty(stockNode.InnerText) && stockNode.InnerText.Contains("P&aring; nettlager"))
                         productCode.productInternetStock = ParseElkjopStock(stockNode.InnerText);
 
                     HtmlNode priceNode = node.SelectSingleNode("div[1]/div[3]/span/span");
-                    if (priceNode != null && priceNode.InnerText != null && !priceNode.InnerText.Equals(""))
+                    if (priceNode != null && !String.IsNullOrEmpty(priceNode.InnerText))
                         productCode.productInternetPrize = ParseElkjopPrize(priceNode.InnerText);
 
                     productCodes.Add(productCode);
@@ -480,7 +481,8 @@ namespace KGSA
 
                     Logg.Debug("Prisguide #" + pos + ": Laster ned side: " + url);
 
-                    string data = DownloadDocument(url);
+                    string data = FetchPage(url);
+                    //string data = DownloadDocument(url);
                     if (data == null || data.Length < 2000)
                     {
                         Logg.Debug("Prisguide #" + pos + ": Feil med nedlasting av produktside");
@@ -522,12 +524,12 @@ namespace KGSA
                             int indexEnd = productUrl.Value.IndexOf("&", indexStart);
 
                             string code = productUrl.Value.Substring(indexStart, indexEnd - indexStart);
-                            if (!prevCode.Equals(code) && !code.Equals(""))
+                            if (!prevCode.Equals(code) && !String.IsNullOrEmpty(code))
                             {
                                 ProductCode productCode = new ProductCode();
                                 productCode.productCode = code;
 
-                                if (prizeNode.InnerText == null || prizeNode.InnerText.Equals(""))
+                                if (String.IsNullOrEmpty(prizeNode.InnerText))
                                     Logg.Debug("Prisguide #" + pos + ": Fant ikke pris på varekoden " + code);
                                 else
                                     productCode.productInternetPrize = ParseElkjopPrize(prizeNode.InnerText);
@@ -592,7 +594,7 @@ namespace KGSA
             {
                 int prisguideId = 0;
 
-                if (url == null || url.Equals(""))
+                if (url == null || String.IsNullOrEmpty(url))
                     return prisguideId;
 
                 int lastIndex = url.LastIndexOf("-") + 1;
@@ -614,53 +616,59 @@ namespace KGSA
             return 0;
         }
 
-        private string DownloadDocument(String urlAddress)
+        public string FetchPage(string url)
         {
-            try
-            {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
-                request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
-                request.Timeout = 30 * 1000;
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                string data = null;
+            StringBuilder sb = new StringBuilder();
+            byte[] buf = new byte[8192];
+            int maxAttempts = 3;
+            int attempts = 0;
 
-                try
+            if (!String.IsNullOrEmpty(url))
+            {
+                bool connectionComplete = false;
+                while (!connectionComplete)
                 {
-                    if (response.StatusCode == HttpStatusCode.OK)
+                    attempts++;
+                    if (attempts > maxAttempts)
+                        break;
+                    HttpWebRequest myReq = (HttpWebRequest)WebRequest.Create(url);
+                    myReq.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
+                    myReq.Timeout = 30 * 1000;
+
+                    myReq.KeepAlive = false;
+                    try
                     {
-                        Stream receiveStream = response.GetResponseStream();
-                        StreamReader readStream = null;
+                        HttpWebResponse resp = (HttpWebResponse)myReq.GetResponse();
+                        Stream stream = resp.GetResponseStream();
 
-                        if (response.CharacterSet == null)
+                        string test = "";
+                        int count = 0;
+                        do
                         {
-                            readStream = new StreamReader(receiveStream);
-                        }
-                        else
-                        {
-                            readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
-                        }
+                            count = stream.Read(buf, 0, buf.Length);
 
-                        data = readStream.ReadToEnd();
-
-                        response.Close();
-                        readStream.Close();
+                            if (count != 0)
+                            {
+                                test = Encoding.UTF8.GetString(buf, 0, count);
+                                sb.Append(test);
+                            }
+                        }
+                        while (count > 0);
+                        stream.Close();
+                        connectionComplete = true;
                     }
-                    return data;
+                    catch (WebException)
+                    {
+                        Logg.Log("Nettsiden " + url + " tok for lang tid til å svare", Color.Red);
+                    }
                 }
-                catch (Exception ex)
+                if (attempts > maxAttempts)
                 {
-                    Logg.Unhandled(ex);
+                    Logg.Log("Nedlastning av siden " + url + " ble avbrutt etter " + maxAttempts + " forsøk", Color.Red);
+                    return "";
                 }
             }
-            catch (WebException)
-            {
-                Logg.Log("Nettsiden " + urlAddress + " tok for lang tid til å svare", Color.Red);
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-            }
-            return "";
+            return sb.ToString();
         }
     }
 

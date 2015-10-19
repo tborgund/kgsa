@@ -51,15 +51,15 @@ namespace KGSA
                 if (area > -1 && area <= days && a > -1)
                 {
                     DateTime d = d2.AddDays(-a);
-                    if (d.Month == dbTilDT.Month)
+                    if (d.Month == appConfig.dbTo.Month)
                     {
                         highlightDate = d;
-                        pickerDato.Value = d;
+                        pickerRankingDate.Value = d;
                         graphPanelTop.Invalidate();
                         tabControlMain.SelectedTab = tabPageRank;
 
                         var page = currentPage();
-                        if (page != "")
+                        if (!String.IsNullOrEmpty(page))
                             RunRanking(page);
                         else
                             RunRanking("Data");
@@ -113,7 +113,7 @@ namespace KGSA
                 else if (pickerDato_Graph.Value != null)
                     _graphFraDato = pickerDato_Graph.Value.AddMonths(-1);
                 else
-                    _graphFraDato = dbTilDT.AddDays(-30);
+                    _graphFraDato = appConfig.dbTo.AddDays(-30);
             }
         }
 
@@ -128,15 +128,15 @@ namespace KGSA
         private void InitGraph()
         {
             this.Update();
-            pickerDato_Graph.Value = dbTilDT;
+            pickerDato_Graph.Value = appConfig.dbTo;
 
             UpdateGraphFields();
             GraphPopulateSelgere();
 
-            groupBox_GraphDato.Enabled = true;
+            groupGraphChoices.Enabled = true;
         }
 
-        private void GraphPopulateSelgere(bool select = false)
+        private void GraphPopulateSelgere()
         {
             try
             {
@@ -168,7 +168,7 @@ namespace KGSA
 
             if (!bwUpdateBigGraph.IsBusy)
             {
-                groupBox_GraphDato.Enabled = false;
+                groupGraphChoices.Enabled = false;
                 Logg.Log("Oppdaterer graf ..", Color.Black, false, true);
                 bwUpdateBigGraph.RunWorkerAsync();
             }
@@ -184,7 +184,7 @@ namespace KGSA
         {
             ProgressStop();
             PaintGraph();
-            groupBox_GraphDato.Enabled = true;
+            groupGraphChoices.Enabled = true;
             if (!_graphReqStop)
                 Logg.Log("Graf oppdatert.", null, false, true);
             else
@@ -202,23 +202,23 @@ namespace KGSA
                 var d = pickerDato_Graph.Value;
                 if (m == 1) // gå tilbake en måned
                 {
-                    if (dbFraDT.Date <= d.AddMonths(-1))
+                    if (appConfig.dbFrom.Date <= d.AddMonths(-1))
                         pickerDato_Graph.Value = d.AddMonths(-1);
                     else
-                        pickerDato_Graph.Value = dbFraDT;
+                        pickerDato_Graph.Value = appConfig.dbFrom;
                 }
                 if (m == 2) // gå tilbake en dag
                 {
                     if (appConfig.ignoreSunday)
                     {
-                        if (dbFraDT.Date <= d.AddDays(-1) && d.AddDays(-1).DayOfWeek != DayOfWeek.Sunday)
+                        if (appConfig.dbFrom.Date <= d.AddDays(-1) && d.AddDays(-1).DayOfWeek != DayOfWeek.Sunday)
                             pickerDato_Graph.Value = d.AddDays(-1);
-                        if (dbFraDT.Date <= d.AddDays(-2) && d.AddDays(-1).DayOfWeek == DayOfWeek.Sunday)
+                        if (appConfig.dbFrom.Date <= d.AddDays(-2) && d.AddDays(-1).DayOfWeek == DayOfWeek.Sunday)
                             pickerDato_Graph.Value = d.AddDays(-2);
                     }
                     else
                     {
-                        if (dbFraDT.Date <= d.AddDays(-1))
+                        if (appConfig.dbFrom.Date <= d.AddDays(-1))
                             pickerDato_Graph.Value = d.AddDays(-1);
                     }
                 }
@@ -226,26 +226,26 @@ namespace KGSA
                 {
                     if (appConfig.ignoreSunday)
                     {
-                        if (dbTilDT.Date >= d.AddDays(1) && d.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
+                        if (appConfig.dbTo.Date >= d.AddDays(1) && d.AddDays(1).DayOfWeek != DayOfWeek.Sunday)
                             pickerDato_Graph.Value = d.AddDays(1);
-                        if (dbTilDT.Date >= d.AddDays(2) && d.AddDays(1).DayOfWeek == DayOfWeek.Sunday)
+                        if (appConfig.dbTo.Date >= d.AddDays(2) && d.AddDays(1).DayOfWeek == DayOfWeek.Sunday)
                             pickerDato_Graph.Value = d.AddDays(2);
                     }
                     else
                     {
-                        if (dbTilDT.Date >= d.AddDays(1))
+                        if (appConfig.dbTo.Date >= d.AddDays(1))
                             pickerDato_Graph.Value = d.AddDays(1);
                     }
                 }
                 if (m == 4) // gå fram en måned
                 {
-                    if (dbTilDT.Date >= d.AddMonths(1))
+                    if (appConfig.dbTo.Date >= d.AddMonths(1))
                         pickerDato_Graph.Value = d.AddMonths(1);
                     else
-                        pickerDato_Graph.Value = dbTilDT;
+                        pickerDato_Graph.Value = appConfig.dbTo;
                 }
                 d = pickerDato_Graph.Value;
-                if (d.Date >= dbTilDT.Date)
+                if (d.Date >= appConfig.dbTo.Date)
                 {
                     buttonGraphF.Enabled = false; // fremover knapp
                     buttonGraphFF.Enabled = false; // fremover knapp
@@ -255,7 +255,7 @@ namespace KGSA
                     buttonGraphF.Enabled = true; // fremover knapp
                     buttonGraphFF.Enabled = true; // fremover knapp
                 }
-                if (d.Date <= dbFraDT.Date)
+                if (d.Date <= appConfig.dbFrom.Date)
                 {
                     buttonGraphBF.Enabled = false; // bakover knapp
                     buttonGraphB.Enabled = false; // bakover knapp
@@ -281,7 +281,7 @@ namespace KGSA
 
             if (!EmptyDatabase())
             {
-                groupBoxRankingValg.Enabled = false;
+                groupRankingChoices.Enabled = false;
                 bwGraph.RunWorkerAsync(argKat);
             }
             else
@@ -327,7 +327,7 @@ namespace KGSA
             ProgressStop();
             if (!IsBusy(true))
                 Logg.Status("Klar.");
-            groupBoxRankingValg.Enabled = true;
+            groupRankingChoices.Enabled = true;
         }
 
 
@@ -428,7 +428,7 @@ namespace KGSA
         private string getVKstring(string arg = "")
         {
             DataTable dtVk;
-            if (arg != "")
+            if (!String.IsNullOrEmpty(arg))
                 dtVk = database.GetSqlDataTable("SELECT Varekode FROM tblVarekoder WHERE Kategori = '" + arg + "' AND Synlig = 1 ORDER by Id");
             else
                 dtVk = database.GetSqlDataTable("SELECT Varekode FROM tblVarekoder AND Synlig = 1 ORDER by Id");
@@ -488,7 +488,7 @@ namespace KGSA
             }
         }
 
-        private void PaintHistTopNew(bool save = false)
+        private void PaintHistTopNew()
         {
             try
             {

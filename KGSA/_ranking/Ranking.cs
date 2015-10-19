@@ -415,7 +415,7 @@ namespace KGSA
         {
             try
             {
-                if (arg == "")
+                if (String.IsNullOrEmpty(arg))
                     return  main.appConfig.visningNull;
 
                 decimal var = Math.Round(Convert.ToDecimal(arg), 0);
@@ -541,7 +541,7 @@ namespace KGSA
         {
             try
             {
-                if (arg == "")
+                if (String.IsNullOrEmpty(arg))
                     arg = "0";
                 decimal var = Convert.ToDecimal(arg);
                 string value = "";

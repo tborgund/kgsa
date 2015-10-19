@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlServerCe;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace KGSA
 {
@@ -29,7 +24,7 @@ namespace KGSA
             ImportSettings();
             dateTimePicker_Date.Format = DateTimePickerFormat.Custom;
             dateTimePicker_Date.CustomFormat = "MMMM yyyy";
-            dateTimePicker_Date.Value = FormMain.GetLastDayOfMonth(FormMain.dbTilDT);
+            dateTimePicker_Date.Value = FormMain.GetLastDayOfMonth(main.appConfig.dbTo);
             comboBox_Acc.SelectedIndex = 0;
             comboBox_Finans.SelectedIndex = 0;
             comboBox_Kategori.SelectedIndex = 0;
@@ -484,7 +479,7 @@ namespace KGSA
             {
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
-                    if (!(Convert.ToDateTime(row.Cells[3].Value).Month == FormMain.dbTilDT.Month && Convert.ToDateTime(row.Cells[3].Value).Year == FormMain.dbTilDT.Year))
+                    if (!(Convert.ToDateTime(row.Cells[3].Value).Month == main.appConfig.dbTo.Month && Convert.ToDateTime(row.Cells[3].Value).Year == main.appConfig.dbTo.Year))
                     {
                         row.DefaultCellStyle.ForeColor = Color.Gray;
                         this.Update();

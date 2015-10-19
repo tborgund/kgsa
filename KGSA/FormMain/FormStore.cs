@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -52,7 +51,7 @@ namespace KGSA
             try
             {
                 string extracted = obsolete.Decompress(appConfig.csvElguideExportFolder + @"\wobsolete.zip");
-                if (extracted != "")
+                if (!String.IsNullOrEmpty(extracted))
                     RunObsoleteImport(extracted);
                 else
                 {
@@ -104,7 +103,7 @@ namespace KGSA
 
         public void ClearHashStore(string katArg = "", bool bg = false)
         {
-            if (katArg != "")
+            if (!String.IsNullOrEmpty(katArg))
             {
                 if (katArg.Equals("Obsolete"))
                     appConfig.strObsolete = "";
@@ -147,8 +146,7 @@ namespace KGSA
                 {
                     Logg.Log("Lager databasen er tom. Importer wobsolete fra Elguide!");
                     webLager.Navigate(htmlImportStore);
-                    groupBoxLagerKat.Enabled = false;
-                    groupBoxLagerValg.Enabled = false;
+
                     buttonOppdaterLager.BackColor = SystemColors.ControlLight;
                     buttonOppdaterLager.ForeColor = SystemColors.ControlText;
 
@@ -156,11 +154,12 @@ namespace KGSA
                     labelStoreDatoUnder.Text = "";
                     labelStoreDato.ForeColor = SystemColors.ControlText;
                     labelStoreDatoUnder.ForeColor = SystemColors.ControlText;
+
+                    ShowHideGui_EmptyStore(false);
                 }
                 else
                 {
-                    groupBoxLagerKat.Enabled = true;
-                    groupBoxLagerValg.Enabled = true;
+                    ShowHideGui_EmptyStore(true);
 
                     if (!autoMode)
                         UpdateStore();
@@ -276,18 +275,18 @@ namespace KGSA
         public void UpdateStore(string katArg = "")
         {
             string page = currentPage();
-            if (katArg == "" && page != "")
+            if (String.IsNullOrEmpty(katArg) && !String.IsNullOrEmpty(page))
                 ClearHashStore(page);
 
-            if (katArg != "")
+            if (!String.IsNullOrEmpty(katArg))
                 RunStore(katArg);
             else
             {
-                if (page != "")
+                if (!String.IsNullOrEmpty(page))
                     RunStore(page);
-                else if (savedPage != "")
+                else if (!String.IsNullOrEmpty(savedPage))
                     RunStore(savedStorePage);
-                else if (appConfig.savedPage != "")
+                else if (!String.IsNullOrEmpty(appConfig.savedPage))
                     RunStore(appConfig.savedStorePage);
                 else
                     RunStore("Obsolete");
@@ -487,7 +486,7 @@ namespace KGSA
             }
         }
 
-        private void BuildStoreStatus(bool bg = false, BackgroundWorker bw = null)
+        private void BuildStoreStatus(bool bg = false)
         {
             string katArg = "Obsolete";
             bool abort = HarSisteVersjonStore(katArg, appConfig.strObsolete);
@@ -600,7 +599,7 @@ namespace KGSA
             }
         }
 
-        private void BuildStoreObsoleteList(bool bg = false, BackgroundWorker bw = null)
+        private void BuildStoreObsoleteList(bool bg = false)
         {
             string katArg = "ObsoleteList";
             bool abort = HarSisteVersjonStore(katArg, appConfig.strObsoleteList);
@@ -630,7 +629,8 @@ namespace KGSA
 
                     GetHtmlStart(doc, true);
 
-                    doc.Add("<span class='Title'>Lager status (" + avdeling.Get(appConfig.Avdeling) + ")</span><span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
+                    doc.Add("<h1>Utgåtte varer (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
+                    doc.Add("<span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
 
                     doc.AddRange(ranking.GetTableHtmlUkurantGrupper());
 
@@ -674,7 +674,7 @@ namespace KGSA
             }
         }
 
-        private void BuildStoreWeekly(bool bg = false, BackgroundWorker bw = null)
+        private void BuildStoreWeekly(bool bg = false)
         {
             string katArg = "LagerUkeAnnonser";
             bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerWeekly);
@@ -748,7 +748,7 @@ namespace KGSA
             }
         }
 
-        private void BuildStoreWeeklyOverview(bool bg = false, BackgroundWorker bw = null)
+        private void BuildStoreWeeklyOverview(bool bg = false)
         {
             string katArg = "LagerUkeAnnonserOversikt";
             bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerWeeklyOverview);
@@ -778,7 +778,8 @@ namespace KGSA
 
                     GetHtmlStart(doc, true);
 
-                    doc.Add("<span class='Title'>Ukesnytt lagerstatus (" + avdeling.Get(appConfig.Avdeling) + ")</span><span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
+                    doc.Add("<h1>Ukesnytt lagerstatus (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
+                    doc.Add("<span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
 
                     doc.AddRange(ranking.GetTableHtmlWeeklyList());
 
@@ -822,7 +823,7 @@ namespace KGSA
             }
         }
 
-        private void BuildStorePrisguide(bool bg = false, BackgroundWorker bw = null)
+        private void BuildStorePrisguide(bool bg = false)
         {
             string katArg = "LagerPrisguide";
             bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerPrisguide);
@@ -852,7 +853,8 @@ namespace KGSA
 
                     GetHtmlStart(doc, true);
 
-                    doc.Add("<span class='Title'>Prisguide.no (" + avdeling.Get(appConfig.Avdeling) + ")</span><span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
+                    doc.Add("<h1>Prisguide.no (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
+                    doc.Add("<span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
 
                     doc.AddRange(ranking.GetTableHtmPrisguide());
 
@@ -896,7 +898,7 @@ namespace KGSA
             }
         }
 
-        private void BuildStorePrisguideOverview(bool bg = false, BackgroundWorker bw = null)
+        private void BuildStorePrisguideOverview(bool bg = false)
         {
             string katArg = "LagerPrisguideOversikt";
             bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerPrisguideOverview);
@@ -926,7 +928,8 @@ namespace KGSA
 
                     GetHtmlStart(doc, true);
 
-                    doc.Add("<span class='Title'>Prisguide.no (" + avdeling.Get(appConfig.Avdeling) + ")</span><span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
+                    doc.Add("<h1>Prisguide.no (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
+                    doc.Add("<span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
 
                     doc.AddRange(ranking.GetTableHtmPrisguideList());
 
@@ -970,7 +973,7 @@ namespace KGSA
             }
         }
 
-        private void BuildStoreObsoleteImports(bool bg = false, BackgroundWorker bw = null)
+        private void BuildStoreObsoleteImports(bool bg = false)
         {
             string katArg = "ObsoleteImports";
             bool abort = HarSisteVersjonStore(katArg, appConfig.strObsoleteImports);

@@ -232,7 +232,7 @@ namespace KGSA
         {
             if (budgetId >= 0)
             {
-                var form = new FormBudgetTimer(appConfig, budgetInfo, budgetId);
+                var form = new FormBudgetTimer(budgetInfo, budgetId);
                 if (form.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
                 {
                     budget.SumWorkHoursAndDays(budgetInfo);

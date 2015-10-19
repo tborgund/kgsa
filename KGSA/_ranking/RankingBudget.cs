@@ -1150,7 +1150,7 @@ namespace KGSA
             return obj;
         }
 
-        public List<string> GetTableHtml(BudgetCategory cat)
+        public List<string> GetTableHtml(BudgetCategory cat, BackgroundWorker bw = null)
         {
             try
             {
@@ -1170,10 +1170,12 @@ namespace KGSA
                 }
 
                 DateTime date = dtTil;
-                if (date > FormMain.dbTilDT)
-                    date = FormMain.dbTilDT;
+                if (date > main.appConfig.dbTo)
+                    date = main.appConfig.dbTo;
 
-                doc.Add("<h3>Resultat for " + BudgetCategoryClass.TypeToName(cat) + " budsjett oppdatert " + date.ToString("dddd d. MMMM yyyy", FormMain.norway) + " og timeantall oppdatert " + budgetInfo.updated.ToString("dddd d. MMMM yyyy", FormMain.norway) + "</h2>");
+                doc.Add("<h3>Resultat for " + BudgetCategoryClass.TypeToName(cat) + " budsjett oppdatert "
+                    + date.ToString("dddd d. MMMM yyyy", FormMain.norway) + " og timeantall oppdatert "
+                    + budgetInfo.updated.ToString("dddd d. MMMM yyyy", FormMain.norway) + "</h2>");
 
                 doc.Add("<div class='toolbox hidePdf'>");
                 doc.Add("<a class='GuiButton hidePdf' onclick='toggleTable(" + hashId + ");' href='#'>Vis / Skjul</a><br>");
@@ -1360,8 +1362,8 @@ namespace KGSA
                 string productColor = budget.GetProductColor(product);
 
                 DateTime date = dtTil;
-                if (date > FormMain.dbTilDT)
-                    date = FormMain.dbTilDT;
+                if (date > main.appConfig.dbTo)
+                    date = main.appConfig.dbTo;
 
                 doc.Add("<h2>Resultat for " + budget.ProductToString(product) + " - " + BudgetCategoryClass.TypeToName(cat) + " budsjett oppdatert " + date.ToString("dddd d. MMMM yyyy", FormMain.norway) + " og timeantall oppdatert " + budgetInfo.updated.ToString("dddd d. MMMM yyyy", FormMain.norway) + "</h2>");
 

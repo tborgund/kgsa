@@ -2,16 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlServerCe;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net.Mail;
-using System.Security.Cryptography;
-using System.Text;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Serialization;
-using KGSA.Properties;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Net;
@@ -407,11 +401,10 @@ namespace KGSA
             checkBoxPOP3UseSsl.Checked = main.appConfig.epostPOP3ssl;
             textBoxEpostPOP3bruker.Text = main.appConfig.epostPOP3username;
             var aes = new SimpleAES();
-            if (main.appConfig.epostPOP3password != "")
+            if (!String.IsNullOrEmpty(main.appConfig.epostPOP3password))
                 textBoxEpostPOP3pass.Text = aes.DecryptString(main.appConfig.epostPOP3password);
             else
                 textBoxEpostPOP3pass.Text = "";
-            SetNumericValue(numericEpostPOP3searchLimit, main.appConfig.epostPOP3searchLimit);
 
             // E-POST - Annet
             textBoxEpostNesteMelding.Text = main.appConfig.epostNesteMelding.Replace("\n", Environment.NewLine);
@@ -496,7 +489,7 @@ namespace KGSA
             // WEBSERVER - Sikkerhet
             checkBoxWebserverSimpleAut.Checked = main.appConfig.webserverRequireSimpleAuthentication;
             textBoxWebserverUser.Text = main.appConfig.webserverUser;
-            if (main.appConfig.webserverPassword != "")
+            if (!String.IsNullOrEmpty(main.appConfig.webserverPassword))
                 textBoxWebserverPassword.Text = aes.DecryptString(main.appConfig.webserverPassword);
             else
                 textBoxWebserverPassword.Text = "";
@@ -660,7 +653,7 @@ namespace KGSA
                 main.appConfig.oversiktKravMtdShowTarget = checkKravMtdShowTarget.Checked;
 
                 // OVERSIKT - Format og logo
-                if (visningNullTextBox.Text == "")
+                if (String.IsNullOrEmpty(visningNullTextBox.Text))
                     main.appConfig.visningNull = "&nbsp;";
                 else
                     main.appConfig.visningNull = visningNullTextBox.Text;
@@ -671,13 +664,13 @@ namespace KGSA
                 // FAVORITTER - Favoritter
                 main.appConfig.favAvdeling = "";
                 for (int i = listBoxFavAvd.Items.Count; i-- > 0; )
-                    if (listBoxFavAvd.Items[i].ToString() == "")
+                    if (!String.IsNullOrEmpty(listBoxFavAvd.Items[i].ToString()))
                         listBoxFavAvd.Items.RemoveAt(i);
                 for (int i = 0; i < listBoxFavAvd.Items.Count; i++)
                 {
                     if (listBoxFavAvd.Items[i].ToString().StartsWith(main.appConfig.Avdeling.ToString()))
                         continue;
-                    if (listBoxFavAvd.Items[i].ToString() != "")
+                    if (!String.IsNullOrEmpty(listBoxFavAvd.Items[i].ToString()))
                         main.appConfig.favAvdeling += listBoxFavAvd.Items[i].ToString().Substring(0, 4);
                     if ((i + 1) < listBoxFavAvd.Items.Count)
                         main.appConfig.favAvdeling += ",";
@@ -783,7 +776,7 @@ namespace KGSA
                 main.appConfig.epostSMTPport = Convert.ToInt32(textBoxEpostSMTPport.Text);
                 main.appConfig.epostSMTPssl = checkBoxEmailUseSsl.Checked;
                 main.appConfig.epostBrukBcc = checkBoxEmailUseBcc.Checked;
-                if (!IsValidEmail(textBoxEpostAvsender.Text) && textBoxEpostAvsender.Text != "")
+                if (!IsValidEmail(textBoxEpostAvsender.Text) && !String.IsNullOrEmpty(textBoxEpostAvsender.Text))
                 {
                     tabControlMain.SelectedTab = tabPageEpost;
                     textBoxEpostAvsender.ForeColor = Color.Red;
@@ -803,11 +796,10 @@ namespace KGSA
                 main.appConfig.epostPOP3ssl = checkBoxPOP3UseSsl.Checked;
                 main.appConfig.epostPOP3username = textBoxEpostPOP3bruker.Text;
                 var aes = new SimpleAES();
-                if (textBoxEpostPOP3pass.Text != "")
+                if (!String.IsNullOrEmpty(textBoxEpostPOP3pass.Text))
                     main.appConfig.epostPOP3password = aes.EncryptToString(textBoxEpostPOP3pass.Text);
                 else
                     main.appConfig.epostPOP3password = "";
-                main.appConfig.epostPOP3searchLimit = Convert.ToInt32(numericEpostPOP3searchLimit.Value);
 
                 // E-POST - Annet
                 main.appConfig.epostNesteMelding = textBoxEpostNesteMelding.Text.Replace(Environment.NewLine, "\n");
@@ -886,7 +878,7 @@ namespace KGSA
                 // WEBSERVER - Sikkerhet
                 main.appConfig.webserverRequireSimpleAuthentication = checkBoxWebserverSimpleAut.Checked;
                 main.appConfig.webserverUser = textBoxWebserverUser.Text;
-                if (textBoxWebserverPassword.Text != "")
+                if (!String.IsNullOrEmpty(textBoxWebserverPassword.Text))
                     main.appConfig.webserverPassword = aes.EncryptToString(textBoxWebserverPassword.Text);
                 else
                     main.appConfig.webserverPassword = "";
@@ -939,7 +931,7 @@ namespace KGSA
 
                 ClearMessageTimer();
 
-                if (str != "")
+                if (!String.IsNullOrEmpty(str))
                     Logg.Log(str, c, true);
             }
             catch
@@ -1398,7 +1390,7 @@ namespace KGSA
                 labelImportForklaring.Text = "Importere alle transaksjoner, også fra alle andre\navdelinger hvis de finnes. Er nødvendig\nfor ranking av andre tjenester.";
             if (comboBoxImport.SelectedIndex == 2)
                 labelImportForklaring.Text = "Importere alle transaksjoner fra din egen avdeling\nsamt angitte favoritt avdelinger. \nEr nødvendig for ranking av andre tjenester.";
-            if (main.appConfig.importSetting == "Normal" && !FormMain.EmptyDatabase() && comboBoxImport.SelectedIndex > 0)
+            if (main.appConfig.importSetting == "Normal" && !main.EmptyDatabase() && comboBoxImport.SelectedIndex > 0)
                 MessageBox.Show("Viktig: Hvis du har importert tidligere uten å ta med alle transaksjonene vil ranking på de andre tjeneste utenom KG/SA være ufullstendige. Importer transaksjonene for hele perioden på nytt.", "KGSA - Informasjon", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -1469,7 +1461,7 @@ namespace KGSA
         {
             try
             {
-                if (FormMain.EmptyDatabase())
+                if (main.EmptyDatabase())
                 {
                     SendMessage("Databasen er tom!", Color.Red);
                     return;
@@ -1479,7 +1471,9 @@ namespace KGSA
                 listBoxButikkerDatabase.Items.Clear();
                 listBoxButikkerDatabase.Items.Add("Laster..");
                 this.Update();
-                DataTable dt = main.database.GetSqlDataTable("SELECT DISTINCT Avdeling FROM tblSalg WHERE Avdeling < 1700 AND Dato >= '" + FormMain.dbTilDT.AddYears(-1).ToString("yyy-MM-dd") + "' AND Dato <= '" + FormMain.dbTilDT.ToString("yyy-MM-dd") + "'");
+                DataTable dt = main.database.GetSqlDataTable("SELECT DISTINCT Avdeling FROM tblSalg "
+                    + " WHERE Avdeling < 1700 AND Dato >= '" + main.appConfig.dbTo.AddYears(-1).ToString("yyy-MM-dd")
+                    + "' AND Dato <= '" + main.appConfig.dbTo.ToString("yyy-MM-dd") + "'");
                 if (dt != null)
                 {
                     if (dt.Rows.Count > 0)
@@ -1521,7 +1515,7 @@ namespace KGSA
         {
             try
             {
-                if (FormMain.EmptyDatabase() || listBoxButikkerDatabase.Items.Count == 0)
+                if (main.EmptyDatabase() || listBoxButikkerDatabase.Items.Count == 0)
                 {
                     SendMessage("Databasen er tom eller butikklisten er ikke oppdatert.", Color.Red);
                     return;
@@ -1672,7 +1666,7 @@ namespace KGSA
 
         private void button23_Click_1(object sender, EventArgs e)
         {
-            var form = new FormEmailAddressbook(main);
+            var form = new FormEmailAddressbook();
             form.ShowDialog(this);
         }
 

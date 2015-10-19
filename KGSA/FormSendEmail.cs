@@ -14,12 +14,10 @@ namespace KGSA
     public partial class FormSendEmail : Form
     {
         FormMain main;
-        private DateTime Dato;
-        public FormSendEmail(FormMain form, DateTime dato)
+        public FormSendEmail(FormMain form)
         {
             this.main = form;
             InitializeComponent();
-            this.Dato = dato;
             comboBoxGruppe.SelectedIndex = 1;
             comboBoxType.SelectedIndex = 0;
             textBoxTitle.Text = main.appConfig.epostEmne;
@@ -37,7 +35,7 @@ namespace KGSA
 
         private void button3_Click(object sender, EventArgs e)
         {
-            FormEmailAddressbook emailForm = new FormEmailAddressbook(main);
+            FormEmailAddressbook emailForm = new FormEmailAddressbook();
 
             emailForm.ShowDialog();
         }

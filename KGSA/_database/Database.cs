@@ -284,7 +284,7 @@ namespace KGSA
                         KgsaEmail email = new KgsaEmail(main);
                         email.ImportOldEmailList(FormMain.settingsPath + @"\emailRecipients.txt");
 
-                        FormEmailAddressbook form = new FormEmailAddressbook(main);
+                        FormEmailAddressbook form = new FormEmailAddressbook();
                         form.ShowDialog();
                     }
                     try

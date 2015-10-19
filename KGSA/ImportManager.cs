@@ -21,9 +21,9 @@ namespace KGSA
     {
         FormMain main;
         private static string[] strGroupImportNormal = new string[8] { "224", "280", "431", "480", "531", "533", "534", "580" };
-        private static List<int> intGroupImportNormal = new List<int> { 224, 280, 431, 480, 531, 533, 534, 580 };
-        private DateTime importTimerLastValue = DateTime.MinValue;
-        private DateTime importTimerLastValueChanged = DateTime.MinValue;
+        //private static List<int> intGroupImportNormal = new List<int> { 224, 280, 431, 480, 531, 533, 534, 580 };
+        //private DateTime importTimerLastValue = DateTime.MinValue;
+        //private DateTime importTimerLastValueChanged = DateTime.MinValue;
         private List<string> csvFilesToImport = new List<string>();
         private static decimal numberScale = 145.7M;
         public decimal csvSizeGuess = 0;
@@ -55,8 +55,8 @@ namespace KGSA
 
             this.returnCode = 0;
             this.importReadErrors = 0;
-            this.importTimerLastValue = DateTime.MinValue;
-            this.importTimerLastValueChanged = DateTime.MinValue;
+            //this.importTimerLastValue = DateTime.MinValue;
+            //this.importTimerLastValueChanged = DateTime.MinValue;
             csvImport[] csvTransAll = new csvImport[] { };
 
             main.processing.SetValue = 0;

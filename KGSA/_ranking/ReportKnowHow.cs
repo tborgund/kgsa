@@ -33,7 +33,7 @@ namespace KGSA
             {
                 MakeTableMonthly(bw);
 
-                for (int g = FormMain.dbFraDT.Year; g < (FormMain.dbTilDT.Year + 1); g++)
+                for (int g = main.appConfig.dbFrom.Year; g < (main.appConfig.dbTo.Year + 1); g++)
                 {
                     if (StopRankingPending())
                         return;
@@ -116,8 +116,8 @@ namespace KGSA
         {
             dtMonthly = ReadyTableMonthly();
 
-            DateTime d1 = FormMain.dbFraDT;
-            DateTime d2 = FormMain.dbTilDT;
+            DateTime d1 = main.appConfig.dbFrom;
+            DateTime d2 = main.appConfig.dbTo;
             DateTime current =  FormMain.GetFirstDayOfMonth(d1);
 
             int months = ((d2.Year - d1.Year) * 12) + d2.Month - d1.Month;

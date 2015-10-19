@@ -13,10 +13,8 @@ namespace KGSA
 {
     public partial class FormEmailAddressbook : Form
     {
-        FormMain main;
-        public FormEmailAddressbook(FormMain form)
+        public FormEmailAddressbook()
         {
-            this.main = form;
             InitializeComponent();
             UpdateEmailsDatagrid();
         }

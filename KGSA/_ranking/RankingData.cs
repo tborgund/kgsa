@@ -111,7 +111,7 @@ namespace KGSA
                 decimal provisjon = 0, tekProvisjon = 0;
                 decimal bAntallSA = 0, bAntallNB = 0, bAntallSATot = 0, bAntallNBTot = 0;
 
-                if (main.sKoder.GetTeknikerAlle() != "")
+                if (!String.IsNullOrEmpty(main.sKoder.GetTeknikerAlle()))
                     foreach (var varekode in varekoderDataAlle)
                         tekProvisjon += varekode.provTekniker
                             * Compute(sqlce, "Sum(Antall)", "[Varekode]='" + varekode.kode + "'");

@@ -243,7 +243,7 @@ namespace KGSA
 
                 DataTable dt;
 
-                if (loggFilter != "")
+                if (!String.IsNullOrEmpty(loggFilter))
                     dt = GetServiceSpecialList(statusFilter, loggFilter);
                 else
                     dt = GetServiceList(statusFilter);
@@ -344,7 +344,7 @@ namespace KGSA
                         DateTime datoIarbeid = Convert.ToDateTime(sqlservice.Rows[0]["DatoIarbeid"]);
                         if (datoIarbeid.Date != FormMain.rangeMin.Date)
                             doc.Add("<br>I arbeid: " + datoIarbeid.ToString("d. MMMM", FormMain.norway) + " (satt i arbeid av: " + sqlservice.Rows[0]["Selgerkode"].ToString() + ")");
-                        if (sqlservice.Rows[0]["Verksted"].ToString() != "")
+                        if (!String.IsNullOrEmpty(sqlservice.Rows[0]["Verksted"].ToString()))
                             doc.Add("<br>Verksted: " + sqlservice.Rows[0]["Verksted"].ToString());
                         DateTime datoFerdig = Convert.ToDateTime(sqlservice.Rows[0]["DatoFerdig"]);
                         serviceStatus = sqlservice.Rows[0]["Status"].ToString();
@@ -408,7 +408,7 @@ namespace KGSA
             }
         }
 
-        private DataTable serviceHistory;
+        //private DataTable serviceHistory;
         public void GenerateServiceHistory(List<string> doc)
         {
             try
@@ -423,7 +423,7 @@ namespace KGSA
                     return;
                 }
 
-                serviceHistory = sqlce;
+                //serviceHistory = sqlce;
 
                 doc.Add("<div class='toolbox hidePdf'>");
                 doc.Add("<a class='GuiButton hidePdf' onclick='toggleTable(" + hashId + ");' href='#'>Vis / Skjul</a><br>");
@@ -1290,7 +1290,7 @@ namespace KGSA
                 DateTime DatoFra = dateArg.AddDays(-days);
                 DateTime checkValue = new DateTime(2001, 1, 1);
 
-                if (avd == "")
+                if (String.IsNullOrEmpty(avd))
                     avd = main.appConfig.Avdeling.ToString();
 
                 DataTable sqlce = main.database.GetSqlDataTable("SELECT * FROM tblService WHERE (DatoMottat >= '" + DatoFra.ToString("yyy-MM-dd") + "') AND (DatoMottat <= '" + dateArg.ToString("yyy-MM-dd") + "') AND Avdeling = '" + avd + "' ORDER BY DatoMottat ASC");

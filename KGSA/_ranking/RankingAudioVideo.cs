@@ -93,7 +93,7 @@ namespace KGSA
                 string[] sk = main.sKoder.GetSelgerkoder("AudioVideo", true);
                 decimal provisjon = 0, tekProvisjon = 0;
 
-                if (main.sKoder.GetTeknikerAlle() != "")
+                if (!String.IsNullOrEmpty(main.sKoder.GetTeknikerAlle()))
                     foreach (var varekode in varekoderAudioVideo)
                         tekProvisjon += varekode.provTekniker
                             * Compute(sqlce, "Sum(Antall)", "[Varekode]='" + varekode.kode + "'");

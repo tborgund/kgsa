@@ -75,7 +75,7 @@ namespace KGSA
         {
             Logg.Debug("Ber om oppdatering av grafikk: " + argKat + " | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
 
-            if (sk != "" && (argKat == "Data" || argKat == "Nettbrett" || argKat == "Tele" || argKat == "AudioVideo" || argKat == "KnowHow"))
+            if (!String.IsNullOrEmpty(sk) && (argKat == "Data" || argKat == "Nettbrett" || argKat == "Tele" || argKat == "AudioVideo" || argKat == "KnowHow"))
             {
                 if (lastSelgerkode != sk || lastSelgerkodeKat != argKat)
                 {
@@ -605,7 +605,7 @@ namespace KGSA
             {
                 string filter = string.Format(CultureInfo.InvariantCulture, "Dato >= '{0}' AND Dato <= '{1}'", dtFraArg.ToString("o", CultureInfo.InvariantCulture), dtTilArg.ToString("o", CultureInfo.InvariantCulture));
 
-                if (sk != "" && (argKat == "Data" || argKat == "Nettbrett" || argKat == "Tele" || argKat == "AudioVideo" || argKat == "KnowHow"))
+                if (!String.IsNullOrEmpty(sk) && (argKat == "Data" || argKat == "Nettbrett" || argKat == "Tele" || argKat == "AudioVideo" || argKat == "KnowHow"))
                 {
                     if (!noUpdate && dataSelger == null)
                         UpdateGraphChunk(argKat, dtFraArg, dtTilArg, bw, sk);
@@ -963,7 +963,7 @@ namespace KGSA
 
             var dt = new DataTable();
             string skString = "";
-            if (sk != "")
+            if (!String.IsNullOrEmpty(sk))
                 skString = " AND Selgerkode = '" + sk + "' ";
 
             string product = "";
@@ -988,7 +988,7 @@ namespace KGSA
 
             for (int d = 0; d < Favoritter.Count; d++)
             {
-                if (sk != "" && d > 0)
+                if (!String.IsNullOrEmpty(sk) && d > 0)
                     break;
 
                 string command = "SELECT SUM(CASE WHEN " + product + " THEN Antall ELSE 0 END) AS Product, "
@@ -1042,7 +1042,7 @@ namespace KGSA
                         dt.Rows[b][Favoritter[d]] = new StorageData(0, 0);
             }
 
-            if (main.appConfig.graphAdvanced && sk == "")
+            if (main.appConfig.graphAdvanced && String.IsNullOrEmpty(sk))
             {
                 if (FormMain._graphReqStop)
                     return null;
@@ -1344,7 +1344,7 @@ namespace KGSA
                     int pSize = dt.Rows.Count;
                     float Hstep = X / pSize;
                     
-                    if (argAgr == "")
+                    if (String.IsNullOrEmpty(argAgr))
                     {
                         if (Hstep > (40 * dpi))
                             argAgr = "dag";
@@ -1384,7 +1384,7 @@ namespace KGSA
                     List<string> toppselgere = new List<string> { };
                     DagSjekk agr = new DagSjekk(argAgr);
                     List<string> fav = new List<string> { };
-                    if (sk != "")
+                    if (!String.IsNullOrEmpty(sk))
                         fav.Add(main.appConfig.Avdeling.ToString());
                     else
                         fav = Favoritter;
@@ -1466,7 +1466,7 @@ namespace KGSA
                             sumProductAgr = 0;
                             sumServiceAgr = 0;
                         }
-                        if (main.appConfig.graphAdvanced && argAgr == "dag" && sk == "")
+                        if (main.appConfig.graphAdvanced && argAgr == "dag" && String.IsNullOrEmpty(sk))
                         {
                             int sumacc = 0;
                             if (!DBNull.Value.Equals(dt.Rows[d][dt.Columns.Count - 1]))
@@ -1572,9 +1572,9 @@ namespace KGSA
                     listPercent.Reverse(); // reverser listen
 
                     int height = 0;
-                    if (argY > 600 && main.appConfig.graphAdvanced && sk == "")
+                    if (argY > 600 && main.appConfig.graphAdvanced && String.IsNullOrEmpty(sk))
                         height += toppselgere.Count * fontHeight;
-                    if (argY > 400 && sk == "")
+                    if (argY > 400 && String.IsNullOrEmpty(sk))
                         height += fav.Count * fontHeight;
                     if (!main.appConfig.graphAdvanced || argY <= 600)
                         height += fontHeight;
@@ -1619,7 +1619,7 @@ namespace KGSA
                         g.DrawRectangle(pen1, new Rectangle(18, 15 + fontSepHeight + add, boxLength, boxLength));
                     }
 
-                    if (argY > 600 && main.appConfig.graphAdvanced && sk == "")
+                    if (argY > 600 && main.appConfig.graphAdvanced && String.IsNullOrEmpty(sk))
                     {
                         for (int i = 0; i < toppselgere.Count; i++)
                         {
@@ -1631,7 +1631,7 @@ namespace KGSA
                         }
                     }
 
-                    if (argY > 400 && sk == "")
+                    if (argY > 400 && String.IsNullOrEmpty(sk))
                     {
                         for (int i = 0; i < fav.Count; i++)
                         {
@@ -1682,7 +1682,7 @@ namespace KGSA
                     int pSize = dt.Rows.Count;
                     float Hstep = X / pSize;
 
-                    if (argAgr == "")
+                    if (String.IsNullOrEmpty(argAgr))
                     {
                         if (Hstep > (40 * dpi))
                             argAgr = "dag";
@@ -1985,7 +1985,7 @@ namespace KGSA
                     int pSize = dt.Rows.Count;
                     float Hstep = X / pSize;
 
-                    if (argAgr == "")
+                    if (String.IsNullOrEmpty(argAgr))
                     {
                         if (Hstep > (40 * dpi))
                             argAgr = "dag";

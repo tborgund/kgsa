@@ -29,7 +29,28 @@ namespace KGSA
             return 0;
         }
 
-        public string NumberStyle_Percent(decimal numerator, decimal denominator, bool colorNegative = true, bool colorPositive = false)
+        public string NumberStyle_Percent(object numeratorObj, object denominatorObj, bool colorNegative = false, bool colorPositive = false, decimal nullPoint = 1)
+        {
+            try
+            {
+                decimal numerator = 0;
+                decimal denominator = 0;
+                if (DBNull.Value == numeratorObj)
+                    numerator = 0;
+                else
+                    numerator = Convert.ToDecimal(numeratorObj);
+                if (DBNull.Value == denominatorObj)
+                    denominator = 0;
+                else
+                    denominator = Convert.ToDecimal(denominatorObj);
+
+                return NumberStyle_Percent(numerator, denominator, colorNegative, colorPositive, nullPoint);
+            }
+            catch (Exception) { }
+            return "";
+        }
+
+        public string NumberStyle_Percent(decimal numerator, decimal denominator, bool colorNegative = false, bool colorPositive = false, decimal nullPoint = 1)
         {
             try
             {
@@ -46,15 +67,28 @@ namespace KGSA
                 string format = "0.#";
 
                 string output = main.appConfig.visningNull;
-                if (value < 1)
+                if (value < nullPoint)
                     output = "<span" + styleRed + ">" + (value * 100).ToString(format, FormMain.norway) + "%</span>";
-                if (value >= 1)
+                if (value >= nullPoint)
                     output = "<span" + styleGreen + ">" + (value * 100).ToString(format, FormMain.norway) + "%</span>";
 
                 return output;
             }
             catch { }
             return main.appConfig.visningNull + "%";
+        }
+
+        public string NumberStyle_Normal(object obj, int decimals = 0, string afix = "", bool colorNegative = false, bool colorPositive = false)
+        {
+            try
+            {
+                if (DBNull.Value == obj)
+                    return NumberStyle_Normal(0, decimals = 0, afix, colorNegative, colorPositive);
+                else
+                    return NumberStyle_Normal(Convert.ToDecimal(obj), decimals = 0, afix, colorNegative, colorPositive);
+            }
+            catch (Exception) { }
+            return "";
         }
 
         public string NumberStyle_Normal(decimal value, int decimals = 0, string afix = "", bool colorNegative = false, bool colorPositive = false)

@@ -15,7 +15,7 @@ namespace KGSA
     public class WebServer
     {
         private readonly HttpListener _listener = new HttpListener();
-        private readonly Func<HttpListenerRequest, string> _responderMethod;
+        //private readonly Func<HttpListenerRequest, string> _responderMethod;
         private AppSettings appConfig;
         public KgsaServer server;
 
@@ -35,7 +35,7 @@ namespace KGSA
                 foreach (string s in prefixes)
                     _listener.Prefixes.Add(s);
 
-                _responderMethod = method;
+                //_responderMethod = method;
             }
             catch (Exception ex)
             {

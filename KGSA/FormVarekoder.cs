@@ -25,7 +25,7 @@ namespace KGSA
 
         private void FilterVarekoder()
         {
-            if (toolStripComboBoxFilter.Text != "")
+            if (!String.IsNullOrEmpty(toolStripComboBoxFilter.Text))
             {
                 if (toolStripComboBoxFilter.Text == "Alle")
                     bindingSource1.DataSource = main.appConfig.varekoder;
@@ -74,7 +74,7 @@ namespace KGSA
 
                 ClearMessageTimer();
 
-                if (str != "")
+                if (!String.IsNullOrEmpty(str))
                     Logg.Log(str, c, true);
             }
             catch

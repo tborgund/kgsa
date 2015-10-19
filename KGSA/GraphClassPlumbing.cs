@@ -57,7 +57,7 @@ namespace KGSA
             try
             {
                 List<VarekodeList> list;
-                if (argKat != "" && argKat != "KnowHow")
+                if (!String.IsNullOrEmpty(argKat) && argKat != "KnowHow")
                     list = main.appConfig.varekoder.Where(item => item.kategori == argKat && item.inclhitrate == true).ToList();
                 else
                     list = main.appConfig.varekoder.Where(item => item.synlig == true && item.inclhitrate == true).ToList();

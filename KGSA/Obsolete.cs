@@ -15,9 +15,9 @@ namespace KGSA
     public class Obsolete
     {
         FormMain main;
-        DataTable tableHistory;
+        //DataTable tableHistory;
         public DateTime compareDate { get; set; }
-        BackgroundWorker bwCheckLAtestDate = new BackgroundWorker();
+        //BackgroundWorker bwCheckLAtestDate = new BackgroundWorker();
         public void Load(FormMain form)
         {
             this.main = form;
@@ -630,74 +630,5 @@ namespace KGSA
             }
         }
 
-        public void RetreieveHistoryTable()
-        {
-            try
-            {
-                tableHistory = main.database.GetSqlDataTable("SELECT * FROM tblHistory WHERE (Avdeling = " + main.appConfig.Avdeling + " OR Avdeling = " + (main.appConfig.Avdeling + 1000) + ") AND Dato >= '" + main.appConfig.dbStoreViewpoint.ToString("yyy-MM-dd") + "'");
-            }
-            catch(Exception ex)
-            {
-                Logg.Unhandled(ex);
-            }
-        }
-
-        private StoreChartData MakeStoreHistoryDataKatgori(DataTable table, string kategori, int avd)
-        {
-            var store = new StoreChartData();
-            store.kategori = kategori;
-            for (int i = 0; i < table.Rows.Count; i++)
-                if (table.Rows[i]["Kategori"].ToString() == kategori && Convert.ToInt32(table.Rows[i]["Avdeling"]) == avd)
-                    store.data.Add(new StoreChartItem((DateTime)table.Rows[i]["Dato"], (decimal)table.Rows[i]["Ukuransverdi"], (decimal)table.Rows[i]["Ukuransprosent"]));
-
-            if (store.data == null)
-                return new StoreChartData();
-            if (store.data.Count == 0)
-                return new StoreChartData();
-
-            var item = store.data.OrderByDescending(i => i.andel).FirstOrDefault();
-            store.max_andel = item.andel;
-            item = store.data.OrderByDescending(i => i.ukurans).FirstOrDefault();
-            store.max_ukurans = item.ukurans;
-
-            item = store.data.OrderBy(i => i.andel).FirstOrDefault();
-            store.min_andel = item.andel;
-            item = store.data.OrderBy(i => i.ukurans).FirstOrDefault();
-            store.min_ukurans = item.ukurans;
-
-            return store;
-        }
     }
-
-    public class StoreChartData
-    {
-        public string kategori { get; set; }
-        public List<StoreChartItem> data { get; set; }
-        public decimal min_ukurans { get; set; }
-        public decimal max_ukurans { get; set; }
-        public decimal min_andel { get; set; }
-        public decimal max_andel { get; set; }
-        public StoreChartData()
-        {
-            this.data = new List<StoreChartItem>() { };
-            min_andel = 0;
-            min_ukurans = 0;
-            max_andel = 0;
-            max_ukurans = 0;
-        }
-    }
-
-    public class StoreChartItem
-    {
-        public DateTime date { get; set; }
-        public decimal ukurans { get; set; }
-        public decimal andel { get; set; }
-        public StoreChartItem(DateTime date, decimal ukurans, decimal andel)
-        {
-            this.date = date;
-            this.ukurans = ukurans;
-            this.andel = andel;
-        }
-    }
-
 }

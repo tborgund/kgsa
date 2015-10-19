@@ -84,7 +84,7 @@ namespace KGSA
                 string tab = main.readCurrentTab();
                 string page = main.currentPage();
 
-                if ((tab.Equals("Ranking") || tab.Equals("Avdelinger") || tab.Equals("Store")) && !page.Equals(""))
+                if ((tab.Equals("Ranking") || tab.Equals("Avdelinger") || tab.Equals("Store")) && !String.IsNullOrEmpty(page))
                 {
                     string file = ExportDocument(page, date);
                     if (file != null)
@@ -117,7 +117,7 @@ namespace KGSA
                 return;
             }
 
-            if (bookName.Equals("") || sheetName.Equals(""))
+            if (String.IsNullOrEmpty(bookName) || String.IsNullOrEmpty(sheetName))
             {
                 Logg.Debug("OpenXML: Navn ikke angitt for dokumentet og/eller siden.");
                 return;

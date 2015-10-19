@@ -19,18 +19,18 @@ namespace KGSA
         delegate void SetCancelButtonCallback(bool value);
         private void SetGroupBoxDatoCallback(bool value)
         {
-            if (groupBoxRankingValg.InvokeRequired)
+            if (groupRankingChoices.InvokeRequired)
             {
                 SetCancelButtonCallback d = new SetCancelButtonCallback(SetGroupBoxDatoCallback);
                 this.Invoke(d, new object[] { value });
             }
             else
-                groupBoxRankingValg.Enabled = value;
+                groupRankingChoices.Enabled = value;
         }
 
         private void RunRanking(string katArg)
         {
-            if (chkPicker != pickerDato.Value && !bwRanking.IsBusy && (katArg == "Oversikt" || katArg == "Butikk" || katArg == "Data" || katArg == "AudioVideo" || katArg == "Tele" || katArg == "Toppselgere" || katArg == "KnowHow" || katArg == "Lister" || katArg == "Budsjett" || katArg == "Vinnprodukter"))
+            if (chkPicker != pickerRankingDate.Value && !bwRanking.IsBusy && !String.IsNullOrEmpty(katArg))
             {
                 HighlightButton(katArg);
                 if (!EmptyDatabase())
@@ -41,24 +41,11 @@ namespace KGSA
             chkPicker = rangeMin;
         }
 
-        private void RunAvd(string katArg)
-        {
-            if (chkPicker != pickerDato.Value && !bwAvdeling.IsBusy && (katArg == "Tjenester" || katArg == "Snittpriser"))
-            {
-                HighlightButtonAvd(katArg);
-                if (!EmptyDatabase())
-                    bwAvdeling.RunWorkerAsync(katArg);
-                else
-                    webHTMLAvd.Navigate(htmlImport);
-            }
-            chkPicker = rangeMin;
-        }
-
         private void RunVinnSelger(string selgerArg)
         {
             if (!EmptyDatabase())
             {
-                groupBoxRankingValg.Enabled = false;
+                groupRankingChoices.Enabled = false;
                 Logg.Log("Oppdaterer [" + selgerArg + "] ..", Color.Black, false, true);
                 bwVinnSelger.RunWorkerAsync(selgerArg);
             }
@@ -67,14 +54,14 @@ namespace KGSA
 
         }
 
-        private void RunBudget(BudgetCategory cat)
+        public void RunBudget(BudgetCategory cat)
         {
             if (chkBudgetPicker != pickerBudget.Value && !bwBudget.IsBusy)
             {
                 HighlightBudgetButton(cat);
                 if (!EmptyDatabase())
                 {
-                    groupBoxBudgetValg.Enabled = false;
+                    groupBudgetChoices.Enabled = false;
                     bwBudget.RunWorkerAsync(cat);
                 }
                 else
@@ -95,7 +82,10 @@ namespace KGSA
         {
             ProgressStart();
             string katArg = (string)e.Argument;
-            string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+            if (katArg == null)
+                katArg = "";
+
+            string newHash = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
             if (katArg == "Oversikt")
             {
                 BuildOversiktRanking();
@@ -141,6 +131,16 @@ namespace KGSA
                 BuildVinnRanking();
                 appConfig.strVinnprodukter = newHash;
             }
+            else if (katArg == "Tjenester")
+            {
+                BuildAvdTjenester();
+                appConfig.strTjenester = newHash;
+            }
+            else if (katArg == "Snittpriser")
+            {
+                BuildAvdSnittpriser();
+                appConfig.strSnittpriser = newHash;
+            }
             else
                 Logg.Log("Ingen kategori valgt for beregning av ranking.");
         }
@@ -150,41 +150,18 @@ namespace KGSA
             ProgressStop();
             if (!IsBusy(true, true))
                 Logg.Status("Klar.");
-            groupBoxRankingValg.Enabled = true;
-        }
-
-        private void bwAvdeling_DoWork(object sender, DoWorkEventArgs e)
-        {
-            ProgressStart();
-            string katArg = (string)e.Argument;
-            string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
-
-            if (katArg == "Tjenester")
-            {
-                BuildAvdTjenester(false, bwAvdeling);
-                appConfig.strAvdTjenester = newHash;
-            }
-            else if (katArg == "Snittpriser")
-            {
-                BuildAvdSnittpriser(false, bwAvdeling);
-                appConfig.strAvdSnittpriser = newHash;
-            }
-            else
-                Logg.Log("Ingen kategori valgt for beregning av ranking.");
-        }
-
-        private void bwAvdeling_Completed(object sender, RunWorkerCompletedEventArgs e)
-        {
-            ProgressStop();
-            if (!IsBusy(true, true))
-                Logg.Status("Klar.");
-            groupBoxRankingValg.Enabled = true;
+            groupRankingChoices.Enabled = true;
         }
 
         private void bwBudget_DoWork(object sender, DoWorkEventArgs e)
         {
             ProgressStart();
             BudgetCategory cat = (BudgetCategory)e.Argument;
+            MakeBudgetPage(cat, bwBudget);
+        }
+
+        public void MakeBudgetPage(BudgetCategory cat, BackgroundWorker bw = null)
+        {
             string newHash = appConfig.Avdeling + pickerBudget.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
             if (cat == BudgetCategory.MDA)
             {
@@ -236,6 +213,12 @@ namespace KGSA
                 BuildBudget(cat, appConfig.strBudgetButikk, htmlBudgetButikk);
                 appConfig.strBudgetButikk = newHash;
             }
+            else if (cat == BudgetCategory.Daglig)
+            {
+                PageBudgetDaily page = new PageBudgetDaily(this, false, bw, webBudget);
+                page.BuildPage(cat, appConfig.strBudgetDaily, htmlBudgetDaily, pickerBudget.Value);
+                appConfig.strBudgetDaily = newHash;
+            }
             else
                 Logg.Log("Ingen kategori valgt for beregning av budsjett.");
         }
@@ -245,7 +228,7 @@ namespace KGSA
             ProgressStop();
             if (!IsBusy(true, true))
                 Logg.Status("Klar.");
-            groupBoxBudgetValg.Enabled = true;
+            groupBudgetChoices.Enabled = true;
         }
 
         private void ViewGraph(string argKat, bool bg = false, BackgroundWorker bw = null)
@@ -260,7 +243,7 @@ namespace KGSA
                 }
                 var doc = new List<string>();
 
-                DateTime dtPick = pickerDato.Value;
+                DateTime dtPick = pickerRankingDate.Value;
                 DateTime dtFra = dtPick; DateTime dtTil = dtPick;
                 if (datoPeriodeVelger && !bg)
                 {
@@ -361,7 +344,7 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
                     if (datoPeriodeVelger && !bg)
                     {
@@ -501,7 +484,7 @@ namespace KGSA
             }
         }
 
-        private void BuildBudget(BudgetCategory cat, string currentHash, string htmlPage, bool bg = false, BackgroundWorker bw = null)
+        private void BuildBudget(BudgetCategory cat, string currentHash, string htmlPage, bool bg = false)
         {
             string katArg = BudgetCategoryClass.TypeToName(cat);
             bool abort = HarSisteVersjonBudget(cat, currentHash);
@@ -816,7 +799,7 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
                     if (datoPeriodeVelger && !bg)
                     {
@@ -969,7 +952,7 @@ namespace KGSA
             }
         }
 
-        private void BuildKnowHowRanking(bool bg = false, BackgroundWorker bw = null)
+        private void BuildKnowHowRanking(bool bg = false)
         {
             string katArg = "KnowHow";
             bool abort = HarSisteVersjon("KnowHow", appConfig.strKnowHow);
@@ -984,7 +967,7 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
                     if (datoPeriodeVelger && !bg)
                     {
@@ -1135,7 +1118,7 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
                     if (datoPeriodeVelger && !bg)
                     {
@@ -1283,7 +1266,7 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
                     if (datoPeriodeVelger && !bg)
                     {
@@ -1431,9 +1414,9 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (dbTilDT.Month != dtPick.Month && dbTilDT.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
+                    if (appConfig.dbTo.Month != dtPick.Month && appConfig.dbTo.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
                         dtTil = GetLastDayOfMonth(dtPick);
                     if (datoPeriodeVelger && !bg)
                     {
@@ -1540,7 +1523,7 @@ namespace KGSA
             }
         }
 
-        private void BuildToppselgereRanking(bool bg = false, BackgroundWorker bw = null)
+        private void BuildToppselgereRanking(bool bg = false)
         {
             string katArg = "Toppselgere";
             bool abort = HarSisteVersjon(katArg, appConfig.strToppselgere);
@@ -1555,9 +1538,9 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (dbTilDT.Month != dtPick.Month && dbTilDT.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
+                    if (appConfig.dbTo.Month != dtPick.Month && appConfig.dbTo.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
                         dtTil = GetLastDayOfMonth(dtPick);
                     if (datoPeriodeVelger && !bg)
                     {
@@ -1641,7 +1624,7 @@ namespace KGSA
             }
         }
 
-        private void BuildListerRanking(bool bg = false, BackgroundWorker bw = null)
+        private void BuildListerRanking(bool bg = false)
         {
             string katArg = "Lister";
             bool abort = HarSisteVersjon(katArg, appConfig.strLister);
@@ -1656,9 +1639,9 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (dbTilDT.Month != dtPick.Month && dbTilDT.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
+                    if (appConfig.dbTo.Month != dtPick.Month && appConfig.dbTo.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
                         dtTil = GetLastDayOfMonth(dtPick);
                     if (datoPeriodeVelger && !bg)
                     {
@@ -1761,14 +1744,14 @@ namespace KGSA
             }
         }
 
-        private void BuildVinnRankingSelger(string selgerArg, BackgroundWorker bw = null)
+        private void BuildVinnRankingSelger(string selgerArg)
         {
             Logg.Log("Henter vinnprodukt transaksjoner for selger..");
             try
             {
                 webHTML.Navigate(htmlLoading);
                 var doc = new List<string>();
-                DateTime dtPick = pickerDato.Value;
+                DateTime dtPick = pickerRankingDate.Value;
                 DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
 
                 var ranking = new RankingVinn(this, dtFra, dtTil, dtPick);
@@ -1805,7 +1788,7 @@ namespace KGSA
             }
         }
 
-        private void BuildVinnRanking(bool bg = false, BackgroundWorker bw = null)
+        private void BuildVinnRanking(bool bg = false)
         {
             string katArg = "Vinnprodukter";
             bool abort = HarSisteVersjon(katArg, appConfig.strVinnprodukter);
@@ -1820,7 +1803,7 @@ namespace KGSA
                     if (!bg)
                         webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
                     if (datoPeriodeVelger && !bg)
                     {
@@ -1988,24 +1971,24 @@ namespace KGSA
             return "Ukjent";
         }
 
-        private void BuildAvdTjenester(bool bg = false, BackgroundWorker bw = null)
+        private void BuildAvdTjenester(bool bg = false)
         {
             string katArg = "Tjenester";
-            bool abort = HarSisteVersjon(katArg, appConfig.strAvdTjenester);
+            bool abort = HarSisteVersjon(katArg, appConfig.strTjenester);
             try
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedAvdPage = katArg;
+                    savedPage = katArg;
                 if (!abort)
                 {
                     Logg.Log("Oppdaterer [" + katArg + "] ..");
                     if (!bg)
-                        webHTMLAvd.Navigate(htmlLoading);
+                        webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (dbTilDT.Month != dtPick.Month && dbTilDT.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
+                    if (appConfig.dbTo.Month != dtPick.Month && appConfig.dbTo.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
                         dtTil = GetLastDayOfMonth(dtPick);
                     if (datoPeriodeVelger && !bg)
                     {
@@ -2026,7 +2009,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTMLAvd.DocumentText = string.Join(null, doc.ToArray());
+                            webHTML.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtmlPage(appConfig.rankingAvdelingMode, service));
                     }
@@ -2037,57 +2020,57 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTMLAvd.Navigate(htmlStopped);
+                        webHTML.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTMLAvd.Navigate(htmlPeriode);
+                            webHTML.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlAvdTjenester, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTMLAvd.Navigate(htmlAvdTjenester);
+                                webHTML.Navigate(htmlAvdTjenester);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTMLAvd.Navigate(htmlAvdTjenester);
+                    webHTML.Navigate(htmlAvdTjenester);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTMLAvd.Navigate(htmlError);
+                    webHTML.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
             }
         }
 
-        private void BuildAvdSnittpriser(bool bg = false, BackgroundWorker bw = null)
+        private void BuildAvdSnittpriser(bool bg = false)
         {
             string katArg = "Snittpriser";
-            bool abort = HarSisteVersjon(katArg, appConfig.strAvdSnittpriser);
+            bool abort = HarSisteVersjon(katArg, appConfig.strSnittpriser);
             try
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedAvdPage = katArg;
+                    savedPage = katArg;
                 if (!abort)
                 {
                     Logg.Log("Oppdaterer [" + katArg + "] ..");
                     if (!bg)
-                        webHTMLAvd.Navigate(htmlLoading);
+                        webHTML.Navigate(htmlLoading);
                     var doc = new List<string>();
-                    DateTime dtPick = pickerDato.Value;
+                    DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (dbTilDT.Month != dtPick.Month && dbTilDT.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
+                    if (appConfig.dbTo.Month != dtPick.Month && appConfig.dbTo.Year != dtPick.Year) // Hent hele måneden hvis vi IKKE er i siste måneden
                         dtTil = GetLastDayOfMonth(dtPick);
                     if (datoPeriodeVelger && !bg)
                     {
@@ -2109,7 +2092,7 @@ namespace KGSA
                         doc.Add("<h3>Periode: Fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTMLAvd.DocumentText = string.Join(null, doc.ToArray());
+                        webHTML.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
 
                     doc.AddRange(ranking.GetTableHtml(appConfig.rankingAvdelingMode));
@@ -2123,33 +2106,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTMLAvd.Navigate(htmlStopped);
+                        webHTML.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTMLAvd.Navigate(htmlPeriode);
+                            webHTML.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlAvdSnittpriser, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTMLAvd.Navigate(htmlAvdSnittpriser);
+                                webHTML.Navigate(htmlAvdSnittpriser);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTMLAvd.Navigate(htmlAvdSnittpriser);
+                    webHTML.Navigate(htmlAvdSnittpriser);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTMLAvd.Navigate(htmlError);
+                    webHTML.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -2159,7 +2142,7 @@ namespace KGSA
 
         private void MakeReport(string katArg = "")
         {
-            if (katArg != "")
+            if (!String.IsNullOrEmpty(katArg))
                 RunReport(katArg);
             else
             {
@@ -2179,7 +2162,7 @@ namespace KGSA
             {
                 if (!EmptyDatabase())
                 {
-                    groupBoxRankingValg.Enabled = false;
+                    groupRankingChoices.Enabled = false;
                     Logg.Log("Lager [" + katArg + "] rapport ..", Color.Black, false, true);
                     bwReport.RunWorkerAsync(katArg);
                     HighlightButton();
@@ -2212,7 +2195,7 @@ namespace KGSA
             ProgressStop();
             if (!IsBusy(true, true))
                 Logg.Status("Klar.");
-            groupBoxRankingValg.Enabled = true;
+            groupRankingChoices.Enabled = true;
         }
 
         private void makeKnowHowReport()
@@ -2221,14 +2204,14 @@ namespace KGSA
             {
                 timewatch.Start();
                 webHTML.Navigate(htmlLoading);
-                DateTime dtPick = pickerDato.Value;
+                DateTime dtPick = pickerRankingDate.Value;
                 KnowHowReport report = new KnowHowReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
                 GetHtmlStart(doc, true);
 
                 doc.Add("<span style='font-size:13.0pt;font-weight:400;font-style:bold;text-decoration:none;font-family:Calibri, sans-serif;float:left'>Avdeling: KnowHow (" + avdeling.Get(appConfig.Avdeling) + ")</span><span style='font-size:10.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;color:gray;float:right'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br><br>");
                 doc.Add("<span class='xTitle' style='font-size:11.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;'>" +
-                        "Rapport for periode fra " + dbFraDT.ToString("dddd d. MMMM yyyy", norway) + " til " + dbTilDT.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
+                        "Rapport for periode fra " + appConfig.dbFrom.ToString("dddd d. MMMM yyyy", norway) + " til " + appConfig.dbTo.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
 
                 report.makeMonthly(dtPick, bwReport, doc);
                 doc.Add(Resources.htmlEnd);
@@ -2261,14 +2244,14 @@ namespace KGSA
             {
                 timewatch.Start();
                 webHTML.Navigate(htmlLoading);
-                DateTime dtPick = pickerDato.Value;
+                DateTime dtPick = pickerRankingDate.Value;
                 DataReport report = new DataReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
                 GetHtmlStart(doc, true);
 
                 doc.Add("<span style='font-size:13.0pt;font-weight:400;font-style:bold;text-decoration:none;font-family:Calibri, sans-serif;float:left'>Avdeling: Data (" + avdeling.Get(appConfig.Avdeling) + ")</span><span style='font-size:10.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;color:gray;float:right'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br><br>");
                 doc.Add("<span class='xTitle' style='font-size:11.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;'>" +
-                        "Rapport for periode fra " + dbFraDT.ToString("dddd d. MMMM yyyy", norway) + " til " + dbTilDT.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
+                        "Rapport for periode fra " + appConfig.dbFrom.ToString("dddd d. MMMM yyyy", norway) + " til " + appConfig.dbTo.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
 
                 report.makeMonthly(dtPick, bwReport, doc);
                 doc.Add(Resources.htmlEnd);
@@ -2301,14 +2284,14 @@ namespace KGSA
             {
                 timewatch.Start();
                 webHTML.Navigate(htmlLoading);
-                DateTime dtPick = pickerDato.Value;
+                DateTime dtPick = pickerRankingDate.Value;
                 AudioVideoReport report = new AudioVideoReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
                 GetHtmlStart(doc, true);
 
                 doc.Add("<span style='font-size:13.0pt;font-weight:400;font-style:bold;text-decoration:none;font-family:Calibri, sans-serif;float:left'>Avdeling: Lyd og Bilde (" + avdeling.Get(appConfig.Avdeling) + ")</span><span style='font-size:10.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;color:gray;float:right'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br><br>");
                 doc.Add("<span class='xTitle' style='font-size:11.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;'>" +
-                        "Rapport for periode fra " + dbFraDT.ToString("dddd d. MMMM yyyy", norway) + " til " + dbTilDT.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
+                        "Rapport for periode fra " + appConfig.dbFrom.ToString("dddd d. MMMM yyyy", norway) + " til " + appConfig.dbTo.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
                 
                 report.makeMonthly(dtPick, bwReport, doc);
                 doc.Add(Resources.htmlEnd);
@@ -2341,14 +2324,14 @@ namespace KGSA
             {
                 timewatch.Start();
                 webHTML.Navigate(htmlLoading);
-                DateTime dtPick = pickerDato.Value;
+                DateTime dtPick = pickerRankingDate.Value;
                 TeleReport report = new TeleReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
                 GetHtmlStart(doc, true);
 
                 doc.Add("<span style='font-size:13.0pt;font-weight:400;font-style:bold;text-decoration:none;font-family:Calibri, sans-serif;float:left'>Avdeling: Tele (" + avdeling.Get(appConfig.Avdeling) + ")</span><span style='font-size:10.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;color:gray;float:right'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br><br>");
                 doc.Add("<span class='xTitle' style='font-size:11.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;'>" +
-                        "Rapport for periode fra " + dbFraDT.ToString("dddd d. MMMM yyyy", norway) + " til " + dbTilDT.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
+                        "Rapport for periode fra " + appConfig.dbFrom.ToString("dddd d. MMMM yyyy", norway) + " til " + appConfig.dbTo.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
                 
                 report.makeMonthly(dtPick, bwReport, doc);
                 doc.Add(Resources.htmlEnd);
@@ -2381,13 +2364,13 @@ namespace KGSA
             {
                 timewatch.Start();
                 webHTML.Navigate(htmlLoading);
-                DateTime dtPick = pickerDato.Value;
+                DateTime dtPick = pickerRankingDate.Value;
                 ButikkReport report = new ButikkReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
                 GetHtmlStart(doc, true);
                 doc.Add("<span style='font-size:13.0pt;font-weight:400;font-style:bold;text-decoration:none;font-family:Calibri, sans-serif;float:left'>Oversikt butikk (" + avdeling.Get(appConfig.Avdeling) + ")</span><span style='font-size:10.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;color:gray;float:right'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br><br>");
                 doc.Add("<span class='xTitle' style='font-size:11.0pt;font-weight:400;font-style:normal;text-decoration:none;font-family:Calibri, sans-serif;'>" +
-                        "Rapport for periode fra " + dbFraDT.ToString("dddd d. MMMM yyyy", norway) + " til " + dbTilDT.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
+                        "Rapport for periode fra " + appConfig.dbFrom.ToString("dddd d. MMMM yyyy", norway) + " til " + appConfig.dbTo.ToString("dddd d. MMMM yyyy", norway) + "</span><br>");
                 
                 report.makeMonthly(dtPick, bwReport, doc);
                 doc.Add(Resources.htmlEnd);

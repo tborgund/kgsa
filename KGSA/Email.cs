@@ -164,7 +164,7 @@ namespace KGSA
 
                 if (type != null)
                 {
-                    if (type != "")
+                    if (!String.IsNullOrEmpty(type))
                     {
                         if (type == "Quick")
                         {
@@ -191,43 +191,6 @@ namespace KGSA
                 Logg.Unhandled(ex);
             }
             return new List<MailAddress>() { };
-        }
-
-        private List<string> GetRecipientsSimple(string group)
-        {
-            try
-            {
-                List<string> recipients = new List<string>() { };
-
-                if (group != null)
-                {
-                    if (group != "")
-                    {
-                        if (group == "Quick")
-                        {
-                            for (int i = 0; i < emailDb.Rows.Count; i++)
-                                if (Convert.ToBoolean(emailDb.Rows[i]["Quick"]))
-                                    recipients.Add(emailDb.Rows[i]["Address"].ToString());
-                        }
-                        else
-                        {
-                            for (int i = 0; i < emailDb.Rows.Count; i++)
-                                if (emailDb.Rows[i]["Type"].ToString() == group)
-                                    recipients.Add(emailDb.Rows[i]["Address"].ToString());
-                        }
-                    }
-                    else
-                        for (int i = 0; i < emailDb.Rows.Count; i++)
-                            recipients.Add(emailDb.Rows[i]["Address"].ToString());
-                }
-
-                return recipients;
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-            }
-            return new List<string>() { };
         }
 
         public bool Send(string attachment, DateTime date, string type, string emailHeader, string emailBody)
@@ -301,7 +264,7 @@ namespace KGSA
                         SmtpClient smtpClient = new SmtpClient();
                         MailMessage message = new MailMessage();
                         MailAddress fromAddress;
-                        if (main.appConfig.epostAvsenderNavn == "")
+                        if (String.IsNullOrEmpty(main.appConfig.epostAvsenderNavn))
                             fromAddress = new MailAddress(main.appConfig.epostAvsender);
                         else
                             fromAddress = new MailAddress(main.appConfig.epostAvsender, main.appConfig.epostAvsenderNavn);
@@ -340,7 +303,7 @@ namespace KGSA
                     SmtpClient smtpClient = new SmtpClient();
                     MailMessage message = new MailMessage();
                     MailAddress fromAddress;
-                    if (main.appConfig.epostAvsenderNavn == "")
+                    if (String.IsNullOrEmpty(main.appConfig.epostAvsenderNavn))
                         fromAddress = new MailAddress(main.appConfig.epostAvsender);
                     else
                         fromAddress = new MailAddress(main.appConfig.epostAvsender, main.appConfig.epostAvsenderNavn);
@@ -369,7 +332,6 @@ namespace KGSA
                         message.Attachments.Add(attachment);
                     }
 
-                    smtpClient.Timeout = 15;
                     smtpClient.Send(message);
 
                     Logg.Debug("Fullført sending av e-post.");

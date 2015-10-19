@@ -26,7 +26,7 @@ namespace KGSA
         {
             try
             {
-                if (main.appConfig.webserverEnabled && main.appConfig.webserverPort >= 1024 && main.appConfig.webserverPort <= 65535 && main.appConfig.webserverHost != "")
+                if (main.appConfig.webserverEnabled && main.appConfig.webserverPort >= 1024 && main.appConfig.webserverPort <= 65535 && !String.IsNullOrEmpty(main.appConfig.webserverHost))
                 {
                     if (ws != null)
                         if (ws.IsOnline())
@@ -154,7 +154,7 @@ namespace KGSA
                 doc.Add("<a href=\"rankingLister.html\">Lister</a> |");
             if (File.Exists(FormMain.htmlRankingVinn))
                 doc.Add("<a href=\"rankingVinnprodukter.html\">Vinnprodukter</a> |");
-            if (file != "")
+            if (!String.IsNullOrEmpty(file))
                 doc.Add("<a href=\"/content?p=pdf&action=" + file + "\">Last ned PDF</a> |");
 
             if (date.Date != DateTime.Now.Date) // Siden har mulighet for å hente ut andre datoer
@@ -180,7 +180,7 @@ namespace KGSA
                 doc.Add("</select>");
 
                 doc.Add("År: <select name='year' id='selectYear'>");
-                for (int i = FormMain.dbFraDT.Year; i <= FormMain.dbTilDT.Year ; i++)
+                for (int i = main.appConfig.dbFrom.Year; i <= main.appConfig.dbTo.Year ; i++)
                 {
                     if (i == date.Year)
                         doc.Add("<option value='" + i + "' selected>" + i + "</option>");
@@ -188,10 +188,13 @@ namespace KGSA
                         doc.Add("<option value='" + i + "'>" + i + "</option>");
                 }
                 doc.Add("</select> <button type='submit'>Gå til dato</button></form>");
-                if (date.Date != FormMain.dbTilDT.Date)
+                if (date.Date != main.appConfig.dbTo.Date)
                 {
-                    doc.Add("<form action='' method='get'><input type='hidden' name='p' value='" + katArg + "'><input type='hidden' name='day' value='" + FormMain.dbTilDT.Day + "'><input type='hidden' name='month' value='" + FormMain.dbTilDT.Month + "'><input type='hidden' name='year' value='" + FormMain.dbTilDT.Year + "'>");
-                    doc.Add("<button type='submit'>Gå til siste (" + FormMain.dbTilDT.ToShortDateString() + ")</button></form>");
+                    doc.Add("<form action='' method='get'><input type='hidden' name='p' value='" 
+                        + katArg + "'><input type='hidden' name='day' value='" + main.appConfig.dbTo.Day
+                        + "'><input type='hidden' name='month' value='" + main.appConfig.dbTo.Month
+                        + "'><input type='hidden' name='year' value='" + main.appConfig.dbTo.Year + "'>");
+                    doc.Add("<button type='submit'>Gå til siste (" + main.appConfig.dbTo.ToShortDateString() + ")</button></form>");
                 }
             }
 
@@ -238,18 +241,18 @@ namespace KGSA
 
             if (url.StartsWith("/settings"))
             {
-                if (page == "" && action == "")
+                if (String.IsNullOrEmpty(page) && String.IsNullOrEmpty(action))
                     return WebPage_Settings(request);
 
                 if (page == "save")
                 {
-                    if (action == "")
+                    if (String.IsNullOrEmpty(action))
                         return WebPage_Settings_Save(request);
                 }
 
                 if (page == "email")
                 {
-                    if (action == "")
+                    if (String.IsNullOrEmpty(action))
                         return WebPage_Settings_Email(request);
                     else if (action == "add")
                         return WebPage_Settings_EmailAdd(request);
@@ -259,7 +262,7 @@ namespace KGSA
 
                 if (page == "vinn")
                 {
-                    if (action == "")
+                    if (String.IsNullOrEmpty(action))
                         return WebPage_Settings_Vinn(request);
                     else if (action == "add")
                         return WebPage_Settings_VinnAdd(request);
@@ -275,20 +278,20 @@ namespace KGSA
 
                 if (page == "budget")
                 {
-                    if (action == "")
+                    if (String.IsNullOrEmpty(action))
                         return WebPage_Settings_Budget(request);
                 }
             }
 
             if (url.StartsWith("/status"))
             {
-                if (page == "" && action == "")
+                if (String.IsNullOrEmpty(page) && String.IsNullOrEmpty(action))
                     return WebPage_Status(request);
             }
 
             if (url.StartsWith("/content"))
             {
-                if (page == "pdf" && action != "")
+                if (page == "pdf" && !String.IsNullOrEmpty(action))
                     return WebPage_CreatePdf(request, action);
             }
 
@@ -479,7 +482,7 @@ namespace KGSA
 
                 doc.Add("<table><tr>");
                 doc.Add("<td width=300>");
-                if (!FormMain.EmptyDatabase())
+                if (!main.EmptyDatabase())
                 {
                     doc.Add("Ranking sider:<br>");
                     if (main.appConfig.importSetting.StartsWith("Full"))
@@ -506,7 +509,7 @@ namespace KGSA
                         if (File.Exists(FormMain.htmlRankingVinn))
                             doc.Add("<a href=\"rankingVinnprodukter.html\">Vinnprodukter</a><br>");
                     }
-                    doc.Add("Oppdatert: " + FormMain.dbTilDT.ToString("dddd d. MMMM yyyy", FormMain.norway) + "<br>");
+                    doc.Add("Oppdatert: " + main.appConfig.dbTo.ToString("dddd d. MMMM yyyy", FormMain.norway) + "<br>");
 
                     if (main.appConfig.importSetting.StartsWith("Full"))
                     {
@@ -588,7 +591,7 @@ namespace KGSA
             DateTime date;
 
             if (dateStr.Length != 10)
-                date = FormMain.dbTilDT;
+                date = main.appConfig.dbTo;
             else
             {
                 if (!DateTime.TryParseExact(dateStr, "dd.MM.yyyy", FormMain.norway, DateTimeStyles.None, out date))
@@ -604,7 +607,7 @@ namespace KGSA
                 doc.Add("<span class='xHeader'>Ugyldig dato angitt.</span><br><span class='xHeader'>Dato: " + dateStr + "</span>");
                 doc.Add(Resources.htmlEnd);
             }
-            else if (date > FormMain.dbTilDT || date < FormMain.dbFraDT)
+            else if (date > main.appConfig.dbTo || date < main.appConfig.dbFrom)
             {
                 main.GetHtmlStart(doc, false, "Ranking: " + katArg);
                 doc.Add("<span class='xHeader'>Fant ikke transaksjoner for denne datoen</span><br><span class='xHeader'>Dato: " + date.ToShortDateString() + "</span>");
@@ -1408,7 +1411,7 @@ namespace KGSA
             List<string> doc = new List<string>() { };
             doc.Add("<div class='Row'>");
 
-            if (description != "")
+            if (!String.IsNullOrEmpty(description))
             {
                 doc.Add("<div class='Cell' style='border:none;padding-top:3px;padding-bottom:3px;padding-left:3px;padding-right:10px;text-align:right;width:150px;'>");
                 doc.Add("<p>" + description + "</p>");
@@ -1452,7 +1455,7 @@ namespace KGSA
                     if (typeof(int).IsAssignableFrom(prop.PropertyType))
                     {
                         int val = (int)prop.GetValue(main.appConfig, null);
-                        if (option0 != "")
+                        if (!String.IsNullOrEmpty(option0))
                         {
                             doc.Add("<div class='Cell' style='border:none;'>");
                             doc.Add("<p><select name='" + prop.Name + "' id='" + prop.Name + "'>");
@@ -1461,35 +1464,35 @@ namespace KGSA
                                 doc.Add("<option value='0' selected>" + option0 + "</option>");
                             else
                                 doc.Add("<option value='0'>" + option0 + "</option>");
-                            if (option1 != "")
+                            if (!String.IsNullOrEmpty(option1))
                             {
                                 if (val == 1)
                                     doc.Add("<option value='1' selected>" + option1 + "</option>");
                                 else
                                     doc.Add("<option value='1'>" + option1 + "</option>");
                             }
-                            if (option2 != "")
+                            if (!String.IsNullOrEmpty(option2))
                             {
                                 if (val == 2)
                                     doc.Add("<option value='2' selected>" + option2 + "</option>");
                                 else
                                     doc.Add("<option value='2'>" + option2 + "</option>");
                             }
-                            if (option3 != "")
+                            if (!String.IsNullOrEmpty(option3))
                             {
                                 if (val == 3)
                                     doc.Add("<option value='3' selected>" + option3 + "</option>");
                                 else
                                     doc.Add("<option value='3'>" + option3 + "</option>");
                             }
-                            if (option4 != "")
+                            if (!String.IsNullOrEmpty(option4))
                             {
                                 if (val == 4)
                                     doc.Add("<option value='4' selected>" + option4 + "</option>");
                                 else
                                     doc.Add("<option value='4'>" + option4 + "</option>");
                             }
-                            if (option5 != "")
+                            if (!String.IsNullOrEmpty(option5))
                             {
                                 if (val == 5)
                                     doc.Add("<option value='5' selected>" + option5 + "</option>");
@@ -1516,7 +1519,7 @@ namespace KGSA
                 }
             }
 
-            if (info != "")
+            if (!String.IsNullOrEmpty(info))
             {
                 doc.Add("<div class='Cell' style='border:none;padding-left:5px;padding-right:3px;'>");
                 doc.Add("<p>" + info + "</p>");
@@ -1598,7 +1601,7 @@ namespace KGSA
             doc.Add("<html>");
             doc.Add("<head>");
             doc.Add("<meta charset=\"UTF-8\">");
-            if (redirect != "")
+            if (!String.IsNullOrEmpty(redirect))
                 doc.Add("<meta http-equiv=\"refresh\" content=\"3; url=" + redirect + "\" />");
             if (autorefresh)
                 doc.Add("<meta http-equiv=\"refresh\" content=\"8\" >");

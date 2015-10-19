@@ -28,8 +28,8 @@ namespace KGSA
         public TopGraph(FormMain form)
         {
             this.main = form;
-            datoFra = FormMain.dbTilDT.AddMonths(-1);
-            dato = FormMain.dbTilDT;
+            datoFra = main.appConfig.dbTo.AddMonths(-1);
+            dato = main.appConfig.dbTo;
             dager = (dato - datoFra).Days;
             dataButikk = GetHistTable();
             dataData = GetHistTable();
@@ -43,28 +43,28 @@ namespace KGSA
             {
                 if (katArg == "Data")
                 {
-                    if (FormMain.dbTilDT.Date != dato.Date || dataData.Rows.Count == 0)
+                    if (main.appConfig.dbTo.Date != dato.Date || dataData.Rows.Count == 0)
                         dataData = UpdateDataTable(katArg);
                     currentGraph = katArg;
                     return dataData;
                 }
                 else if (katArg == "AudioVideo")
                 {
-                    if (FormMain.dbTilDT.Date != dato.Date || dataAudioVideo.Rows.Count == 0)
+                    if (main.appConfig.dbTo.Date != dato.Date || dataAudioVideo.Rows.Count == 0)
                         dataAudioVideo = UpdateDataTable(katArg);
                     currentGraph = katArg;
                     return dataAudioVideo;
                 }
                 else if (katArg == "Tele")
                 {
-                    if (FormMain.dbTilDT.Date != dato.Date || dataTele.Rows.Count == 0)
+                    if (main.appConfig.dbTo.Date != dato.Date || dataTele.Rows.Count == 0)
                         dataTele = UpdateDataTable(katArg);
                     currentGraph = katArg;
                     return dataTele;
                 }
                 else
                 {
-                    if (FormMain.dbTilDT.Date != dato.Date || dataButikk.Rows.Count == 0)
+                    if (main.appConfig.dbTo.Date != dato.Date || dataButikk.Rows.Count == 0)
                         dataButikk = UpdateDataTable(katArg);
                     currentGraph = "Butikk";
                     return dataButikk;
@@ -252,7 +252,7 @@ namespace KGSA
             try
             {
                 List<VarekodeList> list;
-                if (argKat != "")
+                if (!String.IsNullOrEmpty(argKat))
                     list = main.appConfig.varekoder.Where(item => item.kategori == argKat).ToList();
                 else
                     list = main.appConfig.varekoder.ToList();

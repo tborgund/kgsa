@@ -33,7 +33,7 @@ namespace KGSA
         {
             ds = new DataSet();
             con.Open();
-            if (toolStripComboBoxFilterKat.Text != "Alle" && toolStripComboBoxFilterKat.Text != "")
+            if (toolStripComboBoxFilterKat.Text != "Alle" && !String.IsNullOrEmpty(toolStripComboBoxFilterKat.Text))
                 da = new SqlCeDataAdapter("SELECT * FROM tblVinnprodukt WHERE Avdeling = " + main.appConfig.Avdeling + " AND Kategori = '" + toolStripComboBoxFilterKat.Text + "'", con);
             else
                 da = new SqlCeDataAdapter("SELECT * FROM tblVinnprodukt WHERE Avdeling = " + main.appConfig.Avdeling, con);
@@ -117,7 +117,7 @@ namespace KGSA
                 if (e.ColumnIndex == 0)
                     dataGridView1[e.ColumnIndex, e.RowIndex].Value = cellValue.ToUpper();
 
-                if (cellValue == "" && (e.ColumnIndex == 4))
+                if (String.IsNullOrEmpty(cellValue) && (e.ColumnIndex == 4))
                 {
                     dataGridView1.Rows[e.RowIndex].ErrorText = "Feltet kan ikke være tomt";
                     SendMessage("Feltet kan ikke være tomt! Eller har du ikke oppdatert databasen?", Color.Red);
@@ -141,7 +141,7 @@ namespace KGSA
         {
             try
             {
-                DateTime date = FormMain.dbTilDT;
+                DateTime date = main.appConfig.dbTo;
                 if (date.Day < 15)
                     date = date.AddMonths(-1);
 
@@ -290,7 +290,7 @@ namespace KGSA
 
                 ClearMessageTimer();
 
-                if (str != "")
+                if (!String.IsNullOrEmpty(str))
                     Logg.Log(str, c, true);
             }
             catch

@@ -1,5 +1,4 @@
-﻿using FileHelpers;
-using KGSA.Properties;
+﻿using KGSA.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,21 +23,20 @@ namespace KGSA
 
             if (service.dbServiceDatoFra == service.dbServiceDatoTil)
             {
-                groupBoxServiceDato.Enabled = false;
-                groupBoxServiceTop.Enabled = false;
                 labelServiceHead.ForeColor = SystemColors.ControlText;
                 labelServiceDate.ForeColor = SystemColors.ControlText;
                 labelServiceHead.Text = "(tom)";
                 labelServiceDate.Text = "";
                 webService.Navigate(htmlImportService);
+
+                ShowHideGui_EmptyService(false);
             }
             else
             {
                 labelServiceHead.Text = service.dbServiceDatoTil.ToString("dddd", norway);
                 labelServiceDate.Text = service.dbServiceDatoTil.ToString("d. MMM", norway);
 
-                groupBoxServiceDato.Enabled = true;
-                groupBoxServiceTop.Enabled = true;
+                ShowHideGui_EmptyService(true);
 
                 if ((DateTime.Now - service.dbServiceDatoTil).Days >= 3)
                 {
@@ -61,7 +59,7 @@ namespace KGSA
                 else
                     RunServiceOversikt();
 
-                moveDateService(0, true);
+                moveDateService(0);
             }
         }
 
@@ -144,7 +142,7 @@ namespace KGSA
             string str = (string)e.Argument;
             bool complete = false;
 
-            if (str != "" && str != null)
+            if (!String.IsNullOrEmpty(str))
                 complete = service.Import(str, processing, bwImportService);
             else
                 complete = service.Import(appConfig.csvElguideExportFolder + @"\iserv.csv", processing, bwImportService);
@@ -340,7 +338,7 @@ namespace KGSA
             if (service.dbServiceDatoFra.Date != service.dbServiceDatoTil.Date)
             {
                 string page = currentServicePage();
-                if (katArg == "" && page != "")
+                if (String.IsNullOrEmpty(katArg) && !String.IsNullOrEmpty(page))
                     ClearHash(page);
                 
                 if (page == "ServiceOversikt")
@@ -372,7 +370,7 @@ namespace KGSA
             return "";
         }
 
-        private void moveDateService(int m = 0, bool reload = false)
+        private void moveDateService(int m = 0)
         {
             if (service != null)
             {
@@ -435,7 +433,7 @@ namespace KGSA
                     buttonServF.Enabled = true; // fremover knapp
                     buttonServFF.Enabled = true; // fremover knapp
                 }
-                if (d.Date <= dbFraDT.Date)
+                if (d.Date <= appConfig.dbFrom.Date)
                 {
                     buttonServBF.Enabled = false; // bakover knapp
                     buttonServB.Enabled = false; // bakover knapp
@@ -524,7 +522,7 @@ namespace KGSA
             object[] parameters = e.Argument as object[];
             string statusFilter = parameters[0].ToString();
             string loggFilter = parameters[1].ToString();
-            string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+            string newHash = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
             MakeServiceList(statusFilter, loggFilter, false, bwService);
             appConfig.strServiceList = newHash;
         }
@@ -611,7 +609,7 @@ namespace KGSA
         private void bwService_DoWork(object sender, DoWorkEventArgs e)
         {
             ProgressStart();
-            string newHash = appConfig.Avdeling + pickerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
+            string newHash = appConfig.Avdeling + pickerRankingDate.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
             MakeServiceOversikt(false, bwService);
             appConfig.strServiceOversikt = newHash;
         }

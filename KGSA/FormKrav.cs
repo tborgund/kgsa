@@ -75,7 +75,7 @@ namespace KGSA
         {
             try
             {
-                if (e.FormattedValue.ToString() == "")
+                if (String.IsNullOrEmpty(e.FormattedValue.ToString()))
                     return;
                 if (dataGridViewSk.Rows[e.RowIndex].IsNewRow || e.ColumnIndex < 4)
                     return;
