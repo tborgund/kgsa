@@ -186,6 +186,7 @@ namespace KGSA
         public string strBudgetMdasda { get; set; }
         public string strBudgetButikk { get; set; }
         public string strBudgetDaily { get; set; }
+        public string strBudgetAllSales { get; set; }
         public string strToppselgere { get; set; }
         public string strLister { get; set; }
         public string strVinnprodukter { get; set; }

@@ -35,7 +35,7 @@ namespace KGSA
 
             if (FormMain.selgerkodeList != null)
                 if (FormMain.selgerkodeList.Count == 0)
-                    FormMain.selgerkodeList.AddRange(main.sKoder.GetAlleSelgerkoder(main.appConfig.Avdeling));
+                    FormMain.selgerkodeList.AddRange(main.salesCodes.GetAlleSelgerkoder(main.appConfig.Avdeling));
 
             this.varekoderAlle = main.appConfig.varekoder.ToList();
             this.varekoderAlleAlias = varekoderAlle.Where(item => item.synlig == true).Select(x => x.alias).Distinct();
@@ -715,7 +715,7 @@ namespace KGSA
                     if (argLength == i + 1)
                         end = " style='border-bottom: #000 1px solid;' ";
 
-                    if (sortedTable.Rows[i]["Selgerkode"].ToString() == "TOTALT" || (main.appConfig.bestofHoppoverKasse && main.sKoder.GetKategori(sortedTable.Rows[i]["Selgerkode"].ToString()) == "Kasse" && argCaption == "Inntjening"))
+                    if (sortedTable.Rows[i]["Selgerkode"].ToString() == "TOTALT" || (main.appConfig.bestofHoppoverKasse && main.salesCodes.GetKategori(sortedTable.Rows[i]["Selgerkode"].ToString()) == "Kasse" && argCaption == "Inntjening"))
                     {
                         argLength++;
                         continue;
@@ -741,7 +741,7 @@ namespace KGSA
                             expTot += expDec;
                         }
 
-                        doc.Add("<tr><td class='text-cat'" + end + "><a href='#" + urlID + "s" + sortedTable.Rows[i][0].ToString() + "'>" + main.sKoder.GetNavn(sortedTable.Rows[i][0].ToString()) + "</a></td>");
+                        doc.Add("<tr><td class='text-cat'" + end + "><a href='#" + urlID + "s" + sortedTable.Rows[i][0].ToString() + "'>" + main.salesCodes.GetNavn(sortedTable.Rows[i][0].ToString()) + "</a></td>");
                         doc.Add("<td class='numbers-gen'" + end + ">" + expStr + ForkortTall(Convert.ToDecimal(sortedTable.Rows[i][argTableColumnPrimary])) + "</td>");
                         doc.Add("<td class='numbers-gen'" + end + ">" + ForkortTall(Convert.ToDecimal(sortedTable.Rows[i][argTableColumnSecondary])) + "</td>");
                         doc.Add("</tr>");
@@ -804,9 +804,9 @@ namespace KGSA
 
                     doc.Add("<tfoot><tr><td colspan=3>");
                     if (main.appConfig.bestofVisBesteLastYearTotal)
-                        doc.Add("Best i fjor: " + main.sKoder.GetNavn(sortedTableCompare.Rows[0][0].ToString()) + " med " + ForkortTall(Convert.ToDecimal(sortedTableCompare.Rows[0][argTableColumnPrimary])) + " " + argCaption);
+                        doc.Add("Best i fjor: " + main.salesCodes.GetNavn(sortedTableCompare.Rows[0][0].ToString()) + " med " + ForkortTall(Convert.ToDecimal(sortedTableCompare.Rows[0][argTableColumnPrimary])) + " " + argCaption);
                     else
-                        doc.Add("Best i fjor MTD: " + main.sKoder.GetNavn(sortedTableCompare.Rows[0][0].ToString()) + " med " + ForkortTall(Convert.ToDecimal(sortedTableCompare.Rows[0][argTableColumnPrimary])) + " " + argCaption);
+                        doc.Add("Best i fjor MTD: " + main.salesCodes.GetNavn(sortedTableCompare.Rows[0][0].ToString()) + " med " + ForkortTall(Convert.ToDecimal(sortedTableCompare.Rows[0][argTableColumnPrimary])) + " " + argCaption);
                     doc.Add("</td></tr></tfoot>");
                 }
 
@@ -998,7 +998,7 @@ namespace KGSA
                         }
                         continue;
                     }
-                    doc.Add("<tr><td class='text-cat' style=\"font-size:14pt;\"><a href='#" + urlID + "s" + sortedTable.Rows[i][0].ToString() + "'>" + main.sKoder.GetNavn(sortedTable.Rows[i][0].ToString()) + "</a></td>");
+                    doc.Add("<tr><td class='text-cat' style=\"font-size:14pt;\"><a href='#" + urlID + "s" + sortedTable.Rows[i][0].ToString() + "'>" + main.salesCodes.GetNavn(sortedTable.Rows[i][0].ToString()) + "</a></td>");
                     doc.Add("<td class='numbers-gen' style=\"font-size:14pt;\">" + expStr + ForkortTall(Convert.ToDecimal(sortedTable.Rows[i][argTableColumnPrimary])) + "</td>");
                     doc.Add("<td class='numbers-gen' style=\"font-size:14pt;\">" + ForkortTall(Convert.ToDecimal(sortedTable.Rows[i][argTableColumnSecondary])) + "</td>");
                     doc.Add("<td class='numbers-gen' style=\"font-size:14pt;\">" + PercentShare(Convert.ToDecimal(sortedTable.Rows[i][argTableColumnTertiary]).ToString()) + "</td>");
@@ -1118,9 +1118,9 @@ namespace KGSA
                 for (int i = 0; i < sortedTable.Rows.Count; i++)
                 {
                     if (sortedTable.Rows[i]["Selgerkode"].ToString() != "TOTALT" && Convert.ToDecimal(sortedTable.Rows[i][argTableColumnPrimary]) > 0
-                        && !(main.appConfig.bestofHoppoverKasse && main.sKoder.GetKategori(sortedTable.Rows[i]["Selgerkode"].ToString()) == "Kasse" && argCaption == "Inntjening"))
+                        && !(main.appConfig.bestofHoppoverKasse && main.salesCodes.GetKategori(sortedTable.Rows[i]["Selgerkode"].ToString()) == "Kasse" && argCaption == "Inntjening"))
                     {
-                        doc.Add("<span style='font-size:x-large;'>" + main.sKoder.GetNavn(sortedTable.Rows[i]["Selgerkode"].ToString())
+                        doc.Add("<span style='font-size:x-large;'>" + main.salesCodes.GetNavn(sortedTable.Rows[i]["Selgerkode"].ToString())
                             + "</span><br>" + argCustom + " " + ForkortTall(Convert.ToDecimal(sortedTable.Rows[i][argTableColumnPrimary])) + argCustom2
                             + "<br><span style='font-size:small'>" + ForkortTall(Convert.ToDecimal(sortedTable.Rows[i][argTableColumnSecondary])) + " kr</span>");
                         if (main.appConfig.bestofHoppoverKasse && argCaption == "Inntjening")

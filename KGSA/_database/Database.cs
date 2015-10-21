@@ -226,7 +226,7 @@ namespace KGSA
                             Logg.Log("Database: Flytter eksisterende selgerkoder tilbake..");
                             if (dt != null)
                             {
-                                main.sKoder = new Selgerkoder(main);
+                                main.salesCodes = new SalesCodes(main);
                                 int teller = 0;
                                 for (int i = 0; i < dt.Rows.Count; i++)
                                 {
@@ -251,7 +251,7 @@ namespace KGSA
                                         if (!DBNull.Value.Equals(g))
                                             rtgsa = Convert.ToInt32(g);
 
-                                        if (main.sKoder.AddAll(sk, kat, prov, finans, mod, strom, rtgsa))
+                                        if (main.salesCodes.AddAll(sk, kat, prov, finans, mod, strom, rtgsa))
                                             teller++;
                                         else
                                             Logg.Log("Klarte ikke konvertere " + dt.Rows[i]["Selgerkode"].ToString() + "..");
@@ -387,12 +387,12 @@ namespace KGSA
             DateTime startOfLastWeek = time;
             if (main.appConfig.ignoreSunday)
             {
-                while (startOfLastWeek.DayOfWeek != DayOfWeek.Sunday || (time - startOfLastWeek).TotalDays < 7)
+                while (startOfLastWeek.DayOfWeek != DayOfWeek.Monday || (time - startOfLastWeek).TotalDays < 7)
                     startOfLastWeek = startOfLastWeek.AddDays(-1);
             }
             else
             {
-                while (startOfLastWeek.DayOfWeek != DayOfWeek.Monday || (time - startOfLastWeek).TotalDays < 7)
+                while (startOfLastWeek.DayOfWeek != DayOfWeek.Sunday || (time - startOfLastWeek).TotalDays < 7)
                     startOfLastWeek = startOfLastWeek.AddDays(-1);
             }
 

@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlServerCe;
-using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace KGSA
 {
-    public class Selgerkoder : IDisposable
+    public class SalesCodes : IDisposable
     {
         FormMain main;
         private string navn;
@@ -20,10 +17,10 @@ namespace KGSA
         private string[] arrayAll = new string[] { "[tom]" };
         private string[] arrayVaregruppe = new string[] { "[tom]" };
 
-        public Selgerkoder()
+        public SalesCodes()
         { }
 
-        public Selgerkoder(FormMain form, bool preload = false)
+        public SalesCodes(FormMain form, bool preload = false)
         {
             this.main = form;
             if (preload)
@@ -295,7 +292,7 @@ namespace KGSA
         /// </summary>
         /// <param name="katArg">Kategori</param>
         /// <param name="tekniker">Med eller uten teknikere</param>
-        public string[] GetSelgerkoder(string katArg = "", bool tekniker = false)
+        public string[] GetSalesCodes(string katArg = "", bool tekniker = false)
         {
             if (dtCache == null)
                 dtCache = main.database.GetSqlDataTable("SELECT * FROM tblSelgerkoder WHERE Avdeling = '" + main.appConfig.Avdeling + "'");

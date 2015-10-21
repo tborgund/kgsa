@@ -22,7 +22,7 @@ namespace KGSA
                 processing.SetVisible = true;
                 Logg.Status("Prosesserer..");
                 toolStripComboBoxSkFilter.SelectedIndex = 0;
-                sKoder.Clear();
+                salesCodes.Clear();
                 OppdaterSelgerkoder();
                 this.Update();
 
@@ -43,7 +43,7 @@ namespace KGSA
 
                             for (int i = 0; i < selgere.Count; i++)
                                 if (selgere[i] != "INT")
-                                    sKoder.Add(selgere[i], "Kasse", "Selger");
+                                    salesCodes.Add(selgere[i], "Kasse", "Selger");
                         }
                     }
                 }
@@ -69,7 +69,7 @@ namespace KGSA
                         for (int i = 0; i < selgere.Count; i++)
                             if (selgere[i] != "INT")
                             {
-                                sKoder.Add(selgere[i], "Data", "Selger");
+                                salesCodes.Add(selgere[i], "Data", "Selger");
                                 dataselgere += selgere[i];
                             }
                     }
@@ -93,7 +93,7 @@ namespace KGSA
 
                         for (int i = 0; i < selgere.Count; i++)
                             if (selgere[i] != "INT")
-                                sKoder.Add(selgere[i], "AudioVideo", "Selger");
+                                salesCodes.Add(selgere[i], "AudioVideo", "Selger");
                     }
                 }
                 processing.SetValue = 45;
@@ -116,7 +116,7 @@ namespace KGSA
 
                         for (int i = 0; i < selgere.Count; i++)
                             if (selgere[i] != "INT")
-                                sKoder.Add(selgere[i], "Tele", "Selger");
+                                salesCodes.Add(selgere[i], "Tele", "Selger");
                     }
                 }
                 processing.SetValue = 60;
@@ -149,7 +149,7 @@ namespace KGSA
 
                         for (int i = 0; i < selgere.Count; i++) // Legg til resten av potensielle teknikere
                             if (!dataselgere.Contains(selgere[i]))
-                                sKoder.Add(selgere[i], "Teknikere", "Selger");
+                                salesCodes.Add(selgere[i], "Teknikere", "Selger");
                     }
                 }
                 processing.SetValue = 75;
@@ -184,11 +184,11 @@ namespace KGSA
 
                             for (int i = 0; i < selgereMda.Count; i++)
                                 if (selgereMda[i] != "INT")
-                                    sKoder.Add(selgereMda[i], "MDA", "Selger");
+                                    salesCodes.Add(selgereMda[i], "MDA", "Selger");
 
                             for (int i = 0; i < selgereSda.Count; i++)
                                 if (selgereSda[i] != "INT")
-                                    sKoder.Add(selgereSda[i], "SDA", "Selger");
+                                    salesCodes.Add(selgereSda[i], "SDA", "Selger");
                         }
                     }
                 }
@@ -231,7 +231,7 @@ namespace KGSA
                 dataGridViewSk.EndEdit();
                 bindingSourceSk.EndEdit();
 
-                var msg = sKoder.DeleteDuplicates();
+                var msg = salesCodes.DeleteDuplicates();
                 if (!String.IsNullOrEmpty(msg))
                 {
                     Logg.Log(msg, Color.Red);
@@ -243,7 +243,7 @@ namespace KGSA
                 daSk.Update(dsSk, "tblSelgerkoder");
                 OppdaterSelgerkoder();
                 Logg.Log("Selgerkoder Lagret.", Color.Green);
-                sKoder.Update();
+                salesCodes.Update();
                 ClearHash();
             }
             catch (Exception ex)
@@ -320,7 +320,7 @@ namespace KGSA
                 {
                     var cellvalue = lastRightClickValue;
                     lastRightClickValue = "";
-                    if (!sKoder.Add(cellvalue.Trim(), kat, "Selger"))
+                    if (!salesCodes.Add(cellvalue.Trim(), kat, "Selger"))
                         Logg.Log("Kunne ikke legge til selger '" + cellvalue + "' for selgeren finnes allerede.", Color.Red);
                     else
                     {
@@ -331,7 +331,7 @@ namespace KGSA
                 {
                     foreach (string element in listBoxSk.SelectedItems)
                     {
-                        if (!sKoder.Add(element.Trim(), kat, "Selger"))
+                        if (!salesCodes.Add(element.Trim(), kat, "Selger"))
                             Logg.Log("Kunne ikke legge til selger '" + element + "' for selgeren finnes allerede.", Color.Red);
                         else
                             Logg.Log("Selger '" + element.Trim() + "' lagt til avdeling '" + kat + "' med provisjon Selger.", Color.Green);

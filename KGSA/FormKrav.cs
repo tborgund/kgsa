@@ -137,7 +137,7 @@ namespace KGSA
                 conSk.Close();
                 OppdaterSelgerkoder();
                 Logg.Log("Selgerkoder Lagret.", Color.Green);
-                main.sKoder.Update();
+                main.salesCodes.Update();
             }
             catch (Exception ex)
             {

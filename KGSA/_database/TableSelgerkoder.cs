@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlServerCe;
-using System.Linq;
-using System.Text;
 
 namespace KGSA
 {
@@ -12,16 +8,16 @@ namespace KGSA
         FormMain main;
         static string TABLE_NAME = "tblSelgerkoder";
 
-        static string KEY_ID = "Id";
-        static string KEY_SELGERKODE = "Selgerkode";
-        static string KEY_AVDELING = "Avdeling";
-        static string KEY_KATEGORI = "Kategori";
-        static string KEY_PROVISJON = "Provisjon";
-        static string KEY_FINANSKRAV = "FinansKrav";
-        static string KEY_MODKRAV = "ModKrav";
-        static string KEY_STROMKRAV = "StromKrav";
-        static string KEY_RTGSAKRAV = "RtgsaKrav";
-        static string KEY_NAVN = "Navn";
+        public static string KEY_ID = "Id";
+        public static string KEY_SELGERKODE = "Selgerkode";
+        public static string KEY_AVDELING = "Avdeling";
+        public static string KEY_KATEGORI = "Kategori";
+        public static string KEY_PROVISJON = "Provisjon";
+        public static string KEY_FINANSKRAV = "FinansKrav";
+        public static string KEY_MODKRAV = "ModKrav";
+        public static string KEY_STROMKRAV = "StromKrav";
+        public static string KEY_RTGSAKRAV = "RtgsaKrav";
+        public static string KEY_NAVN = "Navn";
 
         static string sqlCreateTable = "CREATE TABLE [" + TABLE_NAME + "] ( "
              + "[" + KEY_ID + "] int IDENTITY (1,1) NOT NULL "
@@ -81,6 +77,13 @@ namespace KGSA
             table.Columns.Add(KEY_RTGSAKRAV, typeof(int));
             table.Columns.Add(KEY_NAVN, typeof(string));
             return table;
+        }
+
+        public DataTable GetSalesCodesTable(int avdeling)
+        {
+            string sql = "SELECT " + KEY_SELGERKODE + ", " + KEY_KATEGORI + ", " + KEY_NAVN + " FROM " + TABLE_NAME +
+                " WHERE " + KEY_AVDELING + " = " + avdeling + " ORDER BY " + KEY_KATEGORI;
+            return main.database.GetSqlDataTable(sql);
         }
     }
 }

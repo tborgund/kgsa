@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlServerCe;
-using System.Linq;
-using System.Text;
 
 namespace KGSA
 {
@@ -12,17 +9,18 @@ namespace KGSA
         FormMain main;
         static string TABLE_NAME = "tblSalg";
 
-        static string KEY_ID = "SalgID";
-        static string KEY_SELGERKODE = "Selgerkode";
-        static string KEY_VAREGRUPPE = "Varegruppe";
-        static string KEY_VAREKODE = "Varekode";
-        static string KEY_DATO = "Dato";
-        static string KEY_ANTALL = "Antall";
-        static string KEY_BTOKR = "Btokr";
-        static string KEY_AVDELING = "Avdeling";
-        static string KEY_SALGSPRIS = "Salgspris";
-        static string KEY_BILAGSNR = "Bilagsnr";
-        static string KEY_MVA = "Mva";
+        public static string KEY_ID = "SalgID";
+        public static string KEY_SELGERKODE = "Selgerkode";
+        public static string KEY_VAREGRUPPE = "Varegruppe";
+        public static string KEY_VAREKODE = "Varekode";
+        public static string KEY_DATO = "Dato";
+        public static string KEY_ANTALL = "Antall";
+        public static string KEY_BTOKR = "Btokr";
+        public static string KEY_AVDELING = "Avdeling";
+        public static string KEY_SALGSPRIS = "Salgspris";
+        public static string KEY_BILAGSNR = "Bilagsnr";
+        public static string KEY_MVA = "Mva";
+        public static string KEY_SALGSPRIS_EX_MVA = "SalgsprisExMva";
 
         static string sqlCreateTable = "CREATE TABLE [" + TABLE_NAME + "] ( "
             + "[" + KEY_ID + "] int IDENTITY (1,1) NOT NULL "
@@ -90,6 +88,17 @@ namespace KGSA
             table.Columns.Add(KEY_SALGSPRIS, typeof(decimal));
             table.Columns.Add(KEY_BILAGSNR, typeof(int));
             table.Columns.Add(KEY_MVA, typeof(decimal));
+            return table;
+        }
+
+        public DataTable GetWeeklySales(int avdeling, DateTime date)
+        {
+            string sql = "SELECT * FROM " + TABLE_NAME + " WHERE " + KEY_AVDELING + " = " + avdeling
+                + " AND CONVERT(NVARCHAR(10)," + KEY_DATO + ",121) >= CONVERT(NVARCHAR(10),'" + date.StartOfWeek().ToString("yyyy-MM-dd")
+                + "',121) AND CONVERT(NVARCHAR(10)," + KEY_DATO + ",121) <= CONVERT(NVARCHAR(10),'" + date.EndOfWeek().ToString("yyyy-MM-dd") + "',121)";
+            DataTable table = main.database.GetSqlDataTable(sql);
+            if (table != null)
+                table.Columns.Add("SalgsprisExMva", typeof(double), "Salgspris / Mva");
             return table;
         }
     }

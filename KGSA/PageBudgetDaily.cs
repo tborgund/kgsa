@@ -5,12 +5,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace KGSA
 {
-    public class PageBudgetDaily : PageRanking
+    public class PageBudgetDaily : PageGenerator
     {
         public PageBudgetDaily(FormMain form, bool runInBackground, BackgroundWorker bw, System.Windows.Forms.WebBrowser webBrowser)
         {
@@ -28,18 +27,17 @@ namespace KGSA
             try
             {
                 if (!runningInBackground && !abort) main.timewatch.Start();
-                if (!runningInBackground)
-                    main.savedBudgetPage = cat;
+                if (!runningInBackground) main.savedBudgetPage = cat;
                 if (!abort)
                 {
                     Logg.Log("Oppdaterer [" + BudgetCategoryClass.TypeToName(cat) + "]..");
-                    if (!runningInBackground) browser.Navigate(FormMain.htmlLoading);
+                    OpenPage_Loading();
 
                     doc = new List<string>();
 
                     main.openXml.DeleteDocument(BudgetCategoryClass.TypeToName(cat), pickedDate);
 
-                    AddPage_Start(true, "Ranking: " + BudgetCategoryClass.TypeToName(cat));
+                    AddPage_Start(true, "Budsjett (" + BudgetCategoryClass.TypeToName(cat) + ")");
                     AddPage_Title("Budsjett (" + main.avdeling.Get(main.appConfig.Avdeling) + ")");
 
                     ShowProgress();
@@ -47,7 +45,10 @@ namespace KGSA
                     BudgetImporter importer = new BudgetImporter(main, DateTime.Now);
 
                     if (main.tableMacroQuick == null)
+                    {
+                        Logg.Log("Fant ikke data fra Makro, forsøker å hente CSV..", null, true);
                         main.tableMacroQuick = importer.ImportElguideBudget(main.appConfig.Avdeling);
+                    }
 
                     if (main.appConfig.dailyBudgetIncludeInQuickRanking)
                         MakeDailyBudgetFromDatabase();
@@ -58,32 +59,32 @@ namespace KGSA
 
                     MakeDailyBudgetFromElguide(budgetInfo);
 
-                    doc.Add(Resources.htmlEnd);
+                    AddPage_End();
+
                     if (FormMain.stopRanking)
                     {
                         main.ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        browser.Navigate(FormMain.htmlStopped);
+                        OpenPage_Stopped();
                         FormMain.stopRanking = false;
                     }
                     else
                     {
                         File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
-                        if (!runningInBackground)
-                            browser.Navigate(htmlPage);
+                        OpenPage(htmlPage);
                         if (!runningInBackground)
                             Logg.Log("Ranking [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
                     }
                 }
-                else if (!runningInBackground)
-                    browser.Navigate(htmlPage);
+                else
+                    OpenPage(htmlPage);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!runningInBackground)
                 {
-                    browser.Navigate(FormMain.htmlError);
+                    OpenPage_Error();
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -103,6 +104,10 @@ namespace KGSA
                     AddWarning("Mangler data for budsjett");
                     return;
                 }
+
+                main.openXml.SaveDocument(tableBudget, BudgetCategoryClass.TypeToName(BudgetCategory.Daglig),
+                    "Resultat mot budsjett " + main.avdeling.Get(main.appConfig.Avdeling)
+                    + " - " + DateTime.Now.ToString("dddd d. MMMM yyyy  HH:mm", FormMain.norway) + "", pickedDate, "Budsjett  (" + main.avdeling.Get(main.appConfig.Avdeling) + ")");
 
                 AddTable_Start("Resultat mot budsjett " + main.avdeling.Get(main.appConfig.Avdeling)
                     + " - " + DateTime.Now.ToString("dddd d. MMMM yyyy  HH:mm", FormMain.norway) + "");
@@ -190,7 +195,7 @@ namespace KGSA
             {
                 if (main.tableMacroQuick == null || main.tableMacroQuick.Rows.Count < 5)
                 {
-                    AddWarning("Mangler tall fra Elguide. Eksporter på nytt fra meny 136 i Elguide og prøv igjen");
+                    AddWarning("Mangler tall fra Elguide eller CSV er gammel. Eksporter på nytt fra meny 136 i Elguide og prøv igjen");
                     return;
                 }
 
@@ -212,8 +217,10 @@ namespace KGSA
                     AddTable_Header_Name("Margin", 60, "", Sorter_Type_Procent);
                     AddTable_Header_Name("Rabatt", 60, "", Sorter_Type_Digit);
 
-                    if (main.appConfig.macroImportQuickSales && intAvd == main.appConfig.Avdeling
-                        && budgetInfo != null && budgetInfo.Salg != null)
+                    if (main.appConfig.macroImportQuickSales
+                        && intAvd == main.appConfig.Avdeling
+                        && budgetInfo != null
+                        && budgetInfo.Salg != null)
                     {
                         if (budgetInfo.Salg.Count > 0)
                         {
@@ -254,8 +261,10 @@ namespace KGSA
                         AddTable_Row_Cell(main.tools.NumberStyle_Percent(main.tableMacroQuick.Rows[i]["Margin"], 100, true, false, 0), "", Class_Style_Numbers_Percent);
                         AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Rabatt"], 0, "", true), "", Class_Style_Numbers_Gen);
 
-                        if (main.appConfig.macroImportQuickSales && intAvd == main.appConfig.Avdeling
-                            && budgetInfo != null && budgetInfo.Salg != null)
+                        if (main.appConfig.macroImportQuickSales
+                            && intAvd == main.appConfig.Avdeling
+                            && budgetInfo != null
+                            && budgetInfo.Salg != null)
                         {
                             try
                             { 

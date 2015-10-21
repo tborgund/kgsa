@@ -142,7 +142,6 @@ namespace KGSA
             processing.SetText = "Kjører kveldsranking rutine..";
             Logg.Log("Kjører kveldsranking rutine..");
             bwQuickAuto.RunWorkerAsync();
-
         }
 
         private void bwQuickAuto_DoWork(object sender, DoWorkEventArgs e)
@@ -164,7 +163,6 @@ namespace KGSA
                 e.Result = 6;
                 return;
             }
-
 
             if (tableMacroQuick == null || tableMacroQuick.Rows.Count < 5 || formMacro.errorCode != 0)
             {

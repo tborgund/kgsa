@@ -413,8 +413,8 @@ namespace KGSA
                 program.Add("KeyPress(F1)");
                 program.Add("KeyPress(F1)");
                 program.Add("KeyPress(F1)");
-                program.Add("Wait(4)");
-                program.Add("ImportAllSales(" + FormMain.Favoritter[0] + ")");
+                //program.Add("Wait(4)");
+                //program.Add("ImportAllSales(" + FormMain.Favoritter[0] + ")");
             }
 
             // program for avslutting av elguide..

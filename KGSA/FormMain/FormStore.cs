@@ -295,8 +295,7 @@ namespace KGSA
 
         private void RunStore(string katArg)
         {
-            if (chkStorePicker != pickerLagerDato.Value && !bwStore.IsBusy && (katArg == "Obsolete" || katArg == "ObsoleteList" || katArg == "ObsoleteImports" || katArg == "LagerMarginer" || katArg.Equals("LagerUkeAnnonser") || katArg.Equals("LagerPrisguide") || katArg.Equals("LagerUkeAnnonserOversikt"))
-                || katArg.Equals("LagerPrisguideOversikt"))
+            if (chkStorePicker != pickerLagerDato.Value && !bwStore.IsBusy && !String.IsNullOrEmpty(katArg))
             {
                 HighlightStoreButton(katArg);
                 if (!EmptyStoreDatabase())

@@ -170,9 +170,11 @@
     <Compile Include="BudgetImporter.cs" />
     <Compile Include="KgsaTools.cs" />
     <Compile Include="OnlineImporter.cs" />
+    <Compile Include="PageBudgetAllSales.cs" />
     <Compile Include="PageBudgetDaily.cs" />
-    <Compile Include="PageRanking.cs" />
+    <Compile Include="PageGenerator.cs" />
     <Compile Include="StreamExtensions.cs" />
+    <Compile Include="WebEngine.cs" />
     <Compile Include="_database\Database.cs" />
     <Compile Include="FormSettingsMacro.cs">
       <SubType>Form</SubType>

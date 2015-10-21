@@ -87,7 +87,7 @@ namespace KGSA
                 if (sqlce.Rows.Count == 0)
                     return dtWork;
 
-                string[] sk = main.sKoder.GetSelgerkoder("", true);
+                string[] sk = main.salesCodes.GetSalesCodes("", true);
                 decimal bAntallTjen = 0;
 
                 // ------------- S E L G E R E / T E K N I K E R E ---------------
@@ -101,7 +101,7 @@ namespace KGSA
                         return dtWork;
 
                     DataRow dtRow = dtWork.NewRow();
-                    string provType = main.sKoder.GetProvisjon(sk[d]);
+                    string provType = main.salesCodes.GetProvisjon(sk[d]);
 
                     decimal sBtokr = 0, sAntallTjen = 0, sSalgspris = 0, sProdukter = 0, sSalgsprisNormal = 0, sAntallTjenTot = 0;
                     string sSelger = sk[d];
@@ -339,7 +339,7 @@ namespace KGSA
                     else if (dt.Rows[i]["Selgerkode"].ToString() == "Andre")
                         doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "t" + "'>" + dt.Rows[i]["Selgerkode"] + "</a></td>");
                     else
-                        doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Selgerkode"] + "'>" + main.sKoder.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
+                        doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Selgerkode"] + "'>" + main.salesCodes.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
 
                     if (dt.Rows[i]["Selgerkode"].ToString() != "Andre")
                         doc.Add("<td class='numbers-percent' style='" + PercentStyleNett(dt.Rows[i]["Hitrate"].ToString()) + "'>" + Percent(dt.Rows[i]["Hitrate"].ToString()) + "</td>");

@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.IO;
 
 namespace KGSA
 {
-    public class PageRanking
+    public class PageGenerator
     {
         public FormMain main;
         public bool runningInBackground = false;
@@ -25,6 +25,8 @@ namespace KGSA
         public static string Sorter_Type_Text = "text";
         public static string Sorter_Type_Digit = "digit";
         public static string Sorter_Type_Procent = "procent";
+
+        public static string Color_Bg_CoolBlue = "background:#bfd2e2;";
 
         protected void ShowProgress()
         {
@@ -166,6 +168,44 @@ namespace KGSA
         {
             doc.Add("<br><span class='Subtitle' style='color:red !important;'>" + message + "</span><br>");
             Logg.Log("Advarsel: " + message, Color.Red, true);
+        }
+
+        protected decimal Compute(DataTable table, string search, string filter = null)
+        {
+            object r = table.Compute(search, filter);
+            if (!DBNull.Value.Equals(r))
+                return Convert.ToDecimal(r);
+            else
+                return 0;
+        }
+
+        protected void OpenPage(string htmlFile)
+        {
+            if (!runningInBackground)
+                browser.Url = new Uri(Path.Combine(FormMain.settingsPath, htmlFile));
+        }
+        protected void OpenPage_Loading()
+        {
+            if (!runningInBackground)
+                browser.Url = new Uri(Path.Combine(FormMain.settingsPath, FormMain.htmlLoading));
+        }
+
+        protected void OpenPage_Stopped()
+        {
+            if (!runningInBackground)
+                browser.Url = new Uri(Path.Combine(FormMain.settingsPath, FormMain.htmlStopped));
+        }
+
+        protected void OpenPage_Error()
+        {
+            if (!runningInBackground)
+                browser.Url = new Uri(Path.Combine(FormMain.settingsPath, FormMain.htmlError));
+        }
+
+        protected void OpenPage_Import()
+        {
+            if (!runningInBackground)
+                browser.Url = new Uri(Path.Combine(FormMain.settingsPath, FormMain.htmlImport));
         }
     }
 }

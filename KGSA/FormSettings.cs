@@ -664,7 +664,7 @@ namespace KGSA
                 // FAVORITTER - Favoritter
                 main.appConfig.favAvdeling = "";
                 for (int i = listBoxFavAvd.Items.Count; i-- > 0; )
-                    if (!String.IsNullOrEmpty(listBoxFavAvd.Items[i].ToString()))
+                    if (String.IsNullOrEmpty(listBoxFavAvd.Items[i].ToString()))
                         listBoxFavAvd.Items.RemoveAt(i);
                 for (int i = 0; i < listBoxFavAvd.Items.Count; i++)
                 {
@@ -1238,7 +1238,7 @@ namespace KGSA
                     SendMessage("Vent litt..");
 
                     main.database.tableSelgerkoder.Reset();
-                    main.sKoder = new Selgerkoder(main, true);
+                    main.salesCodes = new SalesCodes(main, true);
 
                     SendMessage("Database: Alle selgerkoder slettet.");
                     Logg.Log("Database: Selgerkode tabelllen nullstilt.");

@@ -508,7 +508,7 @@ namespace KGSA
         private void bwPopulateSk_DoWork(object sender, DoWorkEventArgs e)
         {
             ProgressStart();
-            selgerkodeList.AddRange(sKoder.GetAlleSelgerkoder(appConfig.Avdeling));
+            selgerkodeList.AddRange(salesCodes.GetAlleSelgerkoder(appConfig.Avdeling));
         }
 
         private void bwPopulateSk_Completed(object sender, RunWorkerCompletedEventArgs e)
@@ -1906,28 +1906,30 @@ namespace KGSA
                 else if (curTab == "Budget" && webBudget.Url != null)
                 {
                     string str = webBudget.Url.OriginalString;
-                    if (str.Contains("budsjettMda.html"))
+                    if (str.Contains(htmlBudgetMdaFile))
                         return "MDA";
-                    else if (str.Contains("budsjettAudioVideo.html"))
+                    else if (str.Contains(htmlBudgetAudioVideoFile))
                         return "AudioVideo";
-                    else if (str.Contains("budsjettSda.html"))
+                    else if (str.Contains(htmlBudgetSdaFile))
                         return "SDA";
-                    else if (str.Contains("budsjettTele.html"))
+                    else if (str.Contains(htmlBudgetTeleFile))
                         return "Tele";
-                    else if (str.Contains("budsjettData.html"))
+                    else if (str.Contains(htmlBudgetDataFile))
                         return "Data";
-                    else if (str.Contains("budsjettCross.html"))
+                    else if (str.Contains(htmlBudgetCrossFile))
                         return "Cross";
-                    else if (str.Contains("budsjettKasse.html"))
+                    else if (str.Contains(htmlBudgetKasseFile))
                         return "Kasse";
-                    else if (str.Contains("budsjettAftersales.html"))
+                    else if (str.Contains(htmlBudgetAftersalesFile))
                         return "Aftersales";
-                    else if (str.Contains("budsjettMdaSda.html"))
+                    else if (str.Contains(htmlBudgetMdasdaFile))
                         return "MDASDA";
-                    else if (str.Contains("budsjettButikk.html"))
+                    else if (str.Contains(htmlBudgetButikkFile))
                         return "Butikk";
-                    else if (str.Contains("budsjettDaglig.html"))
+                    else if (str.Contains(htmlBudgetDailyFile))
                         return "Daglig";
+                    else if (str.Contains(htmlBudgetAllSalesFile))
+                        return "AlleSelgere";
                     else
                         return "";
                 }
@@ -2008,34 +2010,38 @@ namespace KGSA
                 if (webBudget.Url != null)
                 {
                     string str = webBudget.Url.OriginalString;
-                    if (str.Contains("budsjettMda.html"))
+                    if (str.Contains(htmlBudgetMdaFile))
                         return BudgetCategory.MDA;
-                    else if (str.Contains("budsjettAudioVideo.html"))
+                    else if (str.Contains(htmlBudgetAudioVideoFile))
                         return BudgetCategory.AudioVideo;
-                    else if (str.Contains("budsjettSda.html"))
+                    else if (str.Contains(htmlBudgetSdaFile))
                         return BudgetCategory.SDA;
-                    else if (str.Contains("budsjettTele.html"))
+                    else if (str.Contains(htmlBudgetTeleFile))
                         return BudgetCategory.Tele;
-                    else if (str.Contains("budsjettData.html"))
+                    else if (str.Contains(htmlBudgetDataFile))
                         return BudgetCategory.Data;
-                    else if (str.Contains("budsjettCross.html"))
+                    else if (str.Contains(htmlBudgetCrossFile))
                         return BudgetCategory.Cross;
-                    else if (str.Contains("budsjettKasse.html"))
+                    else if (str.Contains(htmlBudgetKasseFile))
                         return BudgetCategory.Kasse;
-                    else if (str.Contains("budsjettAftersales.html"))
+                    else if (str.Contains(htmlBudgetAftersalesFile))
                         return BudgetCategory.Aftersales;
-                    else if (str.Contains("budsjettDaily.html"))
-                        return BudgetCategory.Aftersales;
-                    else if (str.Contains("budsjettDaglig.html"))
+                    else if (str.Contains(htmlBudgetMdasdaFile))
+                        return BudgetCategory.MDASDA;
+                    else if (str.Contains(htmlBudgetButikkFile))
+                        return BudgetCategory.Butikk;
+                    else if (str.Contains(htmlBudgetDailyFile))
                         return BudgetCategory.Daglig;
+                    else if (str.Contains(htmlBudgetAllSalesFile))
+                        return BudgetCategory.AlleSelgere;
                 }
-                return BudgetCategory.None;
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
-                return BudgetCategory.None;
+                Logg.Log("Kritisk uhåndtert feil oppdaget i currentBudgetPage()! Forsøkte å finne budsjett side", Color.Red);
             }
+            return BudgetCategory.None;
         }
 
         private string currentPageFile()
@@ -2047,27 +2053,29 @@ namespace KGSA
             if (currentTab == "Budget")
             {
                 if (currentKat == "MDA")
-                    file = "\"" + settingsPath + "\\budsjettMda.html\" ";
+                    file = "\"" + htmlBudgetMda + "\" ";
                 else if (currentKat == "AudioVideo")
-                    file = "\"" + settingsPath + "\\budsjettAudioVideo.html\" ";
+                    file = "\"" + htmlBudgetAudioVideo + "\" ";
                 else if (currentKat == "SDA")
-                    file = "\"" + settingsPath + "\\budsjettSda.html\" ";
+                    file = "\"" + htmlBudgetSda + "\" ";
                 else if (currentKat == "Tele")
-                    file = "\"" + settingsPath + "\\budsjettTele.html\" ";
+                    file = "\"" + htmlBudgetTele + "\" ";
                 else if (currentKat == "Data")
-                    file = "\"" + settingsPath + "\\budsjettData.html\" ";
+                    file = "\"" + htmlBudgetData + "\" ";
                 else if (currentKat == "Cross")
-                    file = "\"" + settingsPath + "\\budsjettCross.html\" ";
+                    file = "\"" + htmlBudgetCross + "\" ";
                 else if (currentKat == "Kasse")
-                    file = "\"" + settingsPath + "\\budsjettKasse.html\" ";
+                    file = "\"" + htmlBudgetKasse + "\" ";
                 else if (currentKat == "Aftersales")
-                    file = "\"" + settingsPath + "\\budsjettAftersales.html\" ";
+                    file = "\"" + htmlBudgetAftersales + "\" ";
                 else if (currentKat == "MDASDA")
-                    file = "\"" + settingsPath + "\\budsjettMdaSda.html\" ";
+                    file = "\"" + htmlBudgetMdasda + "\" ";
                 else if (currentKat == "Butikk")
-                    file = "\"" + settingsPath + "\\budsjettButikk.html\" ";
+                    file = "\"" + htmlBudgetButikk + "\" ";
                 else if (currentKat == "Daglig")
-                    file = "\"" + settingsPath + "\\budsjettDaglig.html\" ";
+                    file = "\"" + htmlBudgetDaily + "\" ";
+                else if (currentKat == "AlleSelgere")
+                    file = "\"" + htmlBudgetAllSales + "\" ";
             }
             else
             {
@@ -2135,25 +2143,25 @@ namespace KGSA
             BudgetCategory cat = currentBudgetPage();
 
             if (cat == BudgetCategory.MDA)
-                file = "\"" + settingsPath + "\\budsjettMda.html\" ";
+                file = "\"" + htmlBudgetMda + "\" ";
             else if (cat == BudgetCategory.AudioVideo)
-                file = "\"" + settingsPath + "\\budsjettAudioVideo.html\" ";
+                file = "\"" + htmlBudgetAudioVideo + "\" ";
             else if (cat == BudgetCategory.SDA)
-                file = "\"" + settingsPath + "\\budsjettSda.html\" ";
+                file = "\"" + htmlBudgetSda + "\" ";
             else if (cat == BudgetCategory.Tele)
-                file = "\"" + settingsPath + "\\budsjettTele.html\" ";
+                file = "\"" + htmlBudgetTele + "\" ";
             else if (cat == BudgetCategory.Data)
-                file = "\"" + settingsPath + "\\budsjettData.html\" ";
+                file = "\"" + htmlBudgetData + "\" ";
             else if (cat == BudgetCategory.Cross)
-                file = "\"" + settingsPath + "\\budsjettCross.html\" ";
+                file = "\"" + htmlBudgetCross + "\" ";
             else if (cat == BudgetCategory.Kasse)
-                file = "\"" + settingsPath + "\\budsjettKasse.html\" ";
+                file = "\"" + htmlBudgetKasse + "\" ";
             else if (cat == BudgetCategory.Aftersales)
-                file = "\"" + settingsPath + "\\budsjettAftersales.html\" ";
+                file = "\"" + htmlBudgetAftersales + "\" ";
             else if (cat == BudgetCategory.MDASDA)
-                file = "\"" + settingsPath + "\\budsjettMdaSda.html\" ";
+                file = "\"" + htmlBudgetMdasda + "\" ";
             else if (cat == BudgetCategory.Daglig)
-                file = "\"" + settingsPath + "\\budsjettDaglig.html\" ";
+                file = "\"" + htmlBudgetDaily + "\" ";
 
             return file;
         }
@@ -2230,6 +2238,7 @@ namespace KGSA
                 buttonBudgetAftersales.BackColor = SystemColors.ControlLight;
                 buttonBudgetMdaSda.BackColor = SystemColors.ControlLight;
                 buttonBudgetButikk.BackColor = SystemColors.ControlLight;
+                buttonBudgetAllSalesRep.BackColor = SystemColors.ControlLight;
 
                 if (cat == BudgetCategory.MDA)
                     buttonBudgetMda.BackColor = Color.LightSkyBlue;
@@ -2253,6 +2262,8 @@ namespace KGSA
                     buttonBudgetButikk.BackColor = Color.LightSkyBlue;
                 else if (cat == BudgetCategory.Daglig)
                     buttonBudgetDaily.BackColor = Color.LightSkyBlue;
+                else if (cat == BudgetCategory.AlleSelgere)
+                    buttonBudgetAllSalesRep.BackColor = Color.LightSkyBlue;
 
                 this.Update();
             }
@@ -2381,6 +2392,8 @@ namespace KGSA
                     appConfig.strBudgetMdasda = "";
                 else if (cat == BudgetCategory.Daglig)
                     appConfig.strBudgetDaily = "";
+                else if (cat == BudgetCategory.AlleSelgere)
+                    appConfig.strBudgetAllSales = "";
             }
             else
             {
@@ -2394,7 +2407,9 @@ namespace KGSA
                 appConfig.strBudgetAftersales = "";
                 appConfig.strBudgetMdasda = "";
                 appConfig.strBudgetDaily = "";
+                appConfig.strBudgetAllSales = "";
             }
+
             SaveSettings();
             if (!bg && !EmptyDatabase())
             {
@@ -3464,14 +3479,20 @@ namespace KGSA
                     RetrieveDbStore();
                     Logg.Status("Laster fra databasen..");
                     processing.SetValue = 50;
+
                     if (EmptyDatabase())
                         Reload(true); // tving oppdatering hvis databasen var tømt
                     else
+                    {
                         ClearHash();
+                        ClearBudgetHash(BudgetCategory.None);
+                    }
+
                     if (EmptyStoreDatabase())
                         ReloadStore(true); // tving oppdatering hvis lager databasen var tømt
                     else
                         ClearHashStore();
+
                     if (service.dbServiceDatoFra == service.dbServiceDatoTil) // tving oppdatering hvis databasen var tømt
                         ReloadService(true);
                     else
@@ -3576,7 +3597,7 @@ namespace KGSA
                     moveDate(0, true);
                     InitDB();
                     topgraph = new TopGraph(this);
-                    sKoder = new Selgerkoder(this, true);
+                    salesCodes = new SalesCodes(this, true);
                     transInitialized = false;
                 }
             }
@@ -4491,27 +4512,13 @@ namespace KGSA
                 // Show / Hide experimental features
                 if (appConfig.experimental)
                 {
-                    if (!tabControlMain.TabPages.Contains(tabPageBudget))
-                        tabControlMain.TabPages.Add(tabPageBudget);
-
-                    lagreBudsjettPDFToolStripMenuItem.Visible = true;
-
-                    toolStripSeparatorGetBudget.Visible = true;
-
+                    toolStripSeparatorAndroidApp.Visible = true;
                     androidAppToolStripMenuItem.Visible = true;
-                    toolStripSeparator13.Visible = true;
                 }
                 else
                 {
-                    if (tabControlMain.TabPages.Contains(tabPageBudget))
-                        tabControlMain.TabPages.Remove(tabPageBudget);
-
-                    lagreBudsjettPDFToolStripMenuItem.Visible = false;
-
-                    toolStripSeparatorGetBudget.Visible = false;
-
+                    toolStripSeparatorAndroidApp.Visible = false;
                     androidAppToolStripMenuItem.Visible = false;
-                    toolStripSeparator13.Visible = false;
                 }
 
                 inkluderBudsjettMålIKveldstallToolStripMenuItem.Checked = appConfig.dailyBudgetIncludeInQuickRanking;
@@ -4698,6 +4705,7 @@ namespace KGSA
                 errorMsg.ShowDialog(this);
             }
         }
+
         private void SetTimerAutoStore()
         {
             timerAutoStore.Interval = 60 * 1000; // 1 minutt

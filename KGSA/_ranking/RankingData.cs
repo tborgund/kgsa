@@ -107,11 +107,11 @@ namespace KGSA
                 if (sqlce.Rows.Count == 0)
                     return dtWork;
 
-                string[] sk = main.sKoder.GetSelgerkoder("Data", true);
+                string[] sk = main.salesCodes.GetSalesCodes("Data", true);
                 decimal provisjon = 0, tekProvisjon = 0;
                 decimal bAntallSA = 0, bAntallNB = 0, bAntallSATot = 0, bAntallNBTot = 0;
 
-                if (!String.IsNullOrEmpty(main.sKoder.GetTeknikerAlle()))
+                if (!String.IsNullOrEmpty(main.salesCodes.GetTeknikerAlle()))
                     foreach (var varekode in varekoderDataAlle)
                         tekProvisjon += varekode.provTekniker
                             * Compute(sqlce, "Sum(Antall)", "[Varekode]='" + varekode.kode + "'");
@@ -127,7 +127,7 @@ namespace KGSA
                         return dtWork;
 
                     DataRow dtRow = dtWork.NewRow();
-                    string provType = main.sKoder.GetProvisjon(sk[d]);
+                    string provType = main.salesCodes.GetProvisjon(sk[d]);
 
                     decimal sBtokr = 0, sAntallSA = 0, sAntallSATot = 0, sAntallNB = 0, sAntallNBTot = 0, sSalgspris = 0, sProv = 0, s531 = 0, s533 = 0, s534 = 0, sSalgsprisNormal = 0;
                     string sSelger = sk[d];
@@ -469,7 +469,7 @@ namespace KGSA
                     else if (dt.Rows[i]["Selgerkode"].ToString() == "Andre")
                         doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "t" + "'>" + dt.Rows[i]["Selgerkode"] + "</a></td>");
                     else
-                        doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Selgerkode"] + "'>" + main.sKoder.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
+                        doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Selgerkode"] + "'>" + main.salesCodes.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
 
                     if (dt.Rows[i]["Selgerkode"].ToString() != "Andre")
                         doc.Add("<td class='numbers-percent' style='" + PercentStyleData(dt.Rows[i]["HitrateSA"].ToString()) + "'>" + Percent(dt.Rows[i]["HitrateSA"].ToString()) + "</td>");

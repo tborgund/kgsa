@@ -128,7 +128,7 @@
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.btImportEanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.slettEANTabellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparatorGetBudget = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparatorAndroidApp = new System.Windows.Forms.ToolStripSeparator();
             this.epostToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.hentDagensBudsjettToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
@@ -208,6 +208,7 @@
             this.pickerBudget = new System.Windows.Forms.DateTimePicker();
             this.buttonBudgetSettings = new System.Windows.Forms.Button();
             this.groupBudgetPages = new System.Windows.Forms.GroupBox();
+            this.buttonBudgetAllSalesRep = new System.Windows.Forms.Button();
             this.buttonBudgetDaily = new System.Windows.Forms.Button();
             this.buttonBudgetButikk = new System.Windows.Forms.Button();
             this.buttonBudgetMdaSda = new System.Windows.Forms.Button();
@@ -1101,7 +1102,7 @@
             // 
             this.automasjonToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.androidAppToolStripMenuItem,
-            this.toolStripSeparatorGetBudget,
+            this.toolStripSeparatorAndroidApp,
             this.epostToolStripMenuItem1,
             this.toolStripSeparator13,
             this.budsjettToolStripMenuItem});
@@ -1214,10 +1215,10 @@
             this.slettEANTabellToolStripMenuItem.Text = "Slett EAN tabell";
             this.slettEANTabellToolStripMenuItem.Click += new System.EventHandler(this.slettEANTabellToolStripMenuItem_Click);
             // 
-            // toolStripSeparatorGetBudget
+            // toolStripSeparatorAndroidApp
             // 
-            this.toolStripSeparatorGetBudget.Name = "toolStripSeparatorGetBudget";
-            this.toolStripSeparatorGetBudget.Size = new System.Drawing.Size(179, 6);
+            this.toolStripSeparatorAndroidApp.Name = "toolStripSeparatorAndroidApp";
+            this.toolStripSeparatorAndroidApp.Size = new System.Drawing.Size(179, 6);
             // 
             // epostToolStripMenuItem1
             // 
@@ -2104,6 +2105,7 @@
             // 
             // groupBudgetPages
             // 
+            this.groupBudgetPages.Controls.Add(this.buttonBudgetAllSalesRep);
             this.groupBudgetPages.Controls.Add(this.buttonBudgetDaily);
             this.groupBudgetPages.Controls.Add(this.buttonBudgetButikk);
             this.groupBudgetPages.Controls.Add(this.buttonBudgetMdaSda);
@@ -2121,6 +2123,20 @@
             this.groupBudgetPages.TabIndex = 21;
             this.groupBudgetPages.TabStop = false;
             this.groupBudgetPages.Text = "Sider: Budsjett";
+            // 
+            // buttonBudgetAllSalesRep
+            // 
+            this.buttonBudgetAllSalesRep.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.buttonBudgetAllSalesRep.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.buttonBudgetAllSalesRep.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightSkyBlue;
+            this.buttonBudgetAllSalesRep.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonBudgetAllSalesRep.Location = new System.Drawing.Point(98, 22);
+            this.buttonBudgetAllSalesRep.Name = "buttonBudgetAllSalesRep";
+            this.buttonBudgetAllSalesRep.Size = new System.Drawing.Size(86, 23);
+            this.buttonBudgetAllSalesRep.TabIndex = 16;
+            this.buttonBudgetAllSalesRep.Text = "Alle selgere";
+            this.buttonBudgetAllSalesRep.UseVisualStyleBackColor = false;
+            this.buttonBudgetAllSalesRep.Click += new System.EventHandler(this.buttonBudgetAllSalesRep_Click);
             // 
             // buttonBudgetDaily
             // 
@@ -4955,7 +4971,7 @@
         private System.Windows.Forms.ToolStripMenuItem automasjonToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem androidAppToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem btImportEanToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorGetBudget;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorAndroidApp;
         private System.Windows.Forms.Button buttonOpenExcel;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripLog;
         private System.Windows.Forms.ToolStripMenuItem kopierToolStripMenuItem;
@@ -5024,6 +5040,7 @@
         private System.Windows.Forms.ToolStripMenuItem budsjettToolStripMenuItem;
         private System.Windows.Forms.Button buttonBudgetActionBudgetImport;
         private System.Windows.Forms.ToolStripMenuItem oppdaterAlleSiderToolStripMenuItem;
+        private System.Windows.Forms.Button buttonBudgetAllSalesRep;
     }
 }
 

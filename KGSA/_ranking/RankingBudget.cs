@@ -1214,9 +1214,9 @@ namespace KGSA
                     string strLine = dtBudgetOverall.Rows[i]["Selgerkode"].ToString() == "Totalt" ? " style='border-top:2px solid black;' " : "";
 
                     if (dtBudgetOverall.Rows[i]["Selgerkode"].ToString() == "Totalt")
-                        doc.Add("</tbody><tfoot><tr><td class='text-cat' " + strLine + ">" + main.sKoder.GetNavn(dtBudgetOverall.Rows[i]["Selgerkode"].ToString()) + "</td>");
+                        doc.Add("</tbody><tfoot><tr><td class='text-cat' " + strLine + ">" + main.salesCodes.GetNavn(dtBudgetOverall.Rows[i]["Selgerkode"].ToString()) + "</td>");
                     else
-                        doc.Add("<tr><td class='text-cat' " + strLine + "><a href='#" + urlID + "b" + dtBudgetOverall.Rows[i]["Selgerkode"].ToString() + "'>" + main.sKoder.GetNavn(dtBudgetOverall.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
+                        doc.Add("<tr><td class='text-cat' " + strLine + "><a href='#" + urlID + "b" + dtBudgetOverall.Rows[i]["Selgerkode"].ToString() + "'>" + main.salesCodes.GetNavn(dtBudgetOverall.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
 
                     doc.Add("<td class='numbers-gen'" + strLine + ">" + budget.BudgetPlusMinus((decimal)dtBudgetOverall.Rows[i]["Actual_Omset"]) + "</td>");
                     doc.Add("<td class='numbers-gen'" + strLine + ">" + budget.BudgetPlusMinus((decimal)dtBudgetOverall.Rows[i]["Actual_Inntjen"]) + "</td>");
@@ -1406,9 +1406,9 @@ namespace KGSA
                     string strLine = dtBudgetOverall.Rows[i]["Selgerkode"].ToString() == "Totalt" ? " style='border-top:2px solid black;border-bottom:none;' " : "";
 
                     if (dtBudgetOverall.Rows[i]["Selgerkode"].ToString() == "Totalt")
-                        doc.Add("</tbody><tfoot><tr><td class='text-cat' " + strLine + ">" + main.sKoder.GetNavn(dtBudgetProduct.Rows[i]["Selgerkode"].ToString()) + "</td>");
+                        doc.Add("</tbody><tfoot><tr><td class='text-cat' " + strLine + ">" + main.salesCodes.GetNavn(dtBudgetProduct.Rows[i]["Selgerkode"].ToString()) + "</td>");
                     else
-                        doc.Add("<tr><td class='text-cat' " + strLine + "><a href='#" + urlID + "b" + dtBudgetProduct.Rows[i]["Selgerkode"].ToString() + "'>" + main.sKoder.GetNavn(dtBudgetProduct.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
+                        doc.Add("<tr><td class='text-cat' " + strLine + "><a href='#" + urlID + "b" + dtBudgetProduct.Rows[i]["Selgerkode"].ToString() + "'>" + main.salesCodes.GetNavn(dtBudgetProduct.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
 
                     proActual = (KgsaBudgetProduct)dtBudgetProduct.Rows[i]["Field1"];
                     doc.Add("<td class='" + proActual.fields[0].style + "'" + strLine + ">" + proActual.fields[0].text + "</td>");

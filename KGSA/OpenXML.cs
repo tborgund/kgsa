@@ -84,7 +84,7 @@ namespace KGSA
                 string tab = main.readCurrentTab();
                 string page = main.currentPage();
 
-                if ((tab.Equals("Ranking") || tab.Equals("Avdelinger") || tab.Equals("Store")) && !String.IsNullOrEmpty(page))
+                if ((tab.Equals("Ranking") || tab.Equals("Avdelinger") || tab.Equals("Store") || tab.Equals("Budget")) && !String.IsNullOrEmpty(page))
                 {
                     string file = ExportDocument(page, date);
                     if (file != null)

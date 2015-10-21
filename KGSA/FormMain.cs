@@ -26,6 +26,7 @@ namespace KGSA
         public static string settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA";
         public static string settingsFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA\Settings.xml";
         public static string settingsTemp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA\Temp";
+        public static string settingsWeb = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA\Web";
         public static string[] staticVaregruppe = new string[154] { "999", "997", "982", "980", "961", "910", "699", "599", "597", "595", "590", "589", "587", "585", "583", "582", "580", "575", "570", "569", "567", "563", "561", "559", "558", "557", "555", "554", "552", "550", "545", "544", "543", "541", "539", "538", "537", "536", "534", "533", "531", "499", "497", "489", "487", "485", "483", "482", "481", "480", "452", "447", "437", "435", "433", "431", "409", "403", "401", "399", "398", "397", "395", "394", "388", "386", "384", "383", "382", "380", "378", "377", "376", "368", "366", "364", "360", "359", "358", "356", "355", "354", "353", "352", "350", "348", "347", "346", "344", "343", "340", "337", "336", "335", "309", "308", "307", "306", "305", "304", "303", "302", "301", "299", "297", "294", "284", "283", "282", "280", "278", "277", "276", "275", "274", "273", "272", "271", "269", "255", "254", "252", "250", "245", "236", "235", "227", "226", "224", "219", "217", "216", "214", "199", "197", "195", "190", "183", "182", "180", "163", "146", "145", "144", "143", "142", "140", "138", "136", "135", "134", "133", "132", "131" };
 
         public static string databaseVersion = "DbV7";
@@ -56,17 +57,31 @@ namespace KGSA
         public static string htmlAvdTjenester = settingsPath + @"\rankingAvdTjenester.html";
         public static string htmlAvdSnittpriser = settingsPath + @"\rankingAvdSnittpriser.html";
 
-        public static string htmlBudgetMda = settingsPath + @"\budsjettMda.html";
-        public static string htmlBudgetAudioVideo = settingsPath + @"\budsjettAudioVideo.html";
-        public static string htmlBudgetSda = settingsPath + @"\budsjettSda.html";
-        public static string htmlBudgetTele = settingsPath + @"\budsjettTele.html";
-        public static string htmlBudgetData = settingsPath + @"\budsjettData.html";
-        public static string htmlBudgetCross = settingsPath + @"\budsjettCross.html";
-        public static string htmlBudgetKasse = settingsPath + @"\budsjettKasse.html";
-        public static string htmlBudgetAftersales = settingsPath + @"\budsjettAftersales.html";
-        public static string htmlBudgetMdasda = settingsPath + @"\budsjettMdaSda.html";
-        public static string htmlBudgetButikk = settingsPath + @"\budsjettButikk.html";
-        public static string htmlBudgetDaily = settingsPath + @"\budsjettDaglig.html";
+        public static string htmlBudgetMdaFile = "budsjettMda.html";
+        public static string htmlBudgetAudioVideoFile = "budsjettAudioVideo.html";
+        public static string htmlBudgetSdaFile = "budsjettSda.html";
+        public static string htmlBudgetTeleFile = "budsjettTele.html";
+        public static string htmlBudgetDataFile = "budsjettData.html";
+        public static string htmlBudgetCrossFile = "budsjettCross.html";
+        public static string htmlBudgetKasseFile = "budsjettKasse.html";
+        public static string htmlBudgetAftersalesFile = "budsjettAftersales.html";
+        public static string htmlBudgetMdasdaFile = "budsjettMdaSda.html";
+        public static string htmlBudgetButikkFile = "budsjettButikk.html";
+        public static string htmlBudgetDailyFile = "budsjettDaglig.html";
+        public static string htmlBudgetAllSalesFile = "budsjettAlleSelgere.html";
+
+        public static string htmlBudgetMda = settingsPath + "\\" + htmlBudgetMdaFile;
+        public static string htmlBudgetAudioVideo = settingsPath + "\\" + htmlBudgetAudioVideoFile;
+        public static string htmlBudgetSda = settingsPath + "\\" + htmlBudgetSdaFile;
+        public static string htmlBudgetTele = settingsPath + "\\" + htmlBudgetTeleFile;
+        public static string htmlBudgetData = settingsPath + "\\" + htmlBudgetDataFile;
+        public static string htmlBudgetCross = settingsPath + "\\" + htmlBudgetCrossFile;
+        public static string htmlBudgetKasse = settingsPath + "\\" + htmlBudgetKasseFile;
+        public static string htmlBudgetAftersales = settingsPath + "\\" + htmlBudgetAftersalesFile;
+        public static string htmlBudgetMdasda = settingsPath + "\\" + htmlBudgetMdasdaFile;
+        public static string htmlBudgetButikk = settingsPath + "\\" + htmlBudgetButikkFile;
+        public static string htmlBudgetDaily = settingsPath + "\\" + htmlBudgetDailyFile;
+        public static string htmlBudgetAllSales = settingsPath + "\\" + htmlBudgetAllSalesFile;
 
         public static string htmlRapport = settingsPath + @"\rankingRapport.html";
         public static string htmlPeriode = settingsPath + @"\rankingPeriode.html";
@@ -152,6 +167,8 @@ namespace KGSA
         public static DateTime rangeMin = new DateTime(2000, 1, 1, 0, 0, 0);
         public static DateTime rangeMax = DateTime.Now.AddYears(1);
         public static DateTime highlightDate = rangeMin;
+        public static bool appManagerIsBusy = false;
+        private readonly Timer timerMsgClear = new Timer();
 
         public AppSettings appConfig = new AppSettings();
         private int lagretAvdeling = 0;
@@ -170,7 +187,7 @@ namespace KGSA
         public Obsolete obsolete = new Obsolete();
         public TopGraph topgraph;
         public GraphClass gc;
-        public Selgerkoder sKoder;
+        public SalesCodes salesCodes;
         private bool forceShutdown = false;
         private static bool newInstall = false;
         public DataTable sqlceCurrentMonth;
@@ -179,8 +196,6 @@ namespace KGSA
         public BudgetObj budget;
         public OpenXML openXml;
         public Database database;
-        private readonly Timer timerMsgClear = new Timer();
-        public static bool appManagerIsBusy = false;
         public SqlCeConnection connection = new SqlCeConnection(SqlConStr);
         BluetoothServer blueServer = null;
         public KgsaTools tools;
@@ -207,6 +222,7 @@ namespace KGSA
             RetrieveDb();
             RetrieveDbStore();
             RetrieveDbService();
+            splash.ProgressMesssage("Leser fra database..");
             ReloadStore();
             ReloadBudget();
             Reload();
@@ -384,7 +400,7 @@ namespace KGSA
             this.vinnprodukt = new Vinnprodukt(this);
             this.openXml = new OpenXML(this);
             this.processing = new FormProcessing(this);
-            this.sKoder = new Selgerkoder(this);
+            this.salesCodes = new SalesCodes(this);
             this.tools = new KgsaTools(this);
 
             worker = new BackgroundWorker();
@@ -2541,52 +2557,6 @@ namespace KGSA
             form.Dispose();
         }
 
-        private void importerTransaksjonerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy(true))
-                delayedMacroRankingImport();
-        }
-
-        private void importerLagervarerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy(true))
-                delayedAutoStore();
-        }
-
-        private void importerServiceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy(true))
-                delayedAutoServiceImport();
-        }
-
-        private void startAutorankingToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-                delayedAutoRanking();
-        }
-
-        private void startQuickrankingToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-                startDelayedAutoQuickImport();
-        }
-
-        private void makroInnstillingerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-            {
-                FormSettingsMacro form = new FormSettingsMacro(this);
-                if (form.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-                {
-                    SaveSettings();
-                    UpdateUi();
-                }
-
-                form.Dispose();
-
-            }
-        }
-
         private void buttonOpenExcel_Click(object sender, EventArgs e)
         {
             if (openXml != null)
@@ -2817,7 +2787,7 @@ namespace KGSA
         private void buttonBudgetActionOpenExcel_Click(object sender, EventArgs e)
         {
             if (openXml != null)
-                openXml.OpenDocument(pickerRankingDate.Value);
+                openXml.OpenDocument(pickerBudget.Value);
         }
 
         private void buttonBudgetActionMacroImport_Click(object sender, EventArgs e)
@@ -2905,6 +2875,12 @@ namespace KGSA
                 worker = new BackgroundWorker();
                 importer.StartAsyncDownloadBudget(worker, false);
             }
+        }
+
+        private void buttonBudgetAllSalesRep_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+                RunBudget(BudgetCategory.AlleSelgere);
         }
     }
 }

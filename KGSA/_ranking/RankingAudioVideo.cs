@@ -90,10 +90,10 @@ namespace KGSA
                 if (sqlce.Rows.Count == 0)
                     return dtWork;
 
-                string[] sk = main.sKoder.GetSelgerkoder("AudioVideo", true);
+                string[] sk = main.salesCodes.GetSalesCodes("AudioVideo", true);
                 decimal provisjon = 0, tekProvisjon = 0;
 
-                if (!String.IsNullOrEmpty(main.sKoder.GetTeknikerAlle()))
+                if (!String.IsNullOrEmpty(main.salesCodes.GetTeknikerAlle()))
                     foreach (var varekode in varekoderAudioVideo)
                         tekProvisjon += varekode.provTekniker
                             * Compute(sqlce, "Sum(Antall)", "[Varekode]='" + varekode.kode + "'");
@@ -107,7 +107,7 @@ namespace KGSA
                         return dtWork;
 
                     DataRow dtRow = dtWork.NewRow();
-                    string provType = main.sKoder.GetProvisjon(sk[d]);
+                    string provType = main.salesCodes.GetProvisjon(sk[d]);
 
                     decimal s224 = 0, sAntall = 0, sAntallTot = 0;
                     decimal sSalgspris = 0, sBtokr = 0, sProv = 0, sSalgsprisNormal = 0;
@@ -357,7 +357,7 @@ namespace KGSA
                     else if (dt.Rows[i]["Selgerkode"].ToString() == "Andre")
                         doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "t" + "'>" + dt.Rows[i]["Selgerkode"] + "</a></td>");
                     else
-                        doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Selgerkode"] + "'>" + main.sKoder.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
+                        doc.Add("<tr><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Selgerkode"] + "'>" + main.salesCodes.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
 
                     if (dt.Rows[i]["Selgerkode"].ToString() != "Andre")
                         doc.Add("<td class='numbers-percent' style='" + PercentStyleNett(dt.Rows[i]["Hitrate"].ToString()) + "'>" + Percent(dt.Rows[i]["Hitrate"].ToString()) + "</td>");

@@ -172,7 +172,7 @@ namespace KGSA
                 {
                     if (i > main.appConfig.serviceFerdigServiceStatsAntall - 1)
                         break;
-                    doc.Add("<tr><td class='text-cat'>" + main.sKoder.GetNavn(SortedList[i][0].ToString()) + "</td>");
+                    doc.Add("<tr><td class='text-cat'>" + main.salesCodes.GetNavn(SortedList[i][0].ToString()) + "</td>");
                     doc.Add("<td class='numbers-gen'>" + SortedList[i][2] + "</td>");
                     doc.Add("<td class='numbers-gen'>" + SortedList[i][1] + "</td>");
                     doc.Add("</tr>");

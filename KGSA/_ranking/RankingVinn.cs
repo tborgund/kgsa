@@ -145,7 +145,7 @@ namespace KGSA
 
             foreach (BudgetCategory cat in symbols)
             {
-                string[] sk = main.sKoder.GetVinnSelgerkoder(cat);
+                string[] sk = main.salesCodes.GetVinnSelgerkoder(cat);
                 if (sk.Length == 0)
                     continue;
 
@@ -246,7 +246,7 @@ namespace KGSA
 
             foreach (BudgetCategory cat in symbols)
             {
-                string[] sk = main.sKoder.GetVinnSelgerkoder(cat);
+                string[] sk = main.salesCodes.GetVinnSelgerkoder(cat);
                 if (sk.Length == 0)
                     continue;
 
@@ -405,7 +405,7 @@ namespace KGSA
                 {
                     height++;
                     string strLine = dt.Rows.Count == i - 1 ? "border-bottom:none;" : "";
-                    doc.Add("<tr><td class='text-cat' style='font-size:14pt;" + strLine + "'><a href='#vinn" + dt.Rows[i]["Selgerkode"].ToString() + "'>" + main.sKoder.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
+                    doc.Add("<tr><td class='text-cat' style='font-size:14pt;" + strLine + "'><a href='#vinn" + dt.Rows[i]["Selgerkode"].ToString() + "'>" + main.salesCodes.GetNavn(dt.Rows[i]["Selgerkode"].ToString()) + "</a></td>");
 
                     if (main.appConfig.vinnEnkelModus)
                     {

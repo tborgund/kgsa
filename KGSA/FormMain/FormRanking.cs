@@ -219,6 +219,12 @@ namespace KGSA
                 page.BuildPage(cat, appConfig.strBudgetDaily, htmlBudgetDaily, pickerBudget.Value);
                 appConfig.strBudgetDaily = newHash;
             }
+            else if (cat == BudgetCategory.AlleSelgere)
+            {
+                PageBudgetAllSales page = new PageBudgetAllSales(this, false, bw, webBudget);
+                page.BuildPage(cat, appConfig.strBudgetAllSales, htmlBudgetAllSales, pickerBudget.Value);
+                appConfig.strBudgetAllSales = newHash;
+            }
             else
                 Logg.Log("Ingen kategori valgt for beregning av budsjett.");
         }
@@ -1760,7 +1766,7 @@ namespace KGSA
 
                 doc.Add("<h1>Vinnprodukter (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
 
-                doc.Add("<h2>Transaksjoner for selger: " + sKoder.GetNavn(selgerArg) + "</h2>");
+                doc.Add("<h2>Transaksjoner for selger: " + salesCodes.GetNavn(selgerArg) + "</h2>");
                 doc.AddRange(ranking.GetTableHtmlSelger(selgerArg));
 
                 doc.Add(Resources.htmlEnd);

@@ -28,7 +28,7 @@ namespace KGSA
 
                 if (currentBudgetInfo != null)
                 {
-                    var sk = main.sKoder.GetBudgetSelgerkoder(currentBudgetInfo.kategori);
+                    var sk = main.salesCodes.GetBudgetSelgerkoder(currentBudgetInfo.kategori);
 
                     var command = new SqlCeCommand("SELECT * FROM tblBudgetSelger WHERE BudgetId = " + budgetId, main.connection);
                     var da = new SqlCeDataAdapter(command);
@@ -742,7 +742,7 @@ namespace KGSA
                             if (float.IsNaN(wIT) || float.IsInfinity(wIT))
                                 wIT = 1;
 
-                            g.DrawString(main.sKoder.GetNavn(selger), fontNormal, new SolidBrush(Color.Black), new PointF(x + 10 - innject, Vstep * i + offsetTop + (Vstep / 10)));
+                            g.DrawString(main.salesCodes.GetNavn(selger), fontNormal, new SolidBrush(Color.Black), new PointF(x + 10 - innject, Vstep * i + offsetTop + (Vstep / 10)));
 
                             if (type != BudgetValueType.Hitrate && type != BudgetValueType.SoB && type != BudgetValueType.SoM)
                             {
@@ -860,8 +860,6 @@ namespace KGSA
                 return "";
             }
         }
-
-
     }
 
     public class BudgetSelger
@@ -991,7 +989,7 @@ namespace KGSA
 
     public enum BudgetType { TA, Strom, Finans, Rtgsa, Acc, Inntjening, Omsetning, Kvalitet, Effektivitet, Vinnprodukt }
 
-    public enum BudgetCategory { MDA, AudioVideo, SDA, Tele, Data, Cross, Kasse, Aftersales, MDASDA, None, Butikk, Daglig }
+    public enum BudgetCategory { MDA, AudioVideo, SDA, Tele, Data, Cross, Kasse, Aftersales, MDASDA, None, Butikk, Daglig, AlleSelgere }
 
     public static class BudgetCategoryClass
     {
@@ -1019,6 +1017,8 @@ namespace KGSA
                 return "Butikk";
             if (cat == BudgetCategory.Daglig)
                 return "Daglig";
+            if (cat == BudgetCategory.AlleSelgere)
+                return "AlleSelgere";
 
             return "";
         }
@@ -1045,6 +1045,10 @@ namespace KGSA
                 return BudgetCategory.MDASDA;
             if (catStr == "Butikk")
                 return BudgetCategory.Butikk;
+            if (catStr == "Daglig")
+                return BudgetCategory.Daglig;
+            if (catStr == "AlleSelgere")
+                return BudgetCategory.AlleSelgere;
 
             return BudgetCategory.None;
         }

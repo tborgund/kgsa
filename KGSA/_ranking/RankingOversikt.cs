@@ -95,7 +95,7 @@ namespace KGSA
                     if (d == 9)
                         sKat = "Cross";
 
-                    string[] selgere = main.sKoder.GetSelgerkoder(sKat, false);
+                    string[] selgere = main.salesCodes.GetSalesCodes(sKat, false);
                     decimal sInntjen = 0, sOmset = 0, sOmsetExMva = 0, sTjenInntjen = 0, sTjenOmset = 0, sAntallTjen = 0, sAntallSalg = 0, sAccessoriesAntall = 0, sAccessoriesInntjen = 0, sAccessoriesOmset = 0;
                     decimal sStromAntall = 0, sStromInntjen = 0, sModAntall = 0, sModInntjen = 0, sFinansAntall = 0, sFinansInntjen = 0, sModOmset = 0, sKupppvarer = 0;
                     decimal sSnittAntall = 0, sSnittOmset = 0, sSnittInntjen = 0, sAntallBilag = 0;
@@ -187,10 +187,10 @@ namespace KGSA
                         {
                             if (main.appConfig.oversiktKravVis && d > 6)
                             {
-                                finansKravAcc += (int)(main.sKoder.GetKrav(selgere[i], sKat, "Finans", main.appConfig.oversiktKravFinansAntall));
-                                modKravAcc += (int)(main.sKoder.GetKrav(selgere[i], sKat, "Mod", main.appConfig.oversiktKravModAntall));
-                                stromKravAcc += (int)(main.sKoder.GetKrav(selgere[i], sKat, "Strom", main.appConfig.oversiktKravStromAntall));
-                                rtgsaKravAcc += (int)(main.sKoder.GetKrav(selgere[i], sKat, "Rtgsa", main.appConfig.oversiktKravRtgsaAntall));
+                                finansKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Finans", main.appConfig.oversiktKravFinansAntall));
+                                modKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Mod", main.appConfig.oversiktKravModAntall));
+                                stromKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Strom", main.appConfig.oversiktKravStromAntall));
+                                rtgsaKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Rtgsa", main.appConfig.oversiktKravRtgsaAntall));
                             }
                         }
 
@@ -369,7 +369,7 @@ namespace KGSA
                                 return dtWork;
 
                             DataTable dt;
-                            if (d > 0 && d <= 6 && (main.appConfig.oversiktFilterToDepartments || main.sKoder.GetKategori(selgere[i]) == "Cross"))
+                            if (d > 0 && d <= 6 && (main.appConfig.oversiktFilterToDepartments || main.salesCodes.GetKategori(selgere[i]) == "Cross"))
                             {
                                 var rows = sqlce.Select("((Varegruppe >= " + d + "00 AND Varegruppe <= " + d + "99) OR Varegruppe = 961) AND Selgerkode = '" + selgere[i] + "'"); // optionally include .ToList();
                                 dt = rows.Any() ? rows.CopyToDataTable() : sqlce.Clone();
@@ -512,12 +512,12 @@ namespace KGSA
                                     dtRowSel["SnittOmset"] = 0;
                                 }
 
-                                if (main.appConfig.oversiktKravVis && ((main.sKoder.GetKategori(selgere[i]) != "Cross" && d >= 1 && d <= 6) || (d > 6)))
+                                if (main.appConfig.oversiktKravVis && ((main.salesCodes.GetKategori(selgere[i]) != "Cross" && d >= 1 && d <= 6) || (d > 6)))
                                 {
-                                    int finansKrav = (int)(main.sKoder.GetKrav(selgere[i], sKat, "Finans", main.appConfig.oversiktKravFinansAntall));
-                                    var modKrav = (int)(main.sKoder.GetKrav(selgere[i], sKat, "Mod", main.appConfig.oversiktKravModAntall));
-                                    var stromKrav = (int)(main.sKoder.GetKrav(selgere[i], sKat, "Strom", main.appConfig.oversiktKravStromAntall));
-                                    var rtgsaKrav = (int)(main.sKoder.GetKrav(selgere[i], sKat, "Rtgsa", main.appConfig.oversiktKravRtgsaAntall));
+                                    int finansKrav = (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Finans", main.appConfig.oversiktKravFinansAntall));
+                                    var modKrav = (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Mod", main.appConfig.oversiktKravModAntall));
+                                    var stromKrav = (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Strom", main.appConfig.oversiktKravStromAntall));
+                                    var rtgsaKrav = (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Rtgsa", main.appConfig.oversiktKravRtgsaAntall));
 
                                     dtRowSel["FinansKrav"] = finansKrav * multi;
                                     dtRowSel["FinansKravUmod"] = finansKrav;
@@ -816,7 +816,7 @@ namespace KGSA
                 dt = dtDetaljer;
             else
             {
-                if (main.sKoder.Count() < 4)
+                if (main.salesCodes.Count() < 4)
                     doc.Add("<br><span class='Subtitle' style='color:red !important;'>Ikke nok selgerkoder valgt for å lage en meningsfull tabell.</span><br>");
                 else
                     doc.Add("<span class='Subtitle' style='color:red !important;'>Fant ingen transaksjoner.</span><br>");
@@ -853,7 +853,7 @@ namespace KGSA
                 if (!kat)
                 {
                     onclickStr = "";
-                    if (main.sKoder.GetKategori(dt.Rows[i]["Kat"].ToString()) == "Cross")
+                    if (main.salesCodes.GetKategori(dt.Rows[i]["Kat"].ToString()) == "Cross")
                         classStr = " class='" + hashIddRow + " CrossSelger' ";
                     else
                         classStr = " class='" + hashIddRow + " Selger' ";
@@ -866,7 +866,7 @@ namespace KGSA
                     if (kat)
                         doc.Add("<tr" + onclickStr + classStr + "><td class='text-cat'><a href='#" + urlID + "b" + dt.Rows[i]["Kat"] + "'>" + dt.Rows[i]["Kat"] + "</a></td>");
                     else
-                        doc.Add("<tr" + onclickStr + classStr + "><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Kat"] + "'>" + main.sKoder.GetNavn(dt.Rows[i]["Kat"].ToString()) + "</a></td>");
+                        doc.Add("<tr" + onclickStr + classStr + "><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Kat"] + "'>" + main.salesCodes.GetNavn(dt.Rows[i]["Kat"].ToString()) + "</a></td>");
                 }
 
                 if (main.appConfig.importSetting.StartsWith("Full"))
@@ -976,7 +976,7 @@ namespace KGSA
                 dt = dtDetaljer;
             else
             {
-                if (main.sKoder.Count() < 4)
+                if (main.salesCodes.Count() < 4)
                     doc.Add("<br><span class='Subtitle' style='color:red !important;'>Ikke nok selgerkoder valgt for å lage en meningsfull tabell.</span><br>");
                 else
                     doc.Add("<span class='Subtitle' style='color:red !important;'>Fant ingen transaksjoner.</span><br>");
@@ -1012,7 +1012,7 @@ namespace KGSA
                 if (!kat)
                 {
                     onclickStr = "";
-                    if (main.sKoder.GetKategori(dt.Rows[i]["Kat"].ToString()) == "Cross")
+                    if (main.salesCodes.GetKategori(dt.Rows[i]["Kat"].ToString()) == "Cross")
                         classStr = " class='" + hashIddRow + " CrossSelger' ";
                     else
                         classStr = " class='" + hashIddRow + " Selger' ";
@@ -1025,7 +1025,7 @@ namespace KGSA
                     if (kat)
                         doc.Add("<tr" + onclickStr + classStr + "><td class='text-cat'><a href='#" + urlID + "b" + dt.Rows[i]["Kat"] + "'>" + dt.Rows[i]["Kat"] + "</a></td>");
                     else
-                        doc.Add("<tr" + onclickStr + classStr + "><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Kat"] + "'>" + main.sKoder.GetNavn(dt.Rows[i]["Kat"].ToString()) + "</a></td>");
+                        doc.Add("<tr" + onclickStr + classStr + "><td class='text-cat'><a href='#" + urlID + "s" + dt.Rows[i]["Kat"] + "'>" + main.salesCodes.GetNavn(dt.Rows[i]["Kat"].ToString()) + "</a></td>");
                 }
 
                 if (main.appConfig.importSetting.StartsWith("Full"))

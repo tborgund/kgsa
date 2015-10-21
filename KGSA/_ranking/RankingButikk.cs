@@ -123,7 +123,7 @@ namespace KGSA
                     decimal sInntjen = 0, sOmset = 0, sOmsetExMva = 0, sTjenInntjen = 0, sTjenOmset = 0, sAntallTjen = 0, sAntallSalg = 0;
                     decimal sStromAntall = 0, sStromInntjen = 0, sModAntall = 0, sModInntjen = 0, sFinansAntall = 0, sFinansInntjen = 0, sModOmset = 0;
                     object r;
-                    string[] selgere = main.sKoder.GetSelgerkoder(sKat);
+                    string[] selgere = main.salesCodes.GetSalesCodes(sKat);
 
                     if (main.appConfig.importSetting.StartsWith("Full"))
                     {
