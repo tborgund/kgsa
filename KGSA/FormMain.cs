@@ -693,7 +693,7 @@ namespace KGSA
                 else if (curTab == "Service")
                     webService.ShowPrintDialog();
                 else if (curTab == "Store")
-                    webLager.ShowPrintDialog();
+                    webStore.ShowPrintDialog();
                 else
                     Logg.Log("Gjeldene vindu kan ikke skrives ut.");
                 return true;
@@ -822,7 +822,7 @@ namespace KGSA
             else if (curTab == "Service")
                 webService.ShowPrintDialog();
             else if (curTab == "Store")
-                webLager.ShowPrintDialog();
+                webStore.ShowPrintDialog();
             else if (curTab == "Log")
             {
                 PrintDialog printDialog = new PrintDialog();
@@ -968,7 +968,7 @@ namespace KGSA
             }
             else if (curTab == "Store")
             {
-                webLager.ShowPrintPreviewDialog();
+                webStore.ShowPrintPreviewDialog();
                 return;
             }
             
@@ -1000,7 +1000,7 @@ namespace KGSA
             }
             else if (curTab == "Store")
             {
-                webLager.ShowPageSetupDialog();
+                webStore.ShowPageSetupDialog();
                 return;
             }
             

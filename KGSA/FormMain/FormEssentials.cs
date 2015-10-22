@@ -331,7 +331,7 @@ namespace KGSA
             if (formBudget.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
                 ClearBudgetHash(BudgetCategory.None);
-                HighlightBudgetButton(BudgetCategory.None);
+                UpdateUi();
             }
         }
 
@@ -824,12 +824,6 @@ namespace KGSA
 
             // Oppdaterer gjeldene datoer.. vi oppdaterer UI etter ferdig jobb
             RetrieveDb(true);
-            appConfig.strButikk = "";
-            appConfig.strData = "";
-            appConfig.strAudioVideo = "";
-            appConfig.strTele = "";
-            appConfig.strOversikt = "";
-            appConfig.strObsolete = "";
 
             // Hvis valgt, avbryt utsending hvis vi ikke har tall fra i går.
             if (appConfig.epostOnlySendUpdated)
@@ -1973,9 +1967,9 @@ namespace KGSA
                     else
                         return "";
                 }
-                else if (curTab == "Store" && webLager.Url != null)
+                else if (curTab == "Store" && webStore.Url != null)
                 {
-                    string str = webLager.Url.OriginalString;
+                    string str = webStore.Url.OriginalString;
                     if (str.Contains("storeLagerstatus.html"))
                         return "Obsolete";
                     else if (str.Contains("storeObsoleteList.html"))
@@ -3057,13 +3051,15 @@ namespace KGSA
                             }
                             if (appConfig.pdfVisWeekly)
                             {
-                                BuildStoreWeeklyOverview(true);
+                                PageStoreWeekly page = new PageStoreWeekly(this, true, bw, webStore);
+                                page.BuildPage_Overview("", appConfig.strLagerWeeklyOverview, htmlStoreWeeklyOverview, pickerLagerDato.Value);
                                 appConfig.strLagerWeeklyOverview = newHashStore;
                                 sourceFiles += " \"" + htmlStoreWeeklyOverview + "\" ";
                             }
                             if (appConfig.pdfVisPrisguide)
                             {
-                                BuildStorePrisguideOverview(true);
+                                PageStorePrisguide page = new PageStorePrisguide(this, true, bw, webStore);
+                                page.BuildPage_Overview("", appConfig.strLagerPrisguideOverview, htmlStorePrisguideOverview, pickerLagerDato.Value);
                                 appConfig.strLagerPrisguideOverview = newHashStore;
                                 sourceFiles += " \"" + htmlStorePrisguideOverview + "\" ";
                             }

@@ -70,6 +70,10 @@ namespace KGSA
                 checkBox_ShowAftersales.Checked = main.appConfig.budgetShowAftersales;
                 checkBox_ShowMdaSda.Checked = main.appConfig.budgetShowMdasda;
                 checkBox_ShowButikk.Checked = main.appConfig.budgetShowButikk;
+
+                // Dagsbudsjett
+                checkSettingsDailyInclude.Checked = main.appConfig.dailyBudgetIncludeInQuickRanking;
+                checkSettingsDailyAuto.Checked = main.appConfig.dailyBudgetQuickRankingAutoUpdate;
             }
             catch(Exception ex)
             {
@@ -104,6 +108,10 @@ namespace KGSA
             main.appConfig.budgetShowAftersales = checkBox_ShowAftersales.Checked;
             main.appConfig.budgetShowMdasda = checkBox_ShowMdaSda.Checked;
             main.appConfig.budgetShowButikk = checkBox_ShowButikk.Checked;
+
+            // Dagsbudsjett
+            main.appConfig.dailyBudgetIncludeInQuickRanking = checkSettingsDailyInclude.Checked;
+            main.appConfig.dailyBudgetQuickRankingAutoUpdate = checkSettingsDailyAuto.Checked;
 
             main.SaveSettings();
         }

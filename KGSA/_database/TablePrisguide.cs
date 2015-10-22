@@ -116,16 +116,18 @@ namespace KGSA
             return main.database.GetSqlDataTable(sql);
         }
 
-        public DateTime GetLatestDate()
+        public DateTime GetLatestDate(int avdeling)
         {
-            string sql = "SELECT TOP(1) " + KEY_DATE + " FROM " + TABLE_NAME + " WHERE " + KEY_AVDELING + " = " + main.appConfig.Avdeling + " ORDER BY " + KEY_DATE + " DESC";
+            string sql = "SELECT TOP(1) " + KEY_DATE + " FROM " + TABLE_NAME + " WHERE " + KEY_AVDELING + " = " + avdeling + " ORDER BY " + KEY_DATE + " DESC";
             try
             {
                 using (SqlCeCommand command = new SqlCeCommand(sql, main.connection))
                 {
                     DateTime date = FormMain.rangeMin;
-                    object result = command.ExecuteScalar();
-                    DateTime.TryParseExact(Convert.ToString(result), "dd.MM.yyyy", FormMain.norway, DateTimeStyles.None, out date);
+                    var result = command.ExecuteScalar();
+                    if (result != null)
+                        date = Convert.ToDateTime(result);
+
                     return date;
                 }
             }

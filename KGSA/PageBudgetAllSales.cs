@@ -114,15 +114,15 @@ namespace KGSA
                 foreach (DataRow row in table.Rows)
                 {
                     AddTable_Row_Start();
-                    AddTable_Row_Cell(row[INDEX_NAVN].ToString(), "", Class_Style_Numbers_Text_Cat);
-                    AddTable_Row_Cell(row[INDEX_AVD].ToString(), "", Class_Style_Numbers_Text_Cat);
+                    AddTable_Row_Cell(row[INDEX_NAVN].ToString(), "", Class_Style_Text_Cat);
+                    AddTable_Row_Cell(row[INDEX_AVD].ToString(), "", Class_Style_Text_Cat);
 
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(row[INDEX_OMSET_EKS_MVA], 0, "", true), "", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Percent(row[INDEX_BTO_PROSENT], 1, true, false, 0), "text-align: right;", Class_Style_Numbers_Percent);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(row[INDEX_INNTJENT], 0, "", true), "", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(0), "border-left:2px solid #000;", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(0), "", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(0), "", Class_Style_Numbers_Gen);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(row[INDEX_OMSET_EKS_MVA], 0, "", true), "", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Percent(row[INDEX_BTO_PROSENT], 1, true, false, 0), "text-align: right;", Class_Style_Percent);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(row[INDEX_INNTJENT], 0, "", true), "", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(0), "border-left:2px solid #000;", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(0), "", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(0), "", Class_Style_Generic);
                     AddTable_Row_End();
                 }
 

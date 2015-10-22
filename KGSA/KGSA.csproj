@@ -171,6 +171,8 @@
     <Compile Include="KgsaTools.cs" />
     <Compile Include="OnlineImporter.cs" />
     <Compile Include="PageBudgetAllSales.cs" />
+    <Compile Include="PageStorePrisguide.cs" />
+    <Compile Include="PageStoreWeekly.cs" />
     <Compile Include="PageBudgetDaily.cs" />
     <Compile Include="PageGenerator.cs" />
     <Compile Include="StreamExtensions.cs" />

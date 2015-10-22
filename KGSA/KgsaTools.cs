@@ -16,17 +16,15 @@ namespace KGSA
             this.main = form;
         }
 
-        public decimal CalcPercent(decimal numerator, decimal denominator, int decimals = 2)
+        public string TextStyle_Shorten(string text, int maxChars)
         {
             try
             {
-                decimal value = 0;
-                if (denominator != 0)
-                    value = Math.Round(numerator / denominator, decimals);
-                if (numerator == 0)
-                    value = 0;
-            } catch { }
-            return 0;
+                if (text.Length > (maxChars + 2))
+                    return text.Substring(0, maxChars) + "..";
+            }
+            catch (Exception) { };
+            return text;
         }
 
         public string NumberStyle_Percent(object numeratorObj, object denominatorObj, bool colorNegative = false, bool colorPositive = false, decimal nullPoint = 1)

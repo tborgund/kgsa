@@ -145,7 +145,7 @@ namespace KGSA
                 if (EmptyStoreDatabase())
                 {
                     Logg.Log("Lager databasen er tom. Importer wobsolete fra Elguide!");
-                    webLager.Navigate(htmlImportStore);
+                    webStore.Navigate(htmlImportStore);
 
                     buttonOppdaterLager.BackColor = SystemColors.ControlLight;
                     buttonOppdaterLager.ForeColor = SystemColors.ControlText;
@@ -304,7 +304,7 @@ namespace KGSA
                     bwStore.RunWorkerAsync(katArg);
                 }
                 else
-                    webLager.Navigate(htmlImportStore);
+                    webStore.Navigate(htmlImportStore);
             }
             chkStorePicker = rangeMin;
         }
@@ -344,10 +344,16 @@ namespace KGSA
             }
         }
 
+
+
         private void bwStore_DoWork(object sender, DoWorkEventArgs e)
         {
             ProgressStart();
-            string katArg = (string)e.Argument;
+            MakeStore((string)e.Argument, false, bwStore);
+        }
+
+        public void MakeStore(string katArg, bool bg = false, BackgroundWorker bw = null)
+        {
             string newHash = appConfig.Avdeling + pickerLagerDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
             if (katArg == "Obsolete")
             {
@@ -366,22 +372,26 @@ namespace KGSA
             }
             else if (katArg.Equals("LagerUkeAnnonser"))
             {
-                BuildStoreWeekly();
+                PageStoreWeekly page = new PageStoreWeekly(this, bg, bw, webStore);
+                page.BuildPage_Report(katArg, appConfig.strLagerWeekly, htmlStoreWeekly, pickerLagerDato.Value);
                 appConfig.strLagerWeekly = newHash;
             }
             else if (katArg.Equals("LagerUkeAnnonserOversikt"))
             {
-                BuildStoreWeeklyOverview();
+                PageStoreWeekly page = new PageStoreWeekly(this, bg, bw, webStore);
+                page.BuildPage_Overview(katArg, appConfig.strLagerWeeklyOverview, htmlStoreWeeklyOverview, pickerLagerDato.Value);
                 appConfig.strLagerWeeklyOverview = newHash;
             }
             else if (katArg.Equals("LagerPrisguide"))
             {
-                BuildStorePrisguide();
+                PageStorePrisguide page = new PageStorePrisguide(this, bg, bw, webStore);
+                page.BuildPage_Report(katArg, appConfig.strLagerPrisguide, htmlStorePrisguide, pickerLagerDato.Value);
                 appConfig.strLagerPrisguide = newHash;
             }
             else if (katArg.Equals("LagerPrisguideOversikt"))
             {
-                BuildStorePrisguideOverview();
+                PageStorePrisguide page = new PageStorePrisguide(this, bg, bw, webStore);
+                page.BuildPage_Overview(katArg, appConfig.strLagerPrisguideOverview, htmlStorePrisguideOverview, pickerLagerDato.Value);
                 appConfig.strLagerPrisguideOverview = newHash;
             }
             else
@@ -404,7 +414,7 @@ namespace KGSA
                 string page = currentPage();
                 if (url.Contains("#ukenytt=") && (page.Equals("LagerUkeAnnonser") || page.Equals("LagerUkeAnnonserOversikt")))
                 {
-                    DateTime date = database.tableWeekly.GetLatestDate();
+                    DateTime date = database.tableWeekly.GetLatestDate(appConfig.Avdeling);
                     int index = url.IndexOf("#") + 9;
                     string str = url.Substring(index, url.Length - index);
 
@@ -444,7 +454,7 @@ namespace KGSA
                 }
                 else if (url.Contains("#prisguide=") && (page.Equals("LagerPrisguide") || page.Equals("LagerPrisguideOversikt")))
                 {
-                    DateTime date = database.tablePrisguide.GetLatestDate();
+                    DateTime date = database.tablePrisguide.GetLatestDate(appConfig.Avdeling);
                     int index = url.IndexOf("#") + 11;
                     string str = url.Substring(index, url.Length - index);
 
@@ -498,7 +508,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webLager.Navigate(htmlLoading);
+                        webStore.Navigate(htmlLoading);
                     var doc = new List<string>();
 
                     DateTime dtPick = pickerLagerDato.Value;
@@ -522,7 +532,7 @@ namespace KGSA
                     doc.Add("<h3>Oversikt utgåtte varer hovedlager (" + dtTil.ToString("dddd d. MMMM yyyy", norway) + ")</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webLager.DocumentText = string.Join(null, doc.ToArray());
+                        webStore.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtml(false));
 
@@ -531,7 +541,7 @@ namespace KGSA
                         doc.Add("<h3>Oversikt utgåtte varer B/V lager (" + dtTil.ToString("dddd d. MMMM yyyy", norway) + ")</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webLager.DocumentText = string.Join(null, doc.ToArray());
+                            webStore.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtml(true));
                     }
@@ -539,7 +549,7 @@ namespace KGSA
                     doc.Add("<h3>Utvikling hovedlager (Sammenlignet mot " + dtFra.ToString("dddd d. MMMM yyyy", norway) + ")</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webLager.DocumentText = string.Join(null, doc.ToArray());
+                        webStore.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtmlUtvikling(false));
 
@@ -548,7 +558,7 @@ namespace KGSA
                         doc.Add("<h3>Utvikling B/V lager (Sammenlignet mot " + dtFra.ToString("dddd d. MMMM yyyy", norway) + ")</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webLager.DocumentText = string.Join(null, doc.ToArray());
+                            webStore.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtmlUtvikling(true));
                     }
@@ -565,33 +575,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webLager.Navigate(htmlStopped);
+                        webStore.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webLager.Navigate(htmlPeriode);
+                            webStore.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlStoreObsolete, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webLager.Navigate(htmlStoreObsolete);
+                                webStore.Navigate(htmlStoreObsolete);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webLager.Navigate(htmlStoreObsolete);
+                    webStore.Navigate(htmlStoreObsolete);
             }
             catch (Exception ex)
             {
                 Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
-                    webLager.Navigate(htmlError);
+                    webStore.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog(this);
                 }
@@ -611,7 +621,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webLager.Navigate(htmlLoading);
+                        webStore.Navigate(htmlLoading);
                     var doc = new List<string>();
 
                     DateTime dtPick = pickerLagerDato.Value;
@@ -640,332 +650,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webLager.Navigate(htmlStopped);
+                        webStore.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webLager.Navigate(htmlPeriode);
+                            webStore.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlStoreObsoleteList, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webLager.Navigate(htmlStoreObsoleteList);
+                                webStore.Navigate(htmlStoreObsoleteList);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webLager.Navigate(htmlStoreObsoleteList);
+                    webStore.Navigate(htmlStoreObsoleteList);
             }
             catch (Exception ex)
             {
                 Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
-                    webLager.Navigate(htmlError);
-                    FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
-                    errorMsg.ShowDialog(this);
-                }
-            }
-        }
-
-        private void BuildStoreWeekly(bool bg = false)
-        {
-            string katArg = "LagerUkeAnnonser";
-            bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerWeekly);
-            try
-            {
-                if (!bg && !abort) timewatch.Start();
-                if (!bg)
-                    savedStorePage = katArg;
-                if (!abort)
-                {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
-                    if (!bg)
-                        webLager.Navigate(htmlLoading);
-                    var doc = new List<string>();
-
-                    DateTime dtPick = pickerLagerDato.Value;
-                    DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (datoPeriodeVelger && !bg)
-                    {
-                        dtFra = datoPeriodeFra;
-                        dtTil = datoPeriodeTil;
-                    }
-
-                    var ranking = new RankingStore(this, dtFra, dtTil, dtPick, obsolete);
-
-                    openXml.DeleteDocument(katArg, dtPick);
-
-                    GetHtmlStart(doc, true);
-
-                    doc.Add("<span class='Title'>Ukesnytt lagerstatus (" + avdeling.Get(appConfig.Avdeling) + ")</span><span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
-
-                    doc.AddRange(ranking.GetTableHtmlWeekly());
-
-                    doc.Add(Resources.htmlEnd);
-
-                    if (stopRanking)
-                    {
-                        stopRanking = false;
-                        ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
-                        webLager.Navigate(htmlStopped);
-                    }
-                    else
-                    {
-                        if (datoPeriodeVelger && !bg)
-                        {
-                            File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webLager.Navigate(htmlPeriode);
-                        }
-                        else
-                        {
-                            File.WriteAllLines(htmlStoreWeekly, doc.ToArray(), Encoding.Unicode);
-                            if (!bg)
-                                webLager.Navigate(htmlStoreWeekly);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
-                        }
-                    }
-                }
-                else if (!bg)
-                    webLager.Navigate(htmlStoreWeekly);
-            }
-            catch (Exception ex)
-            {
-                Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
-                if (!bg)
-                {
-                    webLager.Navigate(htmlError);
-                    FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
-                    errorMsg.ShowDialog(this);
-                }
-            }
-        }
-
-        private void BuildStoreWeeklyOverview(bool bg = false)
-        {
-            string katArg = "LagerUkeAnnonserOversikt";
-            bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerWeeklyOverview);
-            try
-            {
-                if (!bg && !abort) timewatch.Start();
-                if (!bg)
-                    savedStorePage = katArg;
-                if (!abort)
-                {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
-                    if (!bg)
-                        webLager.Navigate(htmlLoading);
-                    var doc = new List<string>();
-
-                    DateTime dtPick = pickerLagerDato.Value;
-                    DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (datoPeriodeVelger && !bg)
-                    {
-                        dtFra = datoPeriodeFra;
-                        dtTil = datoPeriodeTil;
-                    }
-
-                    var ranking = new RankingStore(this, dtFra, dtTil, dtPick, obsolete);
-
-                    openXml.DeleteDocument(katArg, dtPick);
-
-                    GetHtmlStart(doc, true);
-
-                    doc.Add("<h1>Ukesnytt lagerstatus (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
-                    doc.Add("<span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
-
-                    doc.AddRange(ranking.GetTableHtmlWeeklyList());
-
-                    doc.Add(Resources.htmlEnd);
-
-                    if (stopRanking)
-                    {
-                        stopRanking = false;
-                        ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
-                        webLager.Navigate(htmlStopped);
-                    }
-                    else
-                    {
-                        if (datoPeriodeVelger && !bg)
-                        {
-                            File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webLager.Navigate(htmlPeriode);
-                        }
-                        else
-                        {
-                            File.WriteAllLines(htmlStoreWeeklyOverview, doc.ToArray(), Encoding.Unicode);
-                            if (!bg)
-                                webLager.Navigate(htmlStoreWeeklyOverview);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
-                        }
-                    }
-                }
-                else if (!bg)
-                    webLager.Navigate(htmlStoreWeeklyOverview);
-            }
-            catch (Exception ex)
-            {
-                Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
-                if (!bg)
-                {
-                    webLager.Navigate(htmlError);
-                    FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
-                    errorMsg.ShowDialog(this);
-                }
-            }
-        }
-
-        private void BuildStorePrisguide(bool bg = false)
-        {
-            string katArg = "LagerPrisguide";
-            bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerPrisguide);
-            try
-            {
-                if (!bg && !abort) timewatch.Start();
-                if (!bg)
-                    savedStorePage = katArg;
-                if (!abort)
-                {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
-                    if (!bg)
-                        webLager.Navigate(htmlLoading);
-                    var doc = new List<string>();
-
-                    DateTime dtPick = pickerLagerDato.Value;
-                    DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (datoPeriodeVelger && !bg)
-                    {
-                        dtFra = datoPeriodeFra;
-                        dtTil = datoPeriodeTil;
-                    }
-
-                    var ranking = new RankingStore(this, dtFra, dtTil, dtPick, obsolete);
-
-                    openXml.DeleteDocument(katArg, dtPick);
-
-                    GetHtmlStart(doc, true);
-
-                    doc.Add("<h1>Prisguide.no (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
-                    doc.Add("<span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
-
-                    doc.AddRange(ranking.GetTableHtmPrisguide());
-
-                    doc.Add(Resources.htmlEnd);
-
-                    if (stopRanking)
-                    {
-                        stopRanking = false;
-                        ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
-                        webLager.Navigate(htmlStopped);
-                    }
-                    else
-                    {
-                        if (datoPeriodeVelger && !bg)
-                        {
-                            File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webLager.Navigate(htmlPeriode);
-                        }
-                        else
-                        {
-                            File.WriteAllLines(htmlStorePrisguide, doc.ToArray(), Encoding.Unicode);
-                            if (!bg)
-                                webLager.Navigate(htmlStorePrisguide);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
-                        }
-                    }
-                }
-                else if (!bg)
-                    webLager.Navigate(htmlStorePrisguide);
-            }
-            catch (Exception ex)
-            {
-                Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
-                if (!bg)
-                {
-                    webLager.Navigate(htmlError);
-                    FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
-                    errorMsg.ShowDialog(this);
-                }
-            }
-        }
-
-        private void BuildStorePrisguideOverview(bool bg = false)
-        {
-            string katArg = "LagerPrisguideOversikt";
-            bool abort = HarSisteVersjonStore(katArg, appConfig.strLagerPrisguideOverview);
-            try
-            {
-                if (!bg && !abort) timewatch.Start();
-                if (!bg)
-                    savedStorePage = katArg;
-                if (!abort)
-                {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
-                    if (!bg)
-                        webLager.Navigate(htmlLoading);
-                    var doc = new List<string>();
-
-                    DateTime dtPick = pickerLagerDato.Value;
-                    DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
-                    if (datoPeriodeVelger && !bg)
-                    {
-                        dtFra = datoPeriodeFra;
-                        dtTil = datoPeriodeTil;
-                    }
-
-                    var ranking = new RankingStore(this, dtFra, dtTil, dtPick, obsolete);
-
-                    openXml.DeleteDocument(katArg, dtPick);
-
-                    GetHtmlStart(doc, true);
-
-                    doc.Add("<h1>Prisguide.no (" + avdeling.Get(appConfig.Avdeling) + ")</h1>");
-                    doc.Add("<span class='Generated'>Ranking generert: " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + "</span><br>");
-
-                    doc.AddRange(ranking.GetTableHtmPrisguideList());
-
-                    doc.Add(Resources.htmlEnd);
-
-                    if (stopRanking)
-                    {
-                        stopRanking = false;
-                        ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
-                        webLager.Navigate(htmlStopped);
-                    }
-                    else
-                    {
-                        if (datoPeriodeVelger && !bg)
-                        {
-                            File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webLager.Navigate(htmlPeriode);
-                        }
-                        else
-                        {
-                            File.WriteAllLines(htmlStorePrisguideOverview, doc.ToArray(), Encoding.Unicode);
-                            if (!bg)
-                                webLager.Navigate(htmlStorePrisguideOverview);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
-                        }
-                    }
-                }
-                else if (!bg)
-                    webLager.Navigate(htmlStorePrisguideOverview);
-            }
-            catch (Exception ex)
-            {
-                Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
-                if (!bg)
-                {
-                    webLager.Navigate(htmlError);
+                    webStore.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog(this);
                 }
@@ -985,7 +696,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webLager.Navigate(htmlLoading);
+                        webStore.Navigate(htmlLoading);
                     var doc = new List<string>();
 
                     DateTime dtPick = pickerLagerDato.Value;
@@ -1014,33 +725,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webLager.Navigate(htmlStopped);
+                        webStore.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webLager.Navigate(htmlPeriode);
+                            webStore.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlStoreObsoleteImports, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webLager.Navigate(htmlStoreObsoleteImports);
+                                webStore.Navigate(htmlStoreObsoleteImports);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webLager.Navigate(htmlStoreObsoleteImports);
+                    webStore.Navigate(htmlStoreObsoleteImports);
             }
             catch (Exception ex)
             {
                 Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
-                    webLager.Navigate(htmlError);
+                    webStore.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog(this);
                 }
@@ -1067,6 +778,8 @@ namespace KGSA
                     html = htmlStoreWeeklyOverview;
                 else if (katArg.Equals("LagerPrisguide"))
                     html = htmlStorePrisguide;
+                else if (katArg.Equals("LagerPrisguideOversikt"))
+                    html = htmlStorePrisguideOverview;
                 else
                     return false;
 

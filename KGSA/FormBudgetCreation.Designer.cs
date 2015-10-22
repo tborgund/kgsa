@@ -80,6 +80,7 @@
             this.label15 = new System.Windows.Forms.Label();
             this.numericBudgetChartPostWidth = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox_ShowButikk = new System.Windows.Forms.CheckBox();
             this.checkBox_ShowMdaSda = new System.Windows.Forms.CheckBox();
             this.checkBox_ShowKasse = new System.Windows.Forms.CheckBox();
             this.checkBox_ShowAftersales = new System.Windows.Forms.CheckBox();
@@ -124,7 +125,10 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.checkBox_ShowButikk = new System.Windows.Forms.CheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkSettingsDailyInclude = new System.Windows.Forms.CheckBox();
+            this.checkSettingsDailyAuto = new System.Windows.Forms.CheckBox();
+            this.label18 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageCreation.SuspendLayout();
@@ -140,6 +144,7 @@
             this.bindingNavigator1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox_Dager
@@ -567,6 +572,7 @@
             // 
             // tabPageSettings
             // 
+            this.tabPageSettings.Controls.Add(this.groupBox3);
             this.tabPageSettings.Controls.Add(this.groupBox2);
             this.tabPageSettings.Controls.Add(this.groupBox1);
             this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
@@ -583,9 +589,9 @@
             this.groupBox2.Controls.Add(this.numericBudgetChartMin);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.numericBudgetChartPostWidth);
-            this.groupBox2.Location = new System.Drawing.Point(329, 6);
+            this.groupBox2.Location = new System.Drawing.Point(329, 176);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(258, 267);
+            this.groupBox2.Size = new System.Drawing.Size(258, 97);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Utseende";
@@ -660,6 +666,16 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Generelt";
+            // 
+            // checkBox_ShowButikk
+            // 
+            this.checkBox_ShowButikk.AutoSize = true;
+            this.checkBox_ShowButikk.Location = new System.Drawing.Point(23, 234);
+            this.checkBox_ShowButikk.Name = "checkBox_ShowButikk";
+            this.checkBox_ShowButikk.Size = new System.Drawing.Size(56, 17);
+            this.checkBox_ShowButikk.TabIndex = 14;
+            this.checkBox_ShowButikk.Text = "Butikk";
+            this.checkBox_ShowButikk.UseVisualStyleBackColor = true;
             // 
             // checkBox_ShowMdaSda
             // 
@@ -1092,15 +1108,47 @@
             this.buttonCancel.Text = "Avbryt";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
-            // checkBox_ShowButikk
+            // groupBox3
             // 
-            this.checkBox_ShowButikk.AutoSize = true;
-            this.checkBox_ShowButikk.Location = new System.Drawing.Point(23, 234);
-            this.checkBox_ShowButikk.Name = "checkBox_ShowButikk";
-            this.checkBox_ShowButikk.Size = new System.Drawing.Size(56, 17);
-            this.checkBox_ShowButikk.TabIndex = 14;
-            this.checkBox_ShowButikk.Text = "Butikk";
-            this.checkBox_ShowButikk.UseVisualStyleBackColor = true;
+            this.groupBox3.Controls.Add(this.label18);
+            this.groupBox3.Controls.Add(this.checkSettingsDailyAuto);
+            this.groupBox3.Controls.Add(this.checkSettingsDailyInclude);
+            this.groupBox3.Location = new System.Drawing.Point(329, 6);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(258, 164);
+            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Daglig budsjett";
+            // 
+            // checkSettingsDailyInclude
+            // 
+            this.checkSettingsDailyInclude.AutoSize = true;
+            this.checkSettingsDailyInclude.Location = new System.Drawing.Point(16, 26);
+            this.checkSettingsDailyInclude.Name = "checkSettingsDailyInclude";
+            this.checkSettingsDailyInclude.Size = new System.Drawing.Size(170, 17);
+            this.checkSettingsDailyInclude.TabIndex = 0;
+            this.checkSettingsDailyInclude.Text = "Inkluder dagsbudsjett fra C810";
+            this.checkSettingsDailyInclude.UseVisualStyleBackColor = true;
+            // 
+            // checkSettingsDailyAuto
+            // 
+            this.checkSettingsDailyAuto.AutoSize = true;
+            this.checkSettingsDailyAuto.Location = new System.Drawing.Point(16, 52);
+            this.checkSettingsDailyAuto.Name = "checkSettingsDailyAuto";
+            this.checkSettingsDailyAuto.Size = new System.Drawing.Size(181, 17);
+            this.checkSettingsDailyAuto.TabIndex = 1;
+            this.checkSettingsDailyAuto.Text = "Oppdater dagsbusjett automatisk";
+            this.checkSettingsDailyAuto.UseVisualStyleBackColor = true;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(35, 78);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(180, 52);
+            this.label18.TabIndex = 2;
+            this.label18.Text = "Obs! Trenger ferdig oppsatt tilgang til\r\ne-post konto hvor C810 rapport er\r\ntilgj" +
+    "engelig.\r\nSe e-post innstillinger.";
             // 
             // FormBudgetCreation
             // 
@@ -1136,6 +1184,8 @@
             this.bindingNavigator1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.panel3.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1232,5 +1282,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn BudgetMargin;
         private System.Windows.Forms.DataGridViewTextBoxColumn Updated;
         private System.Windows.Forms.CheckBox checkBox_ShowButikk;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.CheckBox checkSettingsDailyAuto;
+        private System.Windows.Forms.CheckBox checkSettingsDailyInclude;
     }
 }

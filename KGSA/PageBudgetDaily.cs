@@ -1,5 +1,4 @@
-﻿using KGSA.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -64,7 +63,7 @@ namespace KGSA
                     if (FormMain.stopRanking)
                     {
                         main.ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Logg.Log("Lasting avbrutt", Color.Red);
                         OpenPage_Stopped();
                         FormMain.stopRanking = false;
                     }
@@ -73,7 +72,7 @@ namespace KGSA
                         File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
                         OpenPage(htmlPage);
                         if (!runningInBackground)
-                            Logg.Log("Ranking [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
+                            Logg.Log("Side [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
                     }
                 }
                 else
@@ -85,7 +84,7 @@ namespace KGSA
                 if (!runningInBackground)
                 {
                     OpenPage_Error();
-                    FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
+                    FormError errorMsg = new FormError("Feil ved generering av side for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
             }
@@ -159,24 +158,27 @@ namespace KGSA
 
                     AddTable_Row_Start();
 
-                    AddTable_Row_Cell(kategori, "", Class_Style_Numbers_Text_Cat);
+                    AddTable_Row_Cell(kategori, "", Class_Style_Text_Cat);
 
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(omset), "border-left:2px solid #000;text-align: right;", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(omset_budget), "", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Percent(omset, omset_budget, true, true), "", Class_Style_Numbers_Gen);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(omset), "border-left:2px solid #000;text-align: right;", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(omset_budget), "", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Percent(omset, omset_budget, true, true), "", Class_Style_Generic);
 
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(margin, 1, "%"), "border-left:2px solid #000;text-align: right;", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(margin_budget, 1, "%"), "", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(margin - margin_budget, 1, "%", true, true), "", Class_Style_Numbers_Gen);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(margin, 1, "%"), "border-left:2px solid #000;text-align: right;", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(margin_budget, 1, "%"), "", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(margin - margin_budget, 1, "%", true, true), "", Class_Style_Generic);
 
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(inntjen), "border-left:2px solid #000;text-align: right;", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(inntjen_budget), "", Class_Style_Numbers_Gen);
-                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(inntjen - inntjen_budget, 0, "", true, true), "", Class_Style_Numbers_Gen);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(inntjen), "border-left:2px solid #000;text-align: right;", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(inntjen_budget), "", Class_Style_Generic);
+                    AddTable_Row_Cell(main.tools.NumberStyle_Normal(inntjen - inntjen_budget, 0, "", true, true), "", Class_Style_Generic);
 
                     AddTable_Row_End();
 
                     if (kategori.ToLower().Equals("total")) // siste row
+                    {
                         AddTable_Footer_End();
+                        AddTable_Body_Start();
+                    }
                 }
 
                 AddTable_End();
@@ -251,15 +253,15 @@ namespace KGSA
                             AddTable_Footer_Start();
                         }
 
-                        AddTable_Row_Cell(main.tableMacroQuick.Rows[i]["Avdeling"].ToString(), "", Class_Style_Numbers_Text_Cat);
+                        AddTable_Row_Cell(main.tableMacroQuick.Rows[i]["Avdeling"].ToString(), "", Class_Style_Text_Cat);
 
-                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Salg"], 0, "", true), "", Class_Style_Numbers_Small);
-                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Omsetn"], 0, "", true), "", Class_Style_Numbers_Gen);
-                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Fritt"], 0, "", true), "", Class_Style_Numbers_Gen);
+                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Salg"], 0, "", true), "", Class_Style_Small);
+                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Omsetn"], 0, "", true), "", Class_Style_Generic);
+                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Fritt"], 0, "", true), "", Class_Style_Generic);
 
-                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Fortjeneste"], 0, "", true), "", Class_Style_Numbers_Gen);
-                        AddTable_Row_Cell(main.tools.NumberStyle_Percent(main.tableMacroQuick.Rows[i]["Margin"], 100, true, false, 0), "", Class_Style_Numbers_Percent);
-                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Rabatt"], 0, "", true), "", Class_Style_Numbers_Gen);
+                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Fortjeneste"], 0, "", true), "", Class_Style_Generic);
+                        AddTable_Row_Cell(main.tools.NumberStyle_Percent(main.tableMacroQuick.Rows[i]["Margin"], 100, true, false, 0), "", Class_Style_Percent);
+                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(main.tableMacroQuick.Rows[i]["Rabatt"], 0, "", true), "", Class_Style_Generic);
 
                         if (main.appConfig.macroImportQuickSales
                             && intAvd == main.appConfig.Avdeling
@@ -272,10 +274,10 @@ namespace KGSA
                                 {
                                     if ("TOTALT" == main.tableMacroQuick.Rows[i]["Avdeling"].ToString())
                                     {
-                                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(KgsaAntallTot, 0), "", Class_Style_Numbers_Small);
-                                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(KgsaSalgsprisTot, 0), "", Class_Style_Numbers_Gen);
-                                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(KgsaBtokrTot, 0), "", Class_Style_Numbers_Gen);
-                                        AddTable_Row_Cell(main.tools.NumberStyle_Percent(KgsaBtokrTot, main.tableMacroQuick.Rows[i]["Fortjeneste"]), "", Class_Style_Numbers_Percent);
+                                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(KgsaAntallTot, 0), "", Class_Style_Small);
+                                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(KgsaSalgsprisTot, 0), "", Class_Style_Generic);
+                                        AddTable_Row_Cell(main.tools.NumberStyle_Normal(KgsaBtokrTot, 0), "", Class_Style_Generic);
+                                        AddTable_Row_Cell(main.tools.NumberStyle_Percent(KgsaBtokrTot, main.tableMacroQuick.Rows[i]["Fortjeneste"]), "", Class_Style_Percent);
                                     }
                                     else
                                     {
@@ -284,14 +286,14 @@ namespace KGSA
                                         {
                                             if (item.Type == main.tableMacroQuick.Rows[i]["Avdeling"].ToString())
                                             {
-                                                AddTable_Row_Cell(main.tools.NumberStyle_Normal(item.Antall, 0), "", Class_Style_Numbers_Small);
+                                                AddTable_Row_Cell(main.tools.NumberStyle_Normal(item.Antall, 0), "", Class_Style_Small);
                                                 KgsaAntallTot += item.Antall;
-                                                AddTable_Row_Cell(main.tools.NumberStyle_Normal(item.Salgspris, 0), "", Class_Style_Numbers_Gen);
+                                                AddTable_Row_Cell(main.tools.NumberStyle_Normal(item.Salgspris, 0), "", Class_Style_Generic);
                                                 KgsaSalgsprisTot += item.Salgspris;
-                                                AddTable_Row_Cell(main.tools.NumberStyle_Normal(item.Btokr, 0), "", Class_Style_Numbers_Gen);
+                                                AddTable_Row_Cell(main.tools.NumberStyle_Normal(item.Btokr, 0), "", Class_Style_Generic);
                                                 KgsaBtokrTot += item.Btokr;
                                                 AddTable_Row_Cell(main.tools.NumberStyle_Percent(item.Btokr / Convert.ToDouble(main.tableMacroQuick.Rows[i]["Fortjeneste"]), 
-                                                    100, true, false, 0), "", Class_Style_Numbers_Percent);
+                                                    100, true, false, 0), "", Class_Style_Percent);
 
                                                 found = true;
                                                 break;
@@ -299,10 +301,10 @@ namespace KGSA
                                         }
                                         if (!found)
                                         {
-                                            AddTable_Row_Cell(main.tools.NumberStyle_Normal(0, 0), "", Class_Style_Numbers_Small);
-                                            AddTable_Row_Cell(main.tools.NumberStyle_Normal(0, 0), "", Class_Style_Numbers_Gen);
-                                            AddTable_Row_Cell(main.tools.NumberStyle_Normal(0, 0), "", Class_Style_Numbers_Gen);
-                                            AddTable_Row_Cell(main.tools.NumberStyle_Percent(0, 100), "", Class_Style_Numbers_Percent);
+                                            AddTable_Row_Cell(main.tools.NumberStyle_Normal(0, 0), "", Class_Style_Small);
+                                            AddTable_Row_Cell(main.tools.NumberStyle_Normal(0, 0), "", Class_Style_Generic);
+                                            AddTable_Row_Cell(main.tools.NumberStyle_Normal(0, 0), "", Class_Style_Generic);
+                                            AddTable_Row_Cell(main.tools.NumberStyle_Percent(0, 100), "", Class_Style_Percent);
                                         }
                                     }
                                 }

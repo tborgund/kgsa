@@ -222,7 +222,7 @@
             this.buttonBudgetTele = new System.Windows.Forms.Button();
             this.tabPageStore = new System.Windows.Forms.TabPage();
             this.panel17 = new System.Windows.Forms.Panel();
-            this.webLager = new System.Windows.Forms.WebBrowser();
+            this.webStore = new System.Windows.Forms.WebBrowser();
             this.panel16 = new System.Windows.Forms.Panel();
             this.groupInventoryActions = new System.Windows.Forms.GroupBox();
             this.buttonStoreOpenPdf = new System.Windows.Forms.Button();
@@ -2308,26 +2308,26 @@
             // panel17
             // 
             this.panel17.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel17.Controls.Add(this.webLager);
+            this.panel17.Controls.Add(this.webStore);
             this.panel17.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel17.Location = new System.Drawing.Point(199, 3);
             this.panel17.Name = "panel17";
             this.panel17.Size = new System.Drawing.Size(846, 799);
             this.panel17.TabIndex = 1;
             // 
-            // webLager
+            // webStore
             // 
-            this.webLager.AllowWebBrowserDrop = false;
-            this.webLager.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webLager.Location = new System.Drawing.Point(0, 0);
-            this.webLager.Margin = new System.Windows.Forms.Padding(0);
-            this.webLager.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webLager.Name = "webLager";
-            this.webLager.ScriptErrorsSuppressed = true;
-            this.webLager.Size = new System.Drawing.Size(844, 797);
-            this.webLager.TabIndex = 1;
-            this.webLager.WebBrowserShortcutsEnabled = false;
-            this.webLager.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLager_Navigating);
+            this.webStore.AllowWebBrowserDrop = false;
+            this.webStore.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webStore.Location = new System.Drawing.Point(0, 0);
+            this.webStore.Margin = new System.Windows.Forms.Padding(0);
+            this.webStore.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webStore.Name = "webStore";
+            this.webStore.ScriptErrorsSuppressed = true;
+            this.webStore.Size = new System.Drawing.Size(844, 797);
+            this.webStore.TabIndex = 1;
+            this.webStore.WebBrowserShortcutsEnabled = false;
+            this.webStore.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLager_Navigating);
             // 
             // panel16
             // 
@@ -4890,7 +4890,7 @@
         private System.Windows.Forms.Button buttonLagerUkuListe;
         private System.Windows.Forms.Label labelStoreDato;
         private System.Windows.Forms.Button buttonLagerStatus;
-        private System.Windows.Forms.WebBrowser webLager;
+        private System.Windows.Forms.WebBrowser webStore;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonLagerImports;
         private System.Windows.Forms.Button button18;

@@ -17,10 +17,10 @@ namespace KGSA
         public System.Windows.Forms.WebBrowser browser;
         public DateTime pickedDate = FormMain.rangeMin;
 
-        public static string Class_Style_Numbers_Gen = "numbers-gen";
-        public static string Class_Style_Numbers_Small = "numbers-small";
-        public static string Class_Style_Numbers_Percent = "numbers-percent";
-        public static string Class_Style_Numbers_Text_Cat = "text-cat";
+        public static string Class_Style_Generic = "numbers-gen";
+        public static string Class_Style_Small = "numbers-small";
+        public static string Class_Style_Percent = "numbers-percent";
+        public static string Class_Style_Text_Cat = "text-cat";
 
         public static string Sorter_Type_Text = "text";
         public static string Sorter_Type_Digit = "digit";
@@ -55,10 +55,18 @@ namespace KGSA
 
         protected void AddTable_Start(string title = "", string className = "OutertableNormal")
         {
-            doc.Add("<br><table style='width:100%'><tr><td>");
+            doc.Add("<div class='no-break'>");
+            //doc.Add("<br><table style='width:100%'><tr><td>");
             AddPage_Header(title);
             doc.Add("<table class='" + className + "'><tr><td>");
             doc.Add("<table class='tablesorter'>");
+        }
+
+        protected void AddTable_End()
+        {
+            doc.Add("</table>");
+            doc.Add("</td></tr></table>");
+            doc.Add("</div>");
         }
 
         protected void AddTable_Header_Start()
@@ -115,12 +123,6 @@ namespace KGSA
         protected void AddTable_Body_End()
         {
             doc.Add("</tbody>");
-        }
-
-        protected void AddTable_End()
-        {
-            doc.Add("</table>");
-            doc.Add("</td></tr></table>");
         }
 
         protected void AddPage_Start(bool watermark = false, string title = "Untitled")
