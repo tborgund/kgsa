@@ -36,7 +36,7 @@ namespace KGSA
                 if (!EmptyDatabase())
                     bwRanking.RunWorkerAsync(katArg);
                 else
-                    webHTML.Navigate(htmlImport);
+                    webRanking.Navigate(htmlImport);
             }
             chkPicker = rangeMin;
         }
@@ -50,7 +50,7 @@ namespace KGSA
                 bwVinnSelger.RunWorkerAsync(selgerArg);
             }
             else
-                webHTML.Navigate(htmlImport);
+                webRanking.Navigate(htmlImport);
 
         }
 
@@ -245,7 +245,7 @@ namespace KGSA
                 if (!bg)
                 {
                     timewatch.Start();
-                    webHTML.Navigate(htmlLoading);
+                    webRanking.Navigate(htmlLoading);
                 }
                 var doc = new List<string>();
 
@@ -272,7 +272,7 @@ namespace KGSA
                     doc.Add("<h3>Graf for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                 doc.Add("<span class='Loading'>Henter graf..</span>");
                 if (!bg)
-                    webHTML.DocumentText = string.Join(null, doc.ToArray());
+                    webRanking.DocumentText = string.Join(null, doc.ToArray());
                 doc.RemoveAt(doc.Count - 1);
 
                 if (datoPeriodeVelger && !bg)
@@ -288,7 +288,7 @@ namespace KGSA
                     if (!bg && timewatch.ReadyForRefresh())
                     {
                         File.WriteAllLines(htmlGraf, doc.ToArray(), Encoding.Unicode);
-                        webHTML.Navigate(htmlGraf);
+                        webRanking.Navigate(htmlGraf);
                     }
                     doc.RemoveAt(doc.Count - 1);
 
@@ -303,7 +303,7 @@ namespace KGSA
                     if (!bg && timewatch.ReadyForRefresh())
                     {
                         File.WriteAllLines(htmlGraf, doc.ToArray(), Encoding.Unicode);
-                        webHTML.Navigate(htmlGraf);
+                        webRanking.Navigate(htmlGraf);
                     }
                     doc.RemoveAt(doc.Count - 1);
 
@@ -319,7 +319,7 @@ namespace KGSA
 
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlGraf);
+                    webRanking.Navigate(htmlGraf);
                     Logg.Log("Generering av graf for " + argKat + " tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
@@ -328,7 +328,7 @@ namespace KGSA
                 Logg.Log("Feil ved generering av grafikk for " + argKat + ". Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av graf for " + argKat, ex);
                     errorMsg.ShowDialog(this);
                 }
@@ -348,7 +348,7 @@ namespace KGSA
                 if (!abort)
                 {
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -372,7 +372,7 @@ namespace KGSA
                         doc.Add("<h3>Tall for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtml("dag"));
 
@@ -381,7 +381,7 @@ namespace KGSA
                         doc.Add("<h3>" + StringRankingDato(dtPick) + "</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtml("måned"));
 
@@ -390,7 +390,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddYears(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareHtml());
                         }
@@ -399,7 +399,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddMonths(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareLastMonthHtml());
                         }
@@ -408,7 +408,7 @@ namespace KGSA
                             doc.Add("<h3>Sist uke - Uke " + database.GetIso8601WeekOfYear(dtPick) + " (Fra " + database.GetStartOfLastWholeWeek(dtPick).ToString("d. MMM") + " til " + database.GetStartOfLastWholeWeek(dtPick).AddDays(6).ToString("d. MMM") + ")</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableLastWholeWeek());
                         }
@@ -417,7 +417,7 @@ namespace KGSA
                             doc.Add("<h3>Favoritt avdelinger " + StringRankingDato(dtPick) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetAvdHtml());
                         }
@@ -426,7 +426,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Henter graf..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (appConfig.pdfExpandedGraphs)
@@ -457,33 +457,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash("Butikk");
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingButikk, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingButikk);
+                                webRanking.Navigate(htmlRankingButikk);
                             if (!bg) Logg.Log("Ranking [Butikk] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingButikk);
+                    webRanking.Navigate(htmlRankingButikk);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [Butikk]", ex);
                     errorMsg.ShowDialog(this);
                 }
@@ -803,7 +803,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -827,7 +827,7 @@ namespace KGSA
                         doc.Add("<h3>Ranking for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtml("dag"));
 
@@ -836,7 +836,7 @@ namespace KGSA
                         doc.Add("<h3>" + StringRankingDato(dtPick) + "</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtml("måned"));
 
@@ -845,7 +845,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddYears(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareHtml());
                         }
@@ -854,7 +854,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddMonths(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareLastMonthHtml());
                         }
@@ -863,7 +863,7 @@ namespace KGSA
                             doc.Add("<h3>Favoritt avdelinger " + StringRankingDato(dtPick) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetAvdHtml());
                         }
@@ -872,7 +872,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Henter graf..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (appConfig.pdfExpandedGraphs)
@@ -884,7 +884,7 @@ namespace KGSA
                             doc.Add("<h3>Viser " + (datoPeriodeTil - datoPeriodeFra).Days + " dager Datamaskiner</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (datoPeriodeVelger && !bg)
@@ -925,33 +925,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingData, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingData);
+                                webRanking.Navigate(htmlRankingData);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingData);
+                    webRanking.Navigate(htmlRankingData);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -971,7 +971,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -995,7 +995,7 @@ namespace KGSA
                         doc.Add("<h3>Ranking for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtml("dag"));
 
@@ -1004,7 +1004,7 @@ namespace KGSA
                         doc.Add("<h3>" + StringRankingDato(dtPick) + "</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtml("måned"));
 
@@ -1013,7 +1013,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddYears(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareHtml());
                         }
@@ -1022,7 +1022,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddMonths(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareLastMonthHtml());
                         }
@@ -1031,7 +1031,7 @@ namespace KGSA
                             doc.Add("<h3>Favoritt avdelinger " + StringRankingDato(dtPick) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetAvdHtml());
                         }
@@ -1040,7 +1040,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Henter graf..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (appConfig.pdfExpandedGraphs)
@@ -1052,7 +1052,7 @@ namespace KGSA
                             doc.Add("<h3>Viser " + (datoPeriodeTil - datoPeriodeFra).Days + " dager</span>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (datoPeriodeVelger && !bg)
@@ -1076,33 +1076,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingKnowHow, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingKnowHow);
+                                webRanking.Navigate(htmlRankingKnowHow);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingKnowHow);
+                    webRanking.Navigate(htmlRankingKnowHow);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -1122,7 +1122,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -1146,7 +1146,7 @@ namespace KGSA
                         doc.Add("<h3>Ranking for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtml("dag"));
 
@@ -1155,7 +1155,7 @@ namespace KGSA
                         doc.Add("<h3>" + StringRankingDato(dtPick) + "</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtml("måned"));
 
@@ -1164,7 +1164,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddYears(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareHtml());
                         }
@@ -1173,7 +1173,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddMonths(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareLastMonthHtml());
                         }
@@ -1182,7 +1182,7 @@ namespace KGSA
                             doc.Add("<h3>Favoritt avdelinger " + StringRankingDato(dtPick) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetAvdHtml());
                         }
@@ -1191,7 +1191,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Henter graf..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (appConfig.pdfExpandedGraphs)
@@ -1224,33 +1224,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingAudioVideo, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingAudioVideo);
+                                webRanking.Navigate(htmlRankingAudioVideo);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingAudioVideo);
+                    webRanking.Navigate(htmlRankingAudioVideo);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -1270,7 +1270,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -1294,7 +1294,7 @@ namespace KGSA
                         doc.Add("<h3>Ranking for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtml("dag"));
 
@@ -1303,7 +1303,7 @@ namespace KGSA
                         doc.Add("<h3>" + StringRankingDato(dtPick) + "</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtml("måned"));
 
@@ -1312,7 +1312,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddYears(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareHtml());
                         }
@@ -1321,7 +1321,7 @@ namespace KGSA
                             doc.Add("<h3>" + StringRankingDato(dtPick.AddMonths(-1)) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetTableCompareLastMonthHtml());
                         }
@@ -1330,7 +1330,7 @@ namespace KGSA
                             doc.Add("<h3>Favoritt avdelinger " + StringRankingDato(dtPick) + "</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
-                                webHTML.DocumentText = string.Join(null, doc.ToArray());
+                                webRanking.DocumentText = string.Join(null, doc.ToArray());
                             doc.RemoveAt(doc.Count - 1);
                             doc.AddRange(ranking.GetAvdHtml());
                         }
@@ -1339,7 +1339,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Henter graf..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (appConfig.pdfExpandedGraphs)
@@ -1372,33 +1372,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg) 
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingTele, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingTele);
+                                webRanking.Navigate(htmlRankingTele);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingTele);
+                    webRanking.Navigate(htmlRankingTele);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -1418,7 +1418,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -1444,7 +1444,7 @@ namespace KGSA
                         doc.Add("<h3>Detaljert oversikt (Del 1) for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.AddRange(ranking.GetTableHtmlPrimary());
 
@@ -1457,7 +1457,7 @@ namespace KGSA
                             doc.Add("<h3>Detaljert oversikt (Del 2) for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                         doc.Add("<br><span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtmlSecondary());
                         doc.Add("</div>");
@@ -1467,7 +1467,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Henter graf..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
 
                         if (appConfig.pdfExpandedGraphs)
@@ -1496,33 +1496,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingOversikt, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingOversikt);
+                                webRanking.Navigate(htmlRankingOversikt);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingOversikt);
+                    webRanking.Navigate(htmlRankingOversikt);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -1542,7 +1542,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -1566,7 +1566,7 @@ namespace KGSA
                         doc.Add("<h3>Beste selgere sist åpningsdag " + dtTil.ToString("dddd d. MMMM", norway) + "</h3>");
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg)
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.Add("<table style='width:100%'><tr><td>");
                         doc.AddRange(ranking.GetToppListAllLastOpenDay(dtTil));
@@ -1581,7 +1581,7 @@ namespace KGSA
                         doc.Add("<h3>Beste selgere for perioden fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg)
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
                     doc.Add("<table style='width:100%'><tr><td>");
                     doc.AddRange(ranking.GetToppListAll(dtTil));
@@ -1597,33 +1597,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingToppselgere, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingToppselgere);
+                                webRanking.Navigate(htmlRankingToppselgere);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingToppselgere);
+                    webRanking.Navigate(htmlRankingToppselgere);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -1643,7 +1643,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -1717,33 +1717,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingLister, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingLister);
+                                webRanking.Navigate(htmlRankingLister);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingLister);
+                    webRanking.Navigate(htmlRankingLister);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -1755,7 +1755,7 @@ namespace KGSA
             Logg.Log("Henter vinnprodukt transaksjoner for selger..");
             try
             {
-                webHTML.Navigate(htmlLoading);
+                webRanking.Navigate(htmlLoading);
                 var doc = new List<string>();
                 DateTime dtPick = pickerRankingDate.Value;
                 DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -1775,19 +1775,19 @@ namespace KGSA
                 {
                     stopRanking = false;
                     Logg.Log("Ranking stoppet.", Color.Red);
-                    webHTML.Navigate(htmlStopped);
+                    webRanking.Navigate(htmlStopped);
                 }
                 else
                 {
                     File.WriteAllLines(htmlRankingVinnSelger, doc.ToArray(), Encoding.Unicode);
-                    webHTML.Navigate(htmlRankingVinnSelger);
+                    webRanking.Navigate(htmlRankingVinnSelger);
                 }
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
 
-                webHTML.Navigate(htmlError);
+                webRanking.Navigate(htmlError);
                 FormError errorMsg = new FormError("Feil ved generering av vinnprodukt transaksjoner for kunde.", ex);
                 errorMsg.ShowDialog();
 
@@ -1807,7 +1807,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "]..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -1924,33 +1924,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlRankingVinn, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlRankingVinn);
+                                webRanking.Navigate(htmlRankingVinn);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlRankingVinn);
+                    webRanking.Navigate(htmlRankingVinn);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -1990,7 +1990,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "] ..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -2015,7 +2015,7 @@ namespace KGSA
                     {
                         doc.Add("<span class='Loading'>Beregner..</span>");
                         if (!bg && timewatch.ReadyForRefresh())
-                            webHTML.DocumentText = string.Join(null, doc.ToArray());
+                            webRanking.DocumentText = string.Join(null, doc.ToArray());
                         doc.RemoveAt(doc.Count - 1);
                         doc.AddRange(ranking.GetTableHtmlPage(appConfig.rankingAvdelingMode, service));
                     }
@@ -2026,33 +2026,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlAvdTjenester, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlAvdTjenester);
+                                webRanking.Navigate(htmlAvdTjenester);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlAvdTjenester);
+                    webRanking.Navigate(htmlAvdTjenester);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -2072,7 +2072,7 @@ namespace KGSA
                 {
                     Logg.Log("Oppdaterer [" + katArg + "] ..");
                     if (!bg)
-                        webHTML.Navigate(htmlLoading);
+                        webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
                     DateTime dtPick = pickerRankingDate.Value;
                     DateTime dtFra = GetFirstDayOfMonth(dtPick); DateTime dtTil = dtPick;
@@ -2098,7 +2098,7 @@ namespace KGSA
                         doc.Add("<h3>Periode: Fra " + dtFra.ToString("dddd d. MMMM yyyy", norway) + " til " + dtTil.ToString("dddd d. MMMM yyyy", norway) + "</h3>");
                     doc.Add("<span class='Loading'>Beregner..</span>");
                     if (!bg && timewatch.ReadyForRefresh())
-                        webHTML.DocumentText = string.Join(null, doc.ToArray());
+                        webRanking.DocumentText = string.Join(null, doc.ToArray());
                     doc.RemoveAt(doc.Count - 1);
 
                     doc.AddRange(ranking.GetTableHtml(appConfig.rankingAvdelingMode));
@@ -2112,33 +2112,33 @@ namespace KGSA
                         stopRanking = false;
                         ClearHash(katArg);
                         Logg.Log("Ranking stoppet.", Color.Red);
-                        webHTML.Navigate(htmlStopped);
+                        webRanking.Navigate(htmlStopped);
                     }
                     else
                     {
                         if (datoPeriodeVelger && !bg)
                         {
                             File.WriteAllLines(htmlPeriode, doc.ToArray(), Encoding.Unicode);
-                            webHTML.Navigate(htmlPeriode);
+                            webRanking.Navigate(htmlPeriode);
                         }
                         else
                         {
                             File.WriteAllLines(htmlAvdSnittpriser, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
-                                webHTML.Navigate(htmlAvdSnittpriser);
+                                webRanking.Navigate(htmlAvdSnittpriser);
                             if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
                 else if (!bg)
-                    webHTML.Navigate(htmlAvdSnittpriser);
+                    webRanking.Navigate(htmlAvdSnittpriser);
             }
             catch (Exception ex)
             {
                 Logg.Unhandled(ex);
                 if (!bg)
                 {
-                    webHTML.Navigate(htmlError);
+                    webRanking.Navigate(htmlError);
                     FormError errorMsg = new FormError("Feil ved generering av ranking for [" + katArg + "]", ex);
                     errorMsg.ShowDialog();
                 }
@@ -2174,7 +2174,7 @@ namespace KGSA
                     HighlightButton();
                 }
                 else
-                    webHTML.Navigate(htmlImport);
+                    webRanking.Navigate(htmlImport);
             }
         }
 
@@ -2209,7 +2209,7 @@ namespace KGSA
             try
             {
                 timewatch.Start();
-                webHTML.Navigate(htmlLoading);
+                webRanking.Navigate(htmlLoading);
                 DateTime dtPick = pickerRankingDate.Value;
                 KnowHowReport report = new KnowHowReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
@@ -2226,19 +2226,19 @@ namespace KGSA
                 {
                     stopRanking = false;
                     Logg.Log("Rapport stoppet.", Color.Red);
-                    webHTML.Navigate(htmlStopped);
+                    webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
                 else
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
-                    webHTML.Navigate(htmlRapport);
+                    webRanking.Navigate(htmlRapport);
                     Logg.Log("Rapport [KnowHow] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
             {
-                webHTML.Navigate(htmlError);
+                webRanking.Navigate(htmlError);
                 FormError errorMsg = new FormError("Feil ved generering av rapport for [KnowHow]", ex);
                 errorMsg.ShowDialog(this);
             }
@@ -2249,7 +2249,7 @@ namespace KGSA
             try
             {
                 timewatch.Start();
-                webHTML.Navigate(htmlLoading);
+                webRanking.Navigate(htmlLoading);
                 DateTime dtPick = pickerRankingDate.Value;
                 DataReport report = new DataReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
@@ -2266,19 +2266,19 @@ namespace KGSA
                 {
                     stopRanking = false;
                     Logg.Log("Rapport stoppet.", Color.Red);
-                    webHTML.Navigate(htmlStopped);
+                    webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
                 else
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
-                    webHTML.Navigate(htmlRapport);
+                    webRanking.Navigate(htmlRapport);
                     Logg.Log("Rapport [Data] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
             {
-                webHTML.Navigate(htmlError);
+                webRanking.Navigate(htmlError);
                 FormError errorMsg = new FormError("Feil ved generering av rapport for [Data]", ex);
                 errorMsg.ShowDialog(this);
             }
@@ -2289,7 +2289,7 @@ namespace KGSA
             try
             {
                 timewatch.Start();
-                webHTML.Navigate(htmlLoading);
+                webRanking.Navigate(htmlLoading);
                 DateTime dtPick = pickerRankingDate.Value;
                 AudioVideoReport report = new AudioVideoReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
@@ -2306,19 +2306,19 @@ namespace KGSA
                 {
                     stopRanking = false;
                     Logg.Log("Rapport stoppet.", Color.Red);
-                    webHTML.Navigate(htmlStopped);
+                    webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
                 else
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
-                    webHTML.Navigate(htmlRapport);
+                    webRanking.Navigate(htmlRapport);
                     Logg.Log("Rapport [AudioVideo] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
             {
-                webHTML.Navigate(htmlError);
+                webRanking.Navigate(htmlError);
                 FormError errorMsg = new FormError("Feil ved generering av rapport for [AudioVideo]", ex);
                 errorMsg.ShowDialog(this);
             }
@@ -2329,7 +2329,7 @@ namespace KGSA
             try
             {
                 timewatch.Start();
-                webHTML.Navigate(htmlLoading);
+                webRanking.Navigate(htmlLoading);
                 DateTime dtPick = pickerRankingDate.Value;
                 TeleReport report = new TeleReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
@@ -2346,19 +2346,19 @@ namespace KGSA
                 {
                     stopRanking = false;
                     Logg.Log("Rapport stoppet.", Color.Red);
-                    webHTML.Navigate(htmlStopped);
+                    webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
                 else
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
-                    webHTML.Navigate(htmlRapport);
+                    webRanking.Navigate(htmlRapport);
                     Logg.Log("Rapport [Tele] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
             {
-                webHTML.Navigate(htmlError);
+                webRanking.Navigate(htmlError);
                 FormError errorMsg = new FormError("Feil ved generering av rapport for [Tele]", ex);
                 errorMsg.ShowDialog(this);
             }
@@ -2369,7 +2369,7 @@ namespace KGSA
             try
             {
                 timewatch.Start();
-                webHTML.Navigate(htmlLoading);
+                webRanking.Navigate(htmlLoading);
                 DateTime dtPick = pickerRankingDate.Value;
                 ButikkReport report = new ButikkReport(this, appConfig.Avdeling);
                 var doc = new List<string>();
@@ -2385,19 +2385,19 @@ namespace KGSA
                 {
                     stopRanking = false;
                     Logg.Log("Rapport stoppet.", Color.Red);
-                    webHTML.Navigate(htmlStopped);
+                    webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
                 else
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
-                    webHTML.Navigate(htmlRapport);
+                    webRanking.Navigate(htmlRapport);
                     Logg.Log("Rapport [Butikk] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch(Exception ex)
             {
-                webHTML.Navigate(htmlError);
+                webRanking.Navigate(htmlError);
                 FormError errorMsg = new FormError("Feil ved generering av rapport for [Butikk]", ex);
                 errorMsg.ShowDialog(this);
             }

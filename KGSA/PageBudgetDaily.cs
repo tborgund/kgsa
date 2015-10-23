@@ -73,6 +73,7 @@ namespace KGSA
                         OpenPage(htmlPage);
                         if (!runningInBackground)
                             Logg.Log("Side [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
+                        return true;
                     }
                 }
                 else
@@ -292,8 +293,8 @@ namespace KGSA
                                                 KgsaSalgsprisTot += item.Salgspris;
                                                 AddTable_Row_Cell(main.tools.NumberStyle_Normal(item.Btokr, 0), "", Class_Style_Generic);
                                                 KgsaBtokrTot += item.Btokr;
-                                                AddTable_Row_Cell(main.tools.NumberStyle_Percent(item.Btokr / Convert.ToDouble(main.tableMacroQuick.Rows[i]["Fortjeneste"]), 
-                                                    100, true, false, 0), "", Class_Style_Percent);
+                                                AddTable_Row_Cell(main.tools.NumberStyle_Percent((decimal)item.Btokr, Convert.ToDecimal(main.tableMacroQuick.Rows[i]["Fortjeneste"]), 
+                                                        true, false, 0), "", Class_Style_Percent);
 
                                                 found = true;
                                                 break;

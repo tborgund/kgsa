@@ -285,7 +285,7 @@ namespace KGSA
                 bwGraph.RunWorkerAsync(argKat);
             }
             else
-                webHTML.Navigate(htmlImport);
+                webRanking.Navigate(htmlImport);
         }
 
         private void bwGraph_DoWork(object sender, DoWorkEventArgs e)

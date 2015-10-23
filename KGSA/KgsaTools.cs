@@ -65,6 +65,8 @@ namespace KGSA
                 string format = "0.#";
 
                 string output = main.appConfig.visningNull;
+                if ((int)(value * 100) == 0)
+                    return output;
                 if (value < nullPoint)
                     output = "<span" + styleRed + ">" + (value * 100).ToString(format, FormMain.norway) + "%</span>";
                 if (value >= nullPoint)

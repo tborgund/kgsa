@@ -155,7 +155,7 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageRank = new System.Windows.Forms.TabPage();
             this.panelRankRight = new System.Windows.Forms.Panel();
-            this.webHTML = new System.Windows.Forms.WebBrowser();
+            this.webRanking = new System.Windows.Forms.WebBrowser();
             this.panelNotification = new System.Windows.Forms.Panel();
             this.labelNotificationText = new System.Windows.Forms.Label();
             this.buttonNotification = new System.Windows.Forms.Button();
@@ -1440,7 +1440,7 @@
             // panelRankRight
             // 
             this.panelRankRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelRankRight.Controls.Add(this.webHTML);
+            this.panelRankRight.Controls.Add(this.webRanking);
             this.panelRankRight.Controls.Add(this.panelNotification);
             this.panelRankRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRankRight.Location = new System.Drawing.Point(199, 3);
@@ -1448,20 +1448,20 @@
             this.panelRankRight.Size = new System.Drawing.Size(846, 799);
             this.panelRankRight.TabIndex = 1;
             // 
-            // webHTML
+            // webRanking
             // 
-            this.webHTML.AllowWebBrowserDrop = false;
-            this.webHTML.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webHTML.Location = new System.Drawing.Point(0, 27);
-            this.webHTML.Margin = new System.Windows.Forms.Padding(0);
-            this.webHTML.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webHTML.Name = "webHTML";
-            this.webHTML.ScriptErrorsSuppressed = true;
-            this.webHTML.Size = new System.Drawing.Size(844, 770);
-            this.webHTML.TabIndex = 0;
-            this.webHTML.WebBrowserShortcutsEnabled = false;
-            this.webHTML.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webHTML_DocumentCompleted);
-            this.webHTML.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webHTML_Navigating);
+            this.webRanking.AllowWebBrowserDrop = false;
+            this.webRanking.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webRanking.Location = new System.Drawing.Point(0, 27);
+            this.webRanking.Margin = new System.Windows.Forms.Padding(0);
+            this.webRanking.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webRanking.Name = "webRanking";
+            this.webRanking.ScriptErrorsSuppressed = true;
+            this.webRanking.Size = new System.Drawing.Size(844, 770);
+            this.webRanking.TabIndex = 0;
+            this.webRanking.WebBrowserShortcutsEnabled = false;
+            this.webRanking.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webHTML_DocumentCompleted);
+            this.webRanking.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webHTML_Navigating);
             // 
             // panelNotification
             // 
@@ -4724,7 +4724,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSaveFullPdf;
         private System.Windows.Forms.TabPage tabPageRank;
         private System.Windows.Forms.Panel panelRankRight;
-        private System.Windows.Forms.WebBrowser webHTML;
         private System.Windows.Forms.Panel panelRankLeft;
         private System.Windows.Forms.Button buttonButikk;
         private System.Windows.Forms.Button buttonTele;
@@ -4809,7 +4808,6 @@
         private System.Windows.Forms.ToolStripStatusLabel StatusInformation;
         private System.Windows.Forms.TabPage tabPageService;
         private System.Windows.Forms.Panel panel9;
-        private System.Windows.Forms.WebBrowser webService;
         private System.Windows.Forms.Panel panelServiceLeft;
         private System.Windows.Forms.Button button25;
         private System.Windows.Forms.Button button27;
@@ -4890,7 +4888,6 @@
         private System.Windows.Forms.Button buttonLagerUkuListe;
         private System.Windows.Forms.Label labelStoreDato;
         private System.Windows.Forms.Button buttonLagerStatus;
-        private System.Windows.Forms.WebBrowser webStore;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonLagerImports;
         private System.Windows.Forms.Button button18;
@@ -5041,6 +5038,9 @@
         private System.Windows.Forms.Button buttonBudgetActionBudgetImport;
         private System.Windows.Forms.ToolStripMenuItem oppdaterAlleSiderToolStripMenuItem;
         private System.Windows.Forms.Button buttonBudgetAllSalesRep;
+        public System.Windows.Forms.WebBrowser webRanking;
+        public System.Windows.Forms.WebBrowser webService;
+        public System.Windows.Forms.WebBrowser webStore;
     }
 }
 

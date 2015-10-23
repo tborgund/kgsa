@@ -12,6 +12,10 @@ namespace KGSA
     [Serializable]
     public class AppSettings
     {
+        #region Pages Refresh Time
+        public DateTime page_daily_time { get; set; }
+        public DateTime page_refresh_time { get; set; }
+        #endregion
         #region Online Importer settings
         /// Enable / Disable automatic online importing of weekly products and popular prisguide products
         public bool onlineImporterAuto { get; set; }

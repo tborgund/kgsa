@@ -689,7 +689,7 @@ namespace KGSA
             {
                 string curTab = readCurrentTab();
                 if (curTab == "Ranking")
-                    webHTML.ShowPrintDialog();
+                    webRanking.ShowPrintDialog();
                 else if (curTab == "Service")
                     webService.ShowPrintDialog();
                 else if (curTab == "Store")
@@ -816,7 +816,7 @@ namespace KGSA
         {
             string curTab = readCurrentTab();
             if (curTab == "Ranking")
-                webHTML.ShowPrintDialog();
+                webRanking.ShowPrintDialog();
             else if (curTab == "Budget")
                 webBudget.ShowPrintDialog();
             else if (curTab == "Service")
@@ -953,7 +953,7 @@ namespace KGSA
             string curTab = readCurrentTab();
             if (curTab == "Ranking")
             {
-                webHTML.ShowPrintPreviewDialog();
+                webRanking.ShowPrintPreviewDialog();
                 return;
             }
             else if (curTab == "Budget")
@@ -980,12 +980,12 @@ namespace KGSA
             string curTab = readCurrentTab();
             if (curTab == "Ranking")
             { 
-                webHTML.ShowPageSetupDialog();
+                webRanking.ShowPageSetupDialog();
                 return;
             }
             if (curTab == "Avdelinger")
             {
-                webHTML.ShowPageSetupDialog();
+                webRanking.ShowPageSetupDialog();
                 return;
             }
             else if (curTab == "Budget")

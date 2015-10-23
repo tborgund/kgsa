@@ -1927,9 +1927,9 @@ namespace KGSA
                     else
                         return "";
                 }
-                else if (curTab == "Ranking" && webHTML.Url != null)
+                else if (curTab == "Ranking" && webRanking.Url != null)
                 {
-                    string str = webHTML.Url.OriginalString;
+                    string str = webRanking.Url.OriginalString;
                     if (str.Contains("rankingButikk.html"))
                         return "Butikk";
                     else if (str.Contains("rankingKnowHow.html"))
@@ -3549,7 +3549,7 @@ namespace KGSA
                     labelGraphLastDate.ForeColor = SystemColors.ControlText;
                     labelGraphLastDate.Text = "";
 
-                    webHTML.Navigate(htmlImport);
+                    webRanking.Navigate(htmlImport);
 
                     ShowHideGui_EmptyRanking(false);
 
