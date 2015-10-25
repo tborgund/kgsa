@@ -72,7 +72,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -270,7 +270,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }
@@ -352,7 +352,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }

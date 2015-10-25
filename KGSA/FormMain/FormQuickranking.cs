@@ -36,7 +36,7 @@ namespace KGSA
 
                 if (processing.userPushedCancelButton)
                 {
-                    Logg.Log("Brukeren avbrøt handlingen.");
+                    Log.n("Brukeren avbrøt handlingen.");
                     return;
                 }
             }
@@ -46,7 +46,7 @@ namespace KGSA
             processing.SetProgressStyle = ProgressBarStyle.Marquee;
             processing.SetBackgroundWorker = worker;
             processing.SetText = "Kjører daglig budsjett rutine..";
-            Logg.Log("Kjører daglig budsjett rutine..");
+            Log.n("Kjører daglig budsjett rutine..");
             worker.RunWorkerAsync();
         }
 
@@ -62,13 +62,13 @@ namespace KGSA
                 {
                     if (tableMacroQuick == null || tableMacroQuick.Rows.Count < 5)
                     {
-                        Logg.Log("Daglig Budsjett: Feil oppstod under makro kjøring. Mangler data fra Elguide. Se logg for detaljer", Color.Red);
+                        Log.n("Daglig Budsjett: Feil oppstod under makro kjøring. Mangler data fra Elguide. Se logg for detaljer", Color.Red);
                         e.Result = 7;
                         return;
                     }
                     else
                     {
-                        Logg.Log("Daglig Budsjett: Feil oppstod under makro kjøring. Feilbeskjed: " + formMacro.errorMessage + " Kode: " + formMacro.errorCode, Color.Red);
+                        Log.n("Daglig Budsjett: Feil oppstod under makro kjøring. Feilbeskjed: " + formMacro.errorMessage + " Kode: " + formMacro.errorCode, Color.Red);
                         e.Result = formMacro.errorCode;
                         return;
                     }
@@ -80,8 +80,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Daglig Budsjett: Feil oppstod under konvertering og sending av kveldsranking til PDF. Se logg for detaljer.", Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Daglig Budsjett: Feil oppstod under konvertering og sending av kveldsranking til PDF. Se logg for detaljer.", Color.Red);
             }
             e.Result = 8;
         }
@@ -93,19 +93,19 @@ namespace KGSA
 
             if (e.Error != null)
             {
-                Logg.Log("Kveldstall: Ukjent feil oppstod. " + e.Error.Message + " Se logg for detaljer.", Color.Red);
+                Log.n("Kveldstall: Ukjent feil oppstod. " + e.Error.Message + " Se logg for detaljer.", Color.Red);
             }
             else if (e.Cancelled || (int)e.Result == 2)
             {
-                Logg.Log("Kveldstall: Avbrutt av bruker.");
+                Log.n("Kveldstall: Avbrutt av bruker.");
             }
             else if ((int)e.Result != 0)
             {
-                Logg.Log("Kveldstall: Ukjent feil oppstod. Se logg for detaljer.", Color.Red);
+                Log.n("Kveldstall: Ukjent feil oppstod. Se logg for detaljer.", Color.Red);
             }
             else
             {
-                Logg.Log("Kveldstall: Fullført uten feil.", Color.Green);
+                Log.n("Kveldstall: Fullført uten feil.", Color.Green);
                 processing.SetVisible = false;
                 return;
             }
@@ -130,7 +130,7 @@ namespace KGSA
 
                 if (processing.userPushedCancelButton)
                 {
-                    Logg.Log("Brukeren avbrøt handlingen.");
+                    Log.n("Brukeren avbrøt handlingen.");
                     return;
                 }
             }
@@ -140,7 +140,7 @@ namespace KGSA
             processing.SetProgressStyle = ProgressBarStyle.Marquee;
             processing.SetBackgroundWorker = bwQuickAuto;
             processing.SetText = "Kjører kveldsranking rutine..";
-            Logg.Log("Kjører kveldsranking rutine..");
+            Log.n("Kjører kveldsranking rutine..");
             bwQuickAuto.RunWorkerAsync();
         }
 
@@ -159,7 +159,7 @@ namespace KGSA
             e.Result = formMacro.errorCode;
             if (formMacro.errorCode == 6)
             {
-                Logg.Log("En kritisk feil forhindret makro i å utføre sine oppgaver. Se logg for detaljer.", Color.Red);
+                Log.n("En kritisk feil forhindret makro i å utføre sine oppgaver. Se logg for detaljer.", Color.Red);
                 e.Result = 6;
                 return;
             }
@@ -170,7 +170,7 @@ namespace KGSA
                 if (macroAttempt < macroMaxAttempts && formMacro.errorCode != 2) // Vi har flere forsøk igjen, samt bruker har ikke avbrutt prosessen
                     goto retrymacro;
                 if (formMacro.errorCode != 2)
-                    Logg.Log("Kveldstall: Feil oppstod under kveldsranking automatisering. Feilbeskjed: " + formMacro.errorMessage + " Kode: " + formMacro.errorCode, Color.Red);
+                    Log.n("Kveldstall: Feil oppstod under kveldsranking automatisering. Feilbeskjed: " + formMacro.errorMessage + " Kode: " + formMacro.errorCode, Color.Red);
                 return;
             }
 
@@ -178,7 +178,7 @@ namespace KGSA
 
             if (appConfig.dailyBudgetQuickRankingAutoUpdate && appConfig.dailyBudgetIncludeInQuickRanking)
             {
-                Logg.Log("Kveldstall: Starter nedlasting av dagens budsjett..");
+                Log.n("Kveldstall: Starter nedlasting av dagens budsjett..");
                 processing.SetText = "Henter dagens budsjett..";
                 budgetImporter.FindAndDownloadBudget(bwQuickAuto);
             }
@@ -186,14 +186,14 @@ namespace KGSA
             ClearBudgetHash(BudgetCategory.Daglig);
             MakeBudgetPage(BudgetCategory.Daglig, bwQuickAuto);
 
-            Logg.Log("Kveldstall: Konverterer kveldranking til PDF..");
+            Log.n("Kveldstall: Konverterer kveldranking til PDF..");
             processing.SetText = "Konverterer kveldsranking til PDF..";
 
             string pdfBudget = CreatePDF("", "\"" + settingsPath + "\\budsjettDaglig.html\" ", bwQuickAuto);
             if (String.IsNullOrEmpty(pdfBudget) || !File.Exists(pdfBudget))
             {
                 // Feil under pdf generering
-                Logg.Log("Kveldstall: Feil oppstod under konvertering av kveldsranking til PDF. Se logg for detaljer.", Color.Red);
+                Log.n("Kveldstall: Feil oppstod under konvertering av kveldsranking til PDF. Se logg for detaljer.", Color.Red);
                 e.Result = 6;
                 return;
             }
@@ -203,7 +203,7 @@ namespace KGSA
             if (!email.Send(pdfBudget, DateTime.Now, "Quick", appConfig.epostEmneQuick, appConfig.epostBodyQuick))
             {
                 // Feil under pdf generering
-                Logg.Log("Kveldstall: Feil oppstod under sending av kveldsranking til PDF. Se logg for detaljer.", Color.Red);
+                Log.n("Kveldstall: Feil oppstod under sending av kveldsranking til PDF. Se logg for detaljer.", Color.Red);
                 e.Result = 8;
                 return;
             }
@@ -215,19 +215,19 @@ namespace KGSA
             autoMode = false;
             if (e.Error != null)
             {
-                Logg.Log("Kveldstall: Ukjent feil oppstod. " + e.Error.Message + " Se logg for detaljer.", Color.Red);
+                Log.n("Kveldstall: Ukjent feil oppstod. " + e.Error.Message + " Se logg for detaljer.", Color.Red);
             }
             else if (e.Cancelled || (e.Result != null && (int)e.Result == 2))
             {
-                Logg.Log("Kveldstall: Avbrutt av bruker.");
+                Log.n("Kveldstall: Avbrutt av bruker.");
             }
             else if (e.Result != null && (int)e.Result != 0)
             {
-                Logg.Log("Kveldstall: Ukjent feil oppstod. Se logg for detaljer.", Color.Red);
+                Log.n("Kveldstall: Ukjent feil oppstod. Se logg for detaljer.", Color.Red);
             }
             else
             {
-                Logg.Log("Kveldstall: Fullført uten feil.", Color.Green);
+                Log.n("Kveldstall: Fullført uten feil.", Color.Green);
             }
             processing.HideDelayed();
             this.Activate();

@@ -262,7 +262,6 @@
     <Compile Include="GraphClass.cs" />
     <Compile Include="GraphClassPlumbing.cs" />
     <Compile Include="ImportManager.cs" />
-    <Compile Include="KgsaServer.cs" />
     <Compile Include="LogMessage.cs" />
     <Compile Include="FormMsgAutoranking.cs">
       <SubType>Form</SubType>
@@ -383,7 +382,6 @@
       <DependentUpon>VelgTypeCSV.cs</DependentUpon>
     </Compile>
     <Compile Include="Vinnprodukt.cs" />
-    <Compile Include="WebServer.cs" />
     <EmbeddedResource Include="FormBudgetCreation.resx">
       <DependentUpon>FormBudgetCreation.cs</DependentUpon>
       <SubType>Designer</SubType>

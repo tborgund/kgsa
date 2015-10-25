@@ -361,7 +361,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -547,7 +547,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -679,7 +679,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Error" };
             }
         }
@@ -760,7 +760,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Error" };
             }
         }
@@ -781,7 +781,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Error" };
             }
         }
@@ -802,7 +802,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Error" };
             }
         }
@@ -823,7 +823,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Error" };
             }
         }
@@ -965,7 +965,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -1038,7 +1038,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Error" };
             }
         }

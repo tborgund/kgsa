@@ -21,10 +21,10 @@ namespace KGSA
         public bool forceUpdate = false;
         public FormSettings(FormMain form)
         {
-            this.main = form;
+            main = form;
             InitializeComponent();
             timerMsgClear.Tick += timer;
-            Logg.Debug("Innstillinger åpnet.");
+            Log.d("Innstillinger åpnet.");
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -123,10 +123,6 @@ namespace KGSA
             else
                 RemoveAdvancedTabs();
             checkBoxActivateExperimental.Checked = main.appConfig.experimental;
-            if (main.appConfig.experimental)
-                AddExperimentalTabs();
-            else
-                RemoveExperimentalTabs();
 
             // Fanse: RANKING
             // RANKING - Utseende
@@ -473,30 +469,10 @@ namespace KGSA
             // LAGER - Prisguide.no og Ukenytt
             SetNumericValue(numericUpDownLagerPrisguideImportPages, main.appConfig.onlinePrisguidePagesToImport);
 
-            // Fane: WEBSERVER --------------------------------------------------------------------------------
-            // WEBSERVER - Generelt
-            checkBoxWebserverEnabled.Checked = main.appConfig.webserverEnabled;
-            SetNumericValue(numericWebserverPort, main.appConfig.webserverPort);
-            comboBoxWebserverBindings.Items.Clear();
-            List<string> bindings = GetAllBindings();
-            if (bindings != null)
-            {
-                foreach (string address in bindings)
-                    comboBoxWebserverBindings.Items.Add(address);
-            }
-            comboBoxWebserverBindings.Text = main.appConfig.webserverHost;
-
-            // WEBSERVER - Sikkerhet
-            checkBoxWebserverSimpleAut.Checked = main.appConfig.webserverRequireSimpleAuthentication;
-            textBoxWebserverUser.Text = main.appConfig.webserverUser;
-            if (!String.IsNullOrEmpty(main.appConfig.webserverPassword))
-                textBoxWebserverPassword.Text = aes.DecryptString(main.appConfig.webserverPassword);
-            else
-                textBoxWebserverPassword.Text = "";
-
             // Fane: VEDLIKEHOLD ------------------------------------------------------------------------------
             // VEDLIKEHOLD - Annet
-            debugCheckBox.Checked = main.appConfig.debug;
+            checkBoxDebug.Checked = main.appConfig.debug;
+            checkBoxDebugShowSql.Checked = main.appConfig.debugSql;
         }
 
         bool IsValidEmail(string email)
@@ -684,7 +660,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -693,7 +669,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -702,7 +678,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -711,7 +687,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -720,7 +696,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -730,7 +706,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -739,7 +715,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -748,7 +724,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -757,7 +733,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -766,7 +742,7 @@ namespace KGSA
                 else
                 {
                     tabControlMain.SelectedTab = tabPageAvansert;
-                    Logg.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Varegruppe skal være på tre siffer og ikke inneholde bokstaver.\nFlere varegrupper deles med komma.", "Feil varegruppe format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
 
@@ -780,7 +756,7 @@ namespace KGSA
                 {
                     tabControlMain.SelectedTab = tabPageEpost;
                     textBoxEpostAvsender.ForeColor = Color.Red;
-                    Logg.Alert("E-post avsender er ikke i gyldig format.\nEksempel: noreply@elkjop.no", "Ugyldig E-post adresse", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("E-post avsender er ikke i gyldig format.\nEksempel: noreply@elkjop.no", "Ugyldig E-post adresse", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
                 else
@@ -869,23 +845,10 @@ namespace KGSA
                 // LAGER - Prisguide.no og Ukenytt
                 main.appConfig.onlinePrisguidePagesToImport = (int)numericUpDownLagerPrisguideImportPages.Value;
 
-                // Fane: WEBSERVER --------------------------------------------------------------------------------
-                // WEBSERVER - Generelt
-                main.appConfig.webserverEnabled = checkBoxWebserverEnabled.Checked;
-                main.appConfig.webserverPort = (int)numericWebserverPort.Value;
-                main.appConfig.webserverHost = comboBoxWebserverBindings.Text;
-
-                // WEBSERVER - Sikkerhet
-                main.appConfig.webserverRequireSimpleAuthentication = checkBoxWebserverSimpleAut.Checked;
-                main.appConfig.webserverUser = textBoxWebserverUser.Text;
-                if (!String.IsNullOrEmpty(textBoxWebserverPassword.Text))
-                    main.appConfig.webserverPassword = aes.EncryptToString(textBoxWebserverPassword.Text);
-                else
-                    main.appConfig.webserverPassword = "";
-
                 // Fane: VEDLIKEHOLD -------------------------------------------------------------------------------
                 // VEDLIKEHOLD - Annet
-                main.appConfig.debug = debugCheckBox.Checked;
+                main.appConfig.debug = checkBoxDebug.Checked;
+                main.appConfig.debugSql = checkBoxDebugShowSql.Checked;
 
                 main.SaveSettings();
                 SendMessage("Innstillinger lagret.", Color.Green);
@@ -894,7 +857,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage(ex.Message.ToString().Replace("\n", "").Replace("\r", ""), Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -911,7 +874,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 labelSizeMainDb.Text = "[Tom]";
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -932,7 +895,7 @@ namespace KGSA
                 ClearMessageTimer();
 
                 if (!String.IsNullOrEmpty(str))
-                    Logg.Log(str, c, true);
+                    Log.n(str, c, true);
             }
             catch
             {
@@ -1116,7 +1079,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Debug("Noe uventet skjedde i UpdateColor()", ex);
+                Log.d("Noe uventet skjedde i UpdateColor()", ex);
             }
         }
 
@@ -1146,7 +1109,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1208,7 +1171,7 @@ namespace KGSA
             catch(Exception ex)
             {
                 SendMessage("Unntak ved Elguide eksport mappe valg.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1241,14 +1204,14 @@ namespace KGSA
                     main.salesCodes = new SalesCodes(main, true);
 
                     SendMessage("Database: Alle selgerkoder slettet.");
-                    Logg.Log("Database: Selgerkode tabelllen nullstilt.");
+                    Log.n("Database: Selgerkode tabelllen nullstilt.");
                     DBsize();
                 }
             }
             catch (Exception ex)
             {
                 SendMessage("Unntak oppstod ved sletting av varekoder.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1271,7 +1234,7 @@ namespace KGSA
                 {
 
                     SendMessage("Vent litt..");
-                    Logg.Log("Database: Sletter salgs tabellen..");
+                    Log.n("Database: Sletter salgs tabellen..");
 
                     main.database.tableSalg.Reset();
 
@@ -1280,14 +1243,14 @@ namespace KGSA
                     main.SaveSettings();
                     DBsize();
                     SendMessage("Transaksjons tabellen slettet.");
-                    Logg.Log("Database: Operasjon utført.");
+                    Log.n("Database: Operasjon utført.");
                     forceUpdate = true;
                 }
             }
             catch (Exception ex)
             {
                 SendMessage("Unntak oppstod ved sletting av transaksjoner.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1309,7 +1272,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Unntak oppstod ved sletting av service databasen.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1321,7 +1284,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1340,11 +1303,11 @@ namespace KGSA
                     }
                 }
                 SendMessage("Slettet " + teller + " csv.", Color.Green);
-                Logg.Log("Tømt mellomlager for " + teller + " KGSA CSV filer.");
+                Log.n("Tømt mellomlager for " + teller + " KGSA CSV filer.");
             }
             catch(Exception ex)
             {
-                Logg.Debug("Unntak under sletting av CSV.", ex);
+                Log.d("Unntak under sletting av CSV.", ex);
             }
         }
 
@@ -1360,7 +1323,7 @@ namespace KGSA
                 main.database.CloseConnection();
                 SendMessage("Compacting DB.. vent litt" + Environment.NewLine + "(Dette kan ta en stund)");
                 this.Update();
-                Logg.Log("Compacting DB.. vent litt");
+                Log.n("Compacting DB.. vent litt");
 
                 SqlCeEngine eng = new SqlCeEngine(FormMain.SqlConStr);
                 eng.Compact(FormMain.SqlConStr);
@@ -1370,7 +1333,7 @@ namespace KGSA
 
                 DBsize();
 
-                Logg.Log("Compacting av " + FormMain.fileDatabase + " fullført.", Color.Green);
+                Log.n("Compacting av " + FormMain.fileDatabase + " fullført.", Color.Green);
                 SendMessage("Ferdig.", Color.Green);
 
             }
@@ -1448,7 +1411,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Unntak oppstod ved sletting av lager databasen.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1502,7 +1465,7 @@ namespace KGSA
             catch(Exception ex)
             {
                 SendMessage("Klarte ikke å oppdatere butikk listen.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1562,7 +1525,7 @@ namespace KGSA
             catch(Exception ex)
             {
                 SendMessage("Klarte ikke å flytte over butikklisten!", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1635,7 +1598,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1658,7 +1621,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 SendMessage("Error: Klarte ikke å hente ip-addresser.");
                 return null;
             }
@@ -1690,7 +1653,6 @@ namespace KGSA
             {
                 tabControlMain.TabPages.Add(tabPageLager);
                 tabControlMain.TabPages.Add(tabPageService);
-                tabControlMain.TabPages.Add(tabPageWebserver);
             }
         }
 
@@ -1700,23 +1662,6 @@ namespace KGSA
             {
                 tabControlMain.TabPages.Remove(tabPageLager);
                 tabControlMain.TabPages.Remove(tabPageService);
-                tabControlMain.TabPages.Remove(tabPageWebserver);
-            }
-        }
-
-        private void AddExperimentalTabs()
-        {
-            if (!tabControlMain.TabPages.Contains(tabPageWebserver))
-            {
-                tabControlMain.TabPages.Add(tabPageWebserver);
-            }
-        }
-
-        private void RemoveExperimentalTabs()
-        {
-            if (tabControlMain.TabPages.Contains(tabPageWebserver))
-            {
-                tabControlMain.TabPages.Remove(tabPageWebserver);
             }
         }
 
@@ -1773,7 +1718,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil oppstod under gjenoppretting av tabell.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
 
         }
@@ -1781,14 +1726,6 @@ namespace KGSA
         private void button11_Click(object sender, EventArgs e)
         {
             CleanVinnDb();
-        }
-
-        private void checkBoxActivateExperimental_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBoxActivateExperimental.Checked)
-                AddExperimentalTabs();
-            else
-                RemoveExperimentalTabs();
         }
 
         private int[] StringToIntArray(string input)
@@ -1932,7 +1869,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil oppstod under gjenoppretting av tabell.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 

@@ -73,7 +73,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -96,7 +96,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -155,7 +155,7 @@ namespace KGSA
                 if (ds.Tables["tblBudget"].Rows.Count > 0)
                     ds.Tables["tblBudget"].Rows[0]["Updated"] = DateTime.Now;
                 else
-                    Logg.Log("Fikk ikke satt tidspunkt for timeantall oppdatering.", Color.Red);
+                    Log.n("Fikk ikke satt tidspunkt for timeantall oppdatering.", Color.Red);
                 da.Update(ds, "tblBudget");
 
                 con.Close();
@@ -163,7 +163,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -292,7 +292,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return null;
         }
@@ -422,7 +422,7 @@ namespace KGSA
 
                 if (CheckDuplicate(avdeling, cat, date) && !update)
                 {
-                    Logg.Log("Budsjett: Dette budsjettet finnes allerede i databasen. Slett den gamle først hvis du mener å lage en ny.");
+                    Log.n("Budsjett: Dette budsjettet finnes allerede i databasen. Slett den gamle først hvis du mener å lage en ny.");
                     return -1;
                 }
 
@@ -497,7 +497,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
 
             return -1;
@@ -856,7 +856,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }

@@ -36,7 +36,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -59,7 +59,7 @@ namespace KGSA
                 DataTable tableInfo = main.database.GetSqlDataTable(sqlProductInfo);
                 if (tableInfo == null || tableInfo.Rows.Count == 0)
                 {
-                    Logg.Log("Fant ikke vare informasjon for noen av varekodene", Color.Red);
+                    Log.n("Fant ikke vare informasjon for noen av varekodene", Color.Red);
                     tableInfo = new DataTable();
                 }
 
@@ -84,7 +84,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return null;
         }
@@ -105,7 +105,7 @@ namespace KGSA
                 DataTable tableInfo = main.database.GetSqlDataTable(sqlInfo);
                 if (tableInfo == null || tableInfo.Rows.Count == 0)
                 {
-                    Logg.Log("Ingen match mellom prisguide varer og vareinfo!", Color.Red);
+                    Log.n("Ingen match mellom prisguide varer og vareinfo!", Color.Red);
                     tableInfo = new DataTable();
                 }
 
@@ -130,7 +130,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return null;
         }
@@ -155,7 +155,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return FormMain.rangeMin;
             }
         }
@@ -180,7 +180,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return FormMain.rangeMin;
             }
         }
@@ -203,7 +203,7 @@ namespace KGSA
 
                 if (msgbox == DialogResult.Yes)
                 {
-                    Logg.Log("Lager: Nullstiller databasen..");
+                    Log.n("Lager: Nullstiller databasen..");
 
                     main.database.tableUkurans.Reset();
                     main.database.tableVareinfo.Reset();
@@ -212,7 +212,7 @@ namespace KGSA
                     main.appConfig.dbStoreFrom = FormMain.rangeMin;
                     main.appConfig.dbStoreTo = FormMain.rangeMin;
 
-                    Logg.Log("Lager: Nullstilling fullført.");
+                    Log.n("Lager: Nullstilling fullført.");
                     return true;
                 }
             }
@@ -234,16 +234,16 @@ namespace KGSA
 
                 if (dt.Rows.Count == 0)
                 {
-                    Logg.Debug("Lager historikk: Ingen data å lagre.");
+                    Log.d("Lager historikk: Ingen data å lagre.");
                     return false;
                 }
 
                 string sqlDelCommand = "DELETE FROM tblHistory WHERE Avdeling = " + lager + " AND Dato = '" + date.ToString("yyy-MM-dd") + "'";
                 var command = new SqlCeCommand(sqlDelCommand, main.connection); 
                 var result = command.ExecuteNonQuery();
-                Logg.Debug("tblHistory: Slettet " + result + " oppføringer.");
+                Log.d("tblHistory: Slettet " + result + " oppføringer.");
 
-                Logg.Log("Lagrer historisk data for lager..", null, true);
+                Log.n("Lagrer historisk data for lager..", null, true);
 
                 string sql = "INSERT INTO tblHistory (Avdeling, Dato, Kategori, Lagerantall, Lagerverdi, Ukuransantall, Ukuransverdi, Ukuransprosent) " +
                     "VALUES (@Avdeling, @Dato, @Kategori, @Lagerantall, @Lagerverdi, @Ukuransantall, @Ukuransverdi, @Ukuransprosent)";
@@ -265,11 +265,11 @@ namespace KGSA
                     }
                 }
 
-                Logg.Log("Fullført lagring av historisk lager data.", null, true);
+                Log.n("Fullført lagring av historisk lager data.", null, true);
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
             return false;
@@ -302,7 +302,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return FormMain.rangeMin;
             }
         }
@@ -319,7 +319,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
 
             return null;
@@ -331,7 +331,7 @@ namespace KGSA
             {
                 if (File.Exists(filename) && filename.EndsWith(".zip"))
                 {
-                    Logg.Log("Pakker ut " + filename + "..", null, true);
+                    Log.n("Pakker ut " + filename + "..", null, true);
 
                     string zipToUnpack = filename;
                     string unpackDirectory = System.IO.Path.GetTempPath();
@@ -343,20 +343,20 @@ namespace KGSA
                         }
                     }
 
-                    Logg.Log("Utpakket.", null, true);
+                    Log.n("Utpakket.", null, true);
 
                     if (File.Exists(System.IO.Path.GetTempPath() + @"\wobsolete.csv"))
                         return System.IO.Path.GetTempPath() + @"\wobsolete.csv";
                     else
                     {
-                        Logg.Log("Feil i utpakking av Zip fil! (" + filename + ")", Color.Red);
+                        Log.n("Feil i utpakking av Zip fil! (" + filename + ")", Color.Red);
                     } 
                 }
                 return "";
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }
@@ -473,7 +473,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Debug("Feil oppstod i MakeTableObsolete", ex);
+                Log.d("Feil oppstod i MakeTableObsolete", ex);
                 return null;
             }
         }
@@ -484,7 +484,7 @@ namespace KGSA
             {
                 if (!File.Exists(filename))
                 {
-                    Logg.Log("Vare import: Fant ikke fil eller ble nektet tilgag. (" + filename + ")", Color.Red);
+                    Log.n("Vare import: Fant ikke fil eller ble nektet tilgag. (" + filename + ")", Color.Red);
                     return false;
                 }
 
@@ -500,12 +500,12 @@ namespace KGSA
                     foreach (ErrorInfo err in engine.ErrorManager.Errors)
                     {
                         importReadErrors++;
-                        Logg.Log("Import: Klarte ikke lese linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
-                        Logg.Debug("Exception: " + err.ExceptionInfo.ToString());
+                        Log.n("Import: Klarte ikke lese linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
+                        Log.d("Exception: " + err.ExceptionInfo.ToString());
 
                         if (importReadErrors > 100)
                         {
-                            Logg.Log("Feil: CSV er ikke en obsolete eksportering eller filen er skadet. (" + filename + ")", Color.Red);
+                            Log.n("Feil: CSV er ikke en obsolete eksportering eller filen er skadet. (" + filename + ")", Color.Red);
                             return false;
                         }
 
@@ -530,7 +530,7 @@ namespace KGSA
                 if (count > 0)
                 {
 
-                    Logg.Log("Prosesserer " + count.ToString("#,##0") + " vare oppføringer.. (" + filename + ")");
+                    Log.n("Prosesserer " + count.ToString("#,##0") + " vare oppføringer.. (" + filename + ")");
 
                     var tableUkurans = main.database.tableUkurans.GetDataTable();
 
@@ -550,7 +550,7 @@ namespace KGSA
                             }
                             if (bw.CancellationPending)
                             {
-                                Logg.Log("Lager importering avbrutt av bruker!", Color.Red);
+                                Log.n("Lager importering avbrutt av bruker!", Color.Red);
                                 return false;
                             }
                         }
@@ -614,10 +614,10 @@ namespace KGSA
                     main.appConfig.dbStoreFrom = FormMain.rangeMin;
                     main.appConfig.dbStoreTo = FormMain.rangeMin;
 
-                    Logg.Debug("Forbereder lagring av historikk for lager..");
+                    Log.d("Forbereder lagring av historikk for lager..");
                     SaveHistory(MakeTableObsolete(false), dtLast, false);
                     SaveHistory(MakeTableObsolete(true), dtLast, true);
-                    Logg.Debug("Lagring av historikk fullført.");
+                    Log.d("Lagring av historikk fullført.");
 
                 }
                 return true;

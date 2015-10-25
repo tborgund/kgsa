@@ -17,7 +17,7 @@ namespace KGSA
 
         retrymacro:
 
-            Logg.Log("Auto: Kjører makro.. [" + macroAttempt + "]");
+            Log.n("Auto: Kjører makro.. [" + macroAttempt + "]");
 
             DateTime date = appConfig.dbTo;
             double span = (DateTime.Now - appConfig.dbTo).TotalDays;
@@ -31,7 +31,7 @@ namespace KGSA
             {
                 // Feil oppstod under kjøring av macro
                 macroAttempt++;
-                Logg.Log("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + macroForm.errorMessage + " Kode: " + macroForm.errorCode, Color.Red);
+                Log.n("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + macroForm.errorMessage + " Kode: " + macroForm.errorCode, Color.Red);
                 for (int i = 0; i < 60; i++)
                 {
                     Application.DoEvents();
@@ -50,7 +50,7 @@ namespace KGSA
             {
                 // CSV finnes ikke eller filen er ikke oppdatert i dag i.e. data ble ikke eksportert riktig med makro
                 macroAttempt++;
-                Logg.Log("Auto: CSV er IKKE oppdatert, eller ingen tilgang. Sjekk CSV lokasjon og makro innstillinger.", Color.Red);
+                Log.n("Auto: CSV er IKKE oppdatert, eller ingen tilgang. Sjekk CSV lokasjon og makro innstillinger.", Color.Red);
                 for (int i = 0; i < 60; i++)
                 {
                     Application.DoEvents();
@@ -62,7 +62,7 @@ namespace KGSA
                 return;
             }
 
-            Logg.Log("Auto: Importerer data..");
+            Log.n("Auto: Importerer data..");
 
             csvFilesToImport.Clear();
             ImportManager importMng = new ImportManager(this, csvFilesToImport);
@@ -71,7 +71,7 @@ namespace KGSA
             {
                 // Feil under importering
                 macroAttempt++;
-                Logg.Log("Auto: Feil oppstod under importering. Kode: " + importMng.returnCode, Color.Red);
+                Log.n("Auto: Feil oppstod under importering. Kode: " + importMng.returnCode, Color.Red);
                 for (int i = 0; i < 60; i++)
                 {
                     Application.DoEvents();
@@ -90,11 +90,11 @@ namespace KGSA
             autoMode = false;
             if (e.Cancelled)
             {
-                Logg.Log("Makro: Oppgave kansellert.");
+                Log.n("Makro: Oppgave kansellert.");
             }
             else if (e.Error != null)
             {
-                Logg.Log("Makro: Oppgave avsluttet med feil " + e.Error.Message, Color.Red);
+                Log.n("Makro: Oppgave avsluttet med feil " + e.Error.Message, Color.Red);
             }
             else
             {
@@ -109,19 +109,19 @@ namespace KGSA
                     RetrieveDb();
                     Reload(true);
                     UpdateUi();
-                    Logg.Log("Makro: Oppgave fullført.", Color.Green);
+                    Log.n("Makro: Oppgave fullført.", Color.Green);
                 }
                 else if (returnCode == 2)
                 {
-                    Logg.Log("Makro: Oppgave avbrutt av bruker.");
+                    Log.n("Makro: Oppgave avbrutt av bruker.");
                 }
                 else if (returnCode == -1)
                 {
-                    Logg.Log("Makro: Oppgave avsluttet med ukjent status.", Color.OrangeRed);
+                    Log.n("Makro: Oppgave avsluttet med ukjent status.", Color.OrangeRed);
                 }
                 else
                 {
-                    Logg.Debug("Makro: Ukjent returkode: " + returnCode);
+                    Log.d("Makro: Ukjent returkode: " + returnCode);
                 }
             }
             processing.HideDelayed();
@@ -164,7 +164,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Log("Unntak ved velging av CSV fil. " + ex.Message, Color.Red);
+                Log.n("Unntak ved velging av CSV fil. " + ex.Message, Color.Red);
             }
         }
 
@@ -209,23 +209,23 @@ namespace KGSA
                 if (complete)
                 {
                     var tid = timewatch.Stop();
-                    Logg.Log("Importering tok " + tid + " sekunder.", Color.Black, true);
+                    Log.n("Importering tok " + tid + " sekunder.", Color.Black, true);
                     database.ClearCacheTables();
                     RetrieveDbStore();
                     ReloadStore(true);
                     UpdateUi();
-                    Logg.Log("Vare import: Importering fullført uten feil.", Color.Green);
+                    Log.n("Vare import: Importering fullført uten feil.", Color.Green);
                     processing.SetText = "Fullført!";
                 }
                 else
                 {
-                    Logg.Log("Vare import: Importering fullført med feil! Se logg for detaljer.", Color.Red);
+                    Log.n("Vare import: Importering fullført med feil! Se logg for detaljer.", Color.Red);
                     processing.SetText = "Avbrutt..";
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             processing.HideDelayed();
             this.Activate();
@@ -260,16 +260,16 @@ namespace KGSA
             try
             {
                 var tid = timewatch.Stop();
-                Logg.Log("Importering tok " + tid + " sekunder.", Color.Black, true);
+                Log.n("Importering tok " + tid + " sekunder.", Color.Black, true);
 
                 ImportManager importMng = (ImportManager)e.Result;
 
                 if (importMng.returnCode == 0)
                 {
                     if (importMng.importReadErrors > 0)
-                        Logg.Log("Importering fullført! Transaksjoner med lesefeil: " + importMng.importReadErrors, Color.Orange);
+                        Log.n("Importering fullført! Transaksjoner med lesefeil: " + importMng.importReadErrors, Color.Orange);
                     else
-                        Logg.Log("Importering fullført uten feil!", Color.Green);
+                        Log.n("Importering fullført uten feil!", Color.Green);
 
                     RetrieveDb(true); // forced update
                     RetrieveDbStore();
@@ -295,17 +295,17 @@ namespace KGSA
                 }
                 else if (importMng.returnCode == 4)
                 {
-                    Logg.Log("Ingen tilgang til CSV fil eller CSV inneholdte ingen transaksjoner.", Color.Red);
+                    Log.n("Ingen tilgang til CSV fil eller CSV inneholdte ingen transaksjoner.", Color.Red);
                     processing.SetText = "Importering feilet!";
                 }
                 else if (importMng.returnCode == 2)
                 {
-                    Logg.Log("Importering avbrutt av bruker.", Color.Red);
+                    Log.n("Importering avbrutt av bruker.", Color.Red);
                     processing.SetText = "Importering avbrutt av bruker!";
                 }
                 else
                 {
-                    Logg.Log("Feil oppstod under importering av CSV", Color.Red);
+                    Log.n("Feil oppstod under importering av CSV", Color.Red);
                     processing.SetText = "Importering avbrutt!";
                 }
                 processing.HideDelayed();
@@ -315,7 +315,7 @@ namespace KGSA
             {
                 processing.SetText = "Importering avsluttet med feil!";
                 processing.HideDelayed();
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -352,7 +352,7 @@ namespace KGSA
 
                     if (processing.userPushedCancelButton)
                     {
-                        Logg.Log("Brukeren avbrøt handlingen.");
+                        Log.n("Brukeren avbrøt handlingen.");
                         return;
                     }
                 }
@@ -363,7 +363,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -373,7 +373,7 @@ namespace KGSA
             {
                 processing.SetVisible = true;
                 processing.SetText = "Importerer transaksjoner med makro..";
-                Logg.Log("Importerer transaksjoner med makro..");
+                Log.n("Importerer transaksjoner med makro..");
                 processing.SetValue = 25;
                 processing.SetBackgroundWorker = bwMacroRanking;
                 bwMacroRanking.RunWorkerAsync();

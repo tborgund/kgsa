@@ -67,7 +67,7 @@ namespace KGSA
 
         private void dataGridViewSk_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            Logg.Status("");
+            Log.Status("");
             dataGridViewSk.Rows[e.RowIndex].ErrorText = String.Empty;
         }
 
@@ -86,20 +86,20 @@ namespace KGSA
                 if (result)
                 {
                     // Alt er OK!
-                    Logg.Debug("Endret krav til " + number);
+                    Log.d("Endret krav til " + number);
                 }
                 else
                 {
                     // Format feil!
                     if (value == null) value = "";
                     dataGridViewSk.Rows[e.RowIndex].ErrorText = "Feil format i krav. Må være hele ikke-negative tall."; //error massage
-                    Logg.Log("Feil format i krav. Må være hele ikke-negative tall.", Color.Red);
+                    Log.n("Feil format i krav. Må være hele ikke-negative tall.", Color.Red);
                     e.Cancel = true;
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 dataGridViewSk[e.ColumnIndex, e.RowIndex].Value = "0";
             }
         }
@@ -114,7 +114,7 @@ namespace KGSA
             }
             catch (DeletedRowInaccessibleException ex)
             {
-                Logg.Log("Unntak oppstod under oppdatering av selgerliste. Exception: " + ex, Color.Red);
+                Log.n("Unntak oppstod under oppdatering av selgerliste. Exception: " + ex, Color.Red);
             }
             catch (Exception ex)
             {
@@ -136,7 +136,7 @@ namespace KGSA
                 daSk.Update(dsSk, "tblSelgerkoder");
                 conSk.Close();
                 OppdaterSelgerkoder();
-                Logg.Log("Selgerkoder Lagret.", Color.Green);
+                Log.n("Selgerkoder Lagret.", Color.Green);
                 main.salesCodes.Update();
             }
             catch (Exception ex)

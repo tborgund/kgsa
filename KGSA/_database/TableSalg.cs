@@ -61,7 +61,7 @@ namespace KGSA
                 var cmdIndexAvdeling = new SqlCeCommand(sqlIndexAvdeling, main.connection);
                 cmdIndexAvdeling.ExecuteNonQuery();
             }
-            Logg.Debug("Table " + TABLE_NAME + " ready!");
+            Log.d("Table " + TABLE_NAME + " ready!");
         }
 
         public void Reset()
@@ -72,7 +72,7 @@ namespace KGSA
                 cmdDrop.ExecuteNonQuery();
             }
             Create();
-            Logg.Debug("Table " + TABLE_NAME + " cleared and ready!");
+            Log.d("Table " + TABLE_NAME + " cleared and ready!");
         }
 
         public DataTable GetDataTable()

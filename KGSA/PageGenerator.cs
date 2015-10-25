@@ -169,7 +169,7 @@ namespace KGSA
         protected void AddWarning(string message)
         {
             doc.Add("<br><span class='Subtitle' style='color:red !important;'>" + message + "</span><br>");
-            Logg.Log("Advarsel: " + message, Color.Red, true);
+            Log.n("Advarsel: " + message, Color.Red, true);
         }
 
         protected decimal Compute(DataTable table, string search, string filter = null)

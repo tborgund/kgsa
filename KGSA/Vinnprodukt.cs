@@ -52,7 +52,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<VinnproduktItem>() { };
             }
         }
@@ -85,7 +85,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return false;
         }
@@ -99,11 +99,11 @@ namespace KGSA
 
             if (dt.Rows.Count > 0)
             {
-                var response = Logg.Alert("Varekoden \"" + varekode + "\" finnes allerede!\n\nBytte ut eksisterende med ny?\n\nNye verdier:\nPoeng: " + poeng + "\nStart: " + start.ToShortDateString() + "\nSlutt: " + slutt.ToShortDateString() +
+                var response = Log.Alert("Varekoden \"" + varekode + "\" finnes allerede!\n\nBytte ut eksisterende med ny?\n\nNye verdier:\nPoeng: " + poeng + "\nStart: " + start.ToShortDateString() + "\nSlutt: " + slutt.ToShortDateString() +
                     "\n\nEksisterende:\nPoeng: " + dt.Rows[0]["Poeng"].ToString() + "\nStart: " + Convert.ToDateTime(dt.Rows[0]["DatoStart"]).ToShortDateString() + "\nSlutt: " + Convert.ToDateTime(dt.Rows[0]["DatoExpire"]).ToShortDateString(), "Overskriv", System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Question);
                 if (response == System.Windows.Forms.DialogResult.Yes)
                 {
-                    Logg.Log("Bytter ut varekoden '" + varekode + "' med nye verdier.");
+                    Log.n("Bytter ut varekoden '" + varekode + "' med nye verdier.");
                     Delete(varekode);
                     return false;
                 }
@@ -140,7 +140,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -169,7 +169,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -182,13 +182,13 @@ namespace KGSA
                 con.Open();
                 SqlCeCommand command = new SqlCeCommand("DELETE FROM tblVinnprodukt WHERE Avdeling = " + main.appConfig.Avdeling, con);
                 command.ExecuteNonQuery();
-                Logg.Log("Vinnprodukt listen er tømt.");
+                Log.n("Vinnprodukt listen er tømt.");
                 con.Close();
                 con.Dispose();
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -200,7 +200,7 @@ namespace KGSA
 
                 if (main.IsBusy(true))
                 {
-                    Logg.Alert("Programmet er opptatt med andre oppgaver, vent litt og prøv igjen.");
+                    Log.Alert("Programmet er opptatt med andre oppgaver, vent litt og prøv igjen.");
                     return false;
                 }
 
@@ -233,19 +233,19 @@ namespace KGSA
                 }
                 catch(IOException ex)
                 {
-                    Logg.Unhandled(ex);
-                    if (Logg.Alert("Ingen tilgang til " + file + ".\n\nForsøk igjen?", "Ingen tilgang", System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Yes)
+                    Log.Unhandled(ex);
+                    if (Log.Alert("Ingen tilgang til " + file + ".\n\nForsøk igjen?", "Ingen tilgang", System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Yes)
                         goto retry;
                     else
                         return false;
                 }
 
-                Logg.Log("Fullført lagring av CSV. file://" + file.Replace(' ', (char)160), Color.Green);
+                Log.n("Fullført lagring av CSV. file://" + file.Replace(' ', (char)160), Color.Green);
                 return true;
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex, true);
+                Log.Unhandled(ex, true);
             }
             return false;
         }
@@ -256,13 +256,13 @@ namespace KGSA
             {
                 if (main.IsBusy(true))
                 {
-                    Logg.Alert("Programmet er opptatt med andre oppgaver, vent litt og prøv igjen.");
+                    Log.Alert("Programmet er opptatt med andre oppgaver, vent litt og prøv igjen.");
                     return false;
                 }
 
                 if (!File.Exists(file))
                 {
-                    Logg.Log("Fant ikke CSV.", Color.Red);
+                    Log.n("Fant ikke CSV.", Color.Red);
                     return false;
                 }
 
@@ -273,7 +273,7 @@ namespace KGSA
                 }
                 catch(IOException)
                 {
-                    Logg.Alert("Filen er i bruk av et annet program eller er utilgjengelig", "Ingen tilgang", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    Log.Alert("Filen er i bruk av et annet program eller er utilgjengelig", "Ingen tilgang", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                     return false;
                 }
                 string[] Fields;
@@ -295,7 +295,7 @@ namespace KGSA
 
                 if (dt.Rows.Count > 0)
                 {
-                    Logg.Status("Legger til Vinnprodukter. Vent..");
+                    Log.Status("Legger til Vinnprodukter. Vent..");
                     int teller = 0;
                     int dupli = 0;
                     string dupliVarekoder = "";
@@ -346,18 +346,18 @@ namespace KGSA
 
                     if (main.vinnprodukt.aborted)
                     {
-                        Logg.Log("Import avbrutt.", Color.Red);
+                        Log.n("Import avbrutt.", Color.Red);
                         main.vinnprodukt.aborted = false;
                     }
                     else
                     {
                         if (dupli > 0)
                         {
-                            Logg.Log("Varekoder som fantes allerede eller inneholdte feil: " + dupliVarekoder, null, true);
-                            Logg.Alert("Lagt til " + teller + " vinnprodukter.\n" + dupli + " fantes allerede eller inneholdte feil.\nSe logg for detaljer.", "Fullført import", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                            Log.n("Varekoder som fantes allerede eller inneholdte feil: " + dupliVarekoder, null, true);
+                            Log.Alert("Lagt til " + teller + " vinnprodukter.\n" + dupli + " fantes allerede eller inneholdte feil.\nSe logg for detaljer.", "Fullført import", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                         }
                         else
-                            Logg.Alert("Lagt til " + teller + " vinnprodukter", "Fullført import", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                            Log.Alert("Lagt til " + teller + " vinnprodukter", "Fullført import", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                     }
 
                     // Oppdater tabel etter endring
@@ -367,13 +367,13 @@ namespace KGSA
                 }
                 else
                 {
-                    Logg.Alert("CSV var av feil format eller inneholdte ingen data.", "Import feil", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    Log.Alert("CSV var av feil format eller inneholdte ingen data.", "Import feil", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 }
             }
             catch (Exception ex)
             {
-                Logg.Alert("Kunne ikke tolke CSV.\nFeil format!", "Import feil", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-                Logg.Unhandled(ex);
+                Log.Alert("Kunne ikke tolke CSV.\nFeil format!", "Import feil", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                Log.Unhandled(ex);
             }
             return false;
         }

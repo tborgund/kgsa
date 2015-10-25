@@ -162,8 +162,6 @@ namespace KGSA
         private DateTime chkBudgetPicker;
         private DateTime chkServicePicker;
         private DateTime chkStorePicker;
-        //public static DateTime dbFraDT = DateTime.Now;
-        //public static DateTime dbTilDT = DateTime.Now;
         public static DateTime rangeMin = new DateTime(2000, 1, 1, 0, 0, 0);
         public static DateTime rangeMax = DateTime.Now.AddYears(1);
         public static DateTime highlightDate = rangeMin;
@@ -191,7 +189,6 @@ namespace KGSA
         private bool forceShutdown = false;
         private static bool newInstall = false;
         public DataTable sqlceCurrentMonth;
-        private KgsaServer server;
         public Vinnprodukt vinnprodukt;
         public BudgetObj budget;
         public OpenXML openXml;
@@ -228,7 +225,6 @@ namespace KGSA
             Reload();
             ReloadService();
             splash.ProgressMesssage("Registrerer..");
-            StartWebserver();
             UpdateUi();
             splash.Hide();
             splash.Close();
@@ -253,12 +249,12 @@ namespace KGSA
             if (appConfig.Avdeling < 1000)
                 NewInstallation();
             if (appConfig.Avdeling < 1000) // Sjekk for manglende innstillinger..
-                Logg.Alert("Viktig: Avdeling er IKKE valgt.\n\nGå til innstillinger og legg inn din avdeling!", "Manglende innstillinger", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Log.Alert("Viktig: Avdeling er IKKE valgt.\n\nGå til innstillinger og legg inn din avdeling!", "Manglende innstillinger", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            Logg.Log("KGSA " + version + " (Build: " + RetrieveLinkerTimestamp().ToShortDateString() + ")", Color.Black, true);
+            Log.n("KGSA " + version + " (Build: " + RetrieveLinkerTimestamp().ToShortDateString() + ")", Color.Black, true);
             Focus();
             Loaded = true; // Forhindrer controls on-change events å fyre av under lasting av programmet.
             if (args.Length > 0)
@@ -270,7 +266,7 @@ namespace KGSA
                     {
                         if (filename.EndsWith("iserv.csv"))
                         {
-                            Logg.Log("Angitt CSV (" + filename + ") er av type 'Elguide Service Logg'. Starter importering..");
+                            Log.n("Angitt CSV (" + filename + ") er av type 'Elguide Service Logg'. Starter importering..");
                             bwImportService.RunWorkerAsync(filename);
                             processing.SetVisible = true;
                             processing.SetBackgroundWorker = bwImportService;
@@ -278,7 +274,7 @@ namespace KGSA
                         }
                         else if (filename.EndsWith("irank.csv"))
                         {
-                            Logg.Log("Angitt CSV (" + filename + ") er av type 'Elguide Ranking Transaksjoner'. Starter importering..");
+                            Log.n("Angitt CSV (" + filename + ") er av type 'Elguide Ranking Transaksjoner'. Starter importering..");
                             csvFilesToImport.Clear();
                             csvFilesToImport.Add(args[0]);
                             RunImport(true);
@@ -291,7 +287,7 @@ namespace KGSA
 
                             if (velgcsv.DialogResult == System.Windows.Forms.DialogResult.No)
                             {
-                                Logg.Log("Angitt CSV (" + filename + ") er av type 'Elguide Service Logg'. Starter importering..");
+                                Log.n("Angitt CSV (" + filename + ") er av type 'Elguide Service Logg'. Starter importering..");
                                 bwImportService.RunWorkerAsync(filename);
                                 processing.SetVisible = true;
                                 processing.SetBackgroundWorker = bwImportService;
@@ -299,21 +295,21 @@ namespace KGSA
                             }
                             else if (velgcsv.DialogResult == System.Windows.Forms.DialogResult.Yes)
                             {
-                                Logg.Log("Angitt CSV (" + filename + ") er av type 'Elguide Ranking Transaksjoner'. Starter importering..");
+                                Log.n("Angitt CSV (" + filename + ") er av type 'Elguide Ranking Transaksjoner'. Starter importering..");
                                 csvFilesToImport.Clear();
                                 csvFilesToImport.Add(args[0]);
                                 RunImport(true);
                             }
                             else
-                                Logg.Log("Angitt CSV (" + filename + ") ble ikke gjenkjent av KGSA.", Color.Red);
+                                Log.n("Angitt CSV (" + filename + ") ble ikke gjenkjent av KGSA.", Color.Red);
                         }
                     }
                     else
-                        Logg.Log("Ukjent argument: " + filename + ".", Color.Red);
+                        Log.n("Ukjent argument: " + filename + ".", Color.Red);
                 }
                 catch(Exception ex)
                 {
-                    Logg.Unhandled(ex);
+                    Log.Unhandled(ex);
                 }
             }
 
@@ -385,7 +381,7 @@ namespace KGSA
 
                 SaveSettings();
                 notifyIcon1.Dispose();
-                Logg.LogAdded -= new EventHandler(LogMessage_LogAdded);
+                Log.LogAdded -= new EventHandler(LogMessage_LogAdded);
             }
             else
             {
@@ -396,18 +392,18 @@ namespace KGSA
 
         private void InitializeMyComponents()
         {
-            this.database = new Database(this);
-            this.vinnprodukt = new Vinnprodukt(this);
-            this.openXml = new OpenXML(this);
-            this.processing = new FormProcessing(this);
-            this.salesCodes = new SalesCodes(this);
-            this.tools = new KgsaTools(this);
+            database = new Database(this);
+            vinnprodukt = new Vinnprodukt(this);
+            openXml = new OpenXML(this);
+            processing = new FormProcessing(this);
+            salesCodes = new SalesCodes(this);
+            tools = new KgsaTools(this);
 
             worker = new BackgroundWorker();
 
             webService.ObjectForScripting = new ScriptInterface();
             UpdateServicePage.OnBrowseServicePage += UpdateServicePage_OnRun;
-            Logg.LogAdded += new EventHandler(LogMessage_LogAdded);
+            Log.LogAdded += new EventHandler(LogMessage_LogAdded);
 
             timerAutoRanking.Tick += timer_Tick;
             timerAutoQuick.Tick += timer_TickQuick;
@@ -661,7 +657,7 @@ namespace KGSA
         {
             if (timerMsgClear.Enabled)
             {
-                Logg.Status("");
+                Log.Status("");
                 timerMsgClear.Enabled = false;
                 timerMsgClear.Stop();
             }
@@ -674,13 +670,13 @@ namespace KGSA
                 if (bwRanking.IsBusy)
                 {
                     stopRanking = true;
-                    Logg.Log("Avbryter ranking..", Color.Red);
+                    Log.n("Avbryter ranking..", Color.Red);
                     return true;
                 }
                 if (bwUpdateBigGraph.IsBusy)
                 {
                     _graphReqStop = true;
-                    Logg.Log("Avbryter graf..", Color.Red);
+                    Log.n("Avbryter graf..", Color.Red);
                     return true;
                 }
                 return false;
@@ -695,7 +691,7 @@ namespace KGSA
                 else if (curTab == "Store")
                     webStore.ShowPrintDialog();
                 else
-                    Logg.Log("Gjeldene vindu kan ikke skrives ut.");
+                    Log.n("Gjeldene vindu kan ikke skrives ut.");
                 return true;
             }
             if (keyData == (Keys.Shift | Keys.P))
@@ -743,7 +739,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -754,7 +750,7 @@ namespace KGSA
                 int avd = Convert.ToInt32(sender.ToString().Substring(0, 4));
                 if (avd > 1000 && !appConfig.favAvdeling.Contains(avd.ToString()))
                 {
-                    Logg.Log("Legger til avdeling..", null, false, true);
+                    Log.n("Legger til avdeling..", null, false, true);
                     if (appConfig.favAvdeling.Length > 3) // Den er ikke tom
                         appConfig.favAvdeling += "," + avd;
                     else
@@ -764,15 +760,15 @@ namespace KGSA
                     ClearHash();
                     SaveSettings();
                     UpdateUi();
-                    Logg.Log("Lagt til " + avdeling.Get(avd) + " i favoritt avdelinger.", Color.Green);
+                    Log.n("Lagt til " + avdeling.Get(avd) + " i favoritt avdelinger.", Color.Green);
                 }
                 else
-                    Logg.Log("Avdelingen finnes i favoritt listen fra før.", Color.Red);
+                    Log.n("Avdelingen finnes i favoritt listen fra før.", Color.Red);
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil: Kunne ikke legge til avdeling.", Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Feil: Kunne ikke legge til avdeling.", Color.Red);
             }
         }
 
@@ -836,7 +832,7 @@ namespace KGSA
                 }
             }
             else
-                Logg.Log("Gjeldene vindu kan ikke skrives ut.");
+                Log.n("Gjeldene vindu kan ikke skrives ut.");
         }
 
         private void DocumentToPrint_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
@@ -891,7 +887,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -972,7 +968,7 @@ namespace KGSA
                 return;
             }
             
-            Logg.Log("Gjeldene side kan ikke skrives ut.");
+            Log.n("Gjeldene side kan ikke skrives ut.");
         }
 
         private void toolMenuPagesetup_Click(object sender, EventArgs e)
@@ -1004,7 +1000,7 @@ namespace KGSA
                 return;
             }
             
-            Logg.Log("Gjeldene side kan ikke skrives ut.");
+            Log.n("Gjeldene side kan ikke skrives ut.");
         }
 
         private void graphPanelTop_Paint(object sender, PaintEventArgs e)
@@ -1045,7 +1041,7 @@ namespace KGSA
             SearchDB();
             processing.HideDelayed();
             this.Activate();
-            Logg.Status("Ferdig.");
+            Log.Status("Ferdig.");
         }
 
         private void btokrToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1148,7 +1144,7 @@ namespace KGSA
             }
             catch
             {
-                Logg.Log("Kunne ikke åpne Lesmeg.rtf. Dokumentet mangler eller systemet har ingen programmer som kan åpne den (!).", Color.Red);
+                Log.n("Kunne ikke åpne Lesmeg.rtf. Dokumentet mangler eller systemet har ingen programmer som kan åpne den (!).", Color.Red);
             }
         }
 
@@ -1167,7 +1163,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1343,7 +1339,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1449,7 +1445,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
 
         }
@@ -1477,7 +1473,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1581,7 +1577,7 @@ namespace KGSA
             }
             catch(DeletedRowInaccessibleException ex)
             {
-                Logg.Log("Unntak oppstod under oppdatering av selgerliste. Exception: " + ex, Color.Red);
+                Log.n("Unntak oppstod under oppdatering av selgerliste. Exception: " + ex, Color.Red);
             }
             catch(Exception ex)
             {
@@ -1669,8 +1665,8 @@ namespace KGSA
             if (autorankingMelding.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 SaveSettings();
-                Logg.Log("Meldingen: " + appConfig.epostNesteMelding);
-                Logg.Log("Melding lagret. Sendes ved nest autoranking.", Color.Green);
+                Log.n("Meldingen: " + appConfig.epostNesteMelding);
+                Log.n("Melding lagret. Sendes ved nest autoranking.", Color.Green);
             }
         }
 
@@ -1853,7 +1849,7 @@ namespace KGSA
             if (comboBox_GraphLengde.SelectedIndex != -1 && Loaded)
             {
                 appConfig.graphLengthIndex = comboBox_GraphLengde.SelectedIndex;
-                Logg.Debug("lagret ny index.. " + appConfig.graphLengthIndex);
+                Log.d("lagret ny index.. " + appConfig.graphLengthIndex);
             }
         }
 
@@ -1958,13 +1954,13 @@ namespace KGSA
                     {
                         Bitmap graphBitmap = gc.DrawImageChunk(_graphKatCurrent, appConfig.graphResX, appConfig.graphResY, "", _graphFraDato, pickerDato_Graph.Value, true, null, false, _graphSelCurrent);
                         Clipboard.SetImage(graphBitmap);
-                        Logg.Log("Graf lagret til utklippstavlen.");
+                        Log.n("Graf lagret til utklippstavlen.");
                     }
                 }
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2010,11 +2006,11 @@ namespace KGSA
                 this.TopMost = true;
                 this.TopMost = false;
                 this.Activate();
-                Logg.Debug("Hoved vindu satt tilbake til normal tilstand.");
+                Log.d("Hoved vindu satt tilbake til normal tilstand.");
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2042,7 +2038,7 @@ namespace KGSA
                         serviceID = Convert.ToInt32(s);
                     else
                     {
-                        Logg.Log("Ingen service å søke opp.", Color.Red);
+                        Log.n("Ingen service å søke opp.", Color.Red);
                         return;
                     }
                     MakeServiceDetails(serviceID);
@@ -2072,20 +2068,20 @@ namespace KGSA
             {
                 if (String.IsNullOrEmpty(e.FormattedValue.ToString()) && e.ColumnIndex < 3)
                 {
-                    Logg.Status("Feltet kan ikke være tomt! Eller har du ikke oppdatert databasen?", Color.Red);
+                    Log.Status("Feltet kan ikke være tomt! Eller har du ikke oppdatert databasen?", Color.Red);
                     e.Cancel = true;
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 dataGridViewSk[e.ColumnIndex, e.RowIndex].Value = "";
             }
         }
 
         private void dataGridViewSk_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            Logg.Status("");
+            Log.Status("");
         }
 
         private void serviceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2340,13 +2336,13 @@ namespace KGSA
                     {
                         Bitmap graphBitmap = gc.DrawImageChunk(_graphKatCurrent, appConfig.graphResX, appConfig.graphResY, "", _graphFraDato, pickerDato_Graph.Value, true, null, false, _graphSelCurrent);
                         Clipboard.SetImage(graphBitmap);
-                        Logg.Log("Graf lagret til utklippstavlen.");
+                        Log.n("Graf lagret til utklippstavlen.");
                     }
                 }
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2392,7 +2388,7 @@ namespace KGSA
             }
             catch(FileNotFoundException)
             {
-                Logg.Log("Fant ikke filen! Filen er enten slettet eller flyttet.", Color.Red);
+                Log.n("Fant ikke filen! Filen er enten slettet eller flyttet.", Color.Red);
             }
         }
 
@@ -2563,71 +2559,10 @@ namespace KGSA
                 openXml.OpenDocument(pickerRankingDate.Value);
         }
 
-        private void importerEANToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-            {
-                AppManager app = new AppManager(this);
-                worker = new BackgroundWorker();
-                app.ImportEan(worker);
-            }
-        }
-
         private void buttonLagerExcel_Click(object sender, EventArgs e)
         {
             if (openXml != null)
                 openXml.OpenDocument(pickerLagerDato.Value);
-        }
-
-        private void btOnToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!appManagerIsBusy && !(blueServer != null && blueServer.IsOnline()))
-            {
-                Logg.Log("Starter Bluetooth server..");
-                blueServer = new BluetoothServer(this);
-                blueServer.StartServer(false);
-            }
-            else
-            {
-                Logg.Log("Bluetooth server er allered startet, eller AppManager er opptatt.");
-            }
-        }
-
-        private void btOffToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            blueServer.StopServer();
-            btOffToolStripMenuItem.Checked = false;
-            btOffToolStripMenuItem.Checked = true;
-            Logg.Log("Bluetooth server avslått");
-        }
-
-        private void btAutoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (btAutoToolStripMenuItem.Checked)
-                btAutoToolStripMenuItem.Checked = false;
-            else
-                btAutoToolStripMenuItem.Checked = true;
-            appConfig.blueServerIsEnabled = btAutoToolStripMenuItem.Checked;
-            Logg.Log("Bluetooth server er satt til å starte automatisk ved programstart");
-        }
-
-        private void oppdaterAltToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-            {
-                AppManager appMng = new AppManager(this);
-                worker = new BackgroundWorker();
-                appMng.UpdateAllAsync(worker);
-            }
-        }
-
-        private void slettEANTabellToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!IsBusy())
-            {
-                AppManager appMng = new AppManager(this);
-                appMng.ResetEanDb();
-            }
         }
 
         private void buttonLagerWeekly_Click(object sender, EventArgs e)
@@ -2751,7 +2686,7 @@ namespace KGSA
                 else if (currentTab.Equals("Ranking"))
                     openXml.OpenDocument(pickerRankingDate.Value);
                 else
-                    Logg.Log("Kan ikke åpne regneark for gjeldene side. Velg en annen.", Color.Red);
+                    Log.n("Kan ikke åpne regneark for gjeldene side. Velg en annen.", Color.Red);
             }
         }
 
@@ -2881,6 +2816,85 @@ namespace KGSA
         {
             if (!IsBusy())
                 RunBudget(BudgetCategory.AlleSelgere);
+        }
+
+        private void oppdaterEANDatabasenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+            {
+                if (Log.Alert("Informasjon:\n\nEksporter EAN koder fra meny 200 i Elguide. Velg kategori 1 til 9-99-99.\n\nKlikk OK for å fortsette.",
+                    "EAN importering", MessageBoxButtons.OKCancel, MessageBoxIcon.None) == DialogResult.OK)
+                {
+                    AppManager app = new AppManager(this);
+                    app.ImportEan();
+                }
+            }
+        }
+
+        private void slettAlleEANKoderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+            {
+                database.tableEan.Reset();
+                Log.n("EAN databasen er nullstilt", Color.Green);
+            }
+        }
+
+        private void påAutoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            appConfig.blueServerIsEnabled = påAutoToolStripMenuItem.Checked;
+            if (appConfig.blueServerIsEnabled)
+            {
+                avToolStripMenuItem.Checked = false;
+                påAutoToolStripMenuItem.Checked = true;
+            }
+            else
+            {
+                avToolStripMenuItem.Checked = true;
+                påAutoToolStripMenuItem.Checked = false;
+            }
+
+            SaveSettings();
+            ReloadStore();
+            UpdateUi();
+        }
+
+        private void avToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            appConfig.blueServerIsEnabled = avToolStripMenuItem.Checked;
+            if (appConfig.blueServerIsEnabled)
+            {
+                avToolStripMenuItem.Checked = false;
+                påAutoToolStripMenuItem.Checked = true;
+            }
+            else
+            {
+                avToolStripMenuItem.Checked = true;
+                påAutoToolStripMenuItem.Checked = false;
+            }
+
+            SaveSettings();
+            ReloadStore();
+            UpdateUi();
+        }
+
+        private void oppdaterAppDatabaserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy())
+            {
+                AppManager appMng = new AppManager(this);
+                appMng.UpdateAllAsync();
+            }
+        }
+
+        private void checkBoxLogDebugSql_CheckedChanged(object sender, EventArgs e)
+        {
+            appConfig.debugSql = checkBoxLogDebugSql.Checked;
+        }
+
+        private void checkBoxLogDebug_CheckedChanged(object sender, EventArgs e)
+        {
+            appConfig.debug = checkBoxLogDebug.Checked;
         }
     }
 }

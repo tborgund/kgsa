@@ -172,69 +172,11 @@ namespace KGSA
             }
         }
 
-        #region WEB STUFF
-        private void StartWebserver()
-        {
-            try
-            {
-                if (appConfig.webserverEnabled && appConfig.webserverPort >= 1024 && appConfig.webserverPort <= 65535 && !String.IsNullOrEmpty(appConfig.webserverHost))
-                {
-                    server = new KgsaServer(this);
-                    server.StartWebserver();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-            }
-        }
-
-        delegate void SetWebStartProcessCallback(string command);
-        public void WebStartProcess(string value)
-        {
-            if (this.InvokeRequired)
-            {
-                SetWebStartProcessCallback d = new SetWebStartProcessCallback(WebStartProcess);
-                this.Invoke(d, new object[] { value });
-            }
-            else
-            {
-                if (value == "importranking")
-                {
-                    if (!IsBusy())
-                        delayedMacroRankingImport();
-                }
-                else if (value == "importstore")
-                {
-                    if (!IsBusy())
-                        delayedAutoStore();
-                }
-                else if (value == "importservice")
-                {
-                    if (!IsBusy())
-                        delayedAutoServiceImport();
-                }
-                else if (value == "update")
-                {
-                    if (!IsBusy())
-                        RunCreateHtml();
-                }
-                else if (value == "autoranking")
-                {
-                    if (!IsBusy())
-                        delayedAutoRanking();
-                }
-            }
-        }
-
-        #endregion
-
-
         private void OpenSendEmail()
         {
             if (String.IsNullOrEmpty(appConfig.epostAvsender) || String.IsNullOrEmpty(appConfig.epostSMTPserver))
             {
-                Logg.Log("Mangler epost opplysninger. Sjekk innstillinger!", Color.Red);
+                Log.n("Mangler epost opplysninger. Sjekk innstillinger!", Color.Red);
                 return;
             }
 
@@ -242,7 +184,7 @@ namespace KGSA
 
             if (se.ShowDialog() == DialogResult.OK)
             {
-                Logg.Log("Starter sending av ranking..");
+                Log.n("Starter sending av ranking..");
 
                 processing.SetVisible = true;
                 processing.SetBackgroundWorker = bwSendEmail;
@@ -292,9 +234,9 @@ namespace KGSA
             ProgressStop();
             processing.HideDelayed();
             if (e.Cancelled)
-                Logg.Log("Sending av e-post avbryt av bruker.");
+                Log.n("Sending av e-post avbryt av bruker.");
             else if (e.Error != null)
-                Logg.Log("Feil oppstod under sending av e-post. Sjekk logg.", Color.Red);
+                Log.n("Feil oppstod under sending av e-post. Sjekk logg.", Color.Red);
 
             this.Activate();
         }
@@ -338,7 +280,7 @@ namespace KGSA
         private void bwCreateHtml_DoWork(object sender, DoWorkEventArgs e)
         {
             ProgressStart();
-            Logg.Log("Starter bakgrunnsjobb..", null, true);
+            Log.n("Starter bakgrunnsjobb..", null, true);
             e.Result = CreateHtml(bwCreateHtml);
         }
 
@@ -439,7 +381,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -448,9 +390,9 @@ namespace KGSA
         {
             ProgressStop();
             if (e.Error != null || e.Cancelled || !(bool)e.Result)
-                Logg.Log("Bakgrunnsjobb avbrutt.");
+                Log.n("Bakgrunnsjobb avbrutt.");
             else
-                Logg.Log("Bakgrunnsjobb ferdig.", null, true);
+                Log.n("Bakgrunnsjobb ferdig.", null, true);
         }
 
 
@@ -564,7 +506,7 @@ namespace KGSA
                     this.Update();
                     SearchDB(page, month, type, data);
                     processing.SetVisible = false;
-                    Logg.Status("Ferdig.");
+                    Log.Status("Ferdig.");
                 }
                 else if (url.Contains("#vinn")) // klikk på vinnprodukt selgerkode
                 {
@@ -574,7 +516,7 @@ namespace KGSA
                     if (selger.Length > 0)
                         RunVinnSelger(selger);
                     else
-                        Logg.Alert("Ugyldig selgerkode!");
+                        Log.Alert("Ugyldig selgerkode!");
                 }
                 else if (url.Contains("#graf"))
                 {
@@ -757,7 +699,7 @@ namespace KGSA
 
             retrymacro:
 
-            Logg.Log("Auto: Kjører makro.. [" + macroAttempt + "]");
+            Log.n("Auto: Kjører makro.. [" + macroAttempt + "]");
 
             DateTime date = appConfig.dbTo;
             double span = (DateTime.Now - appConfig.dbTo).TotalDays;
@@ -771,7 +713,7 @@ namespace KGSA
             {
                 // Feil oppstod under kjøring av macro
                 macroAttempt++;
-                Logg.Log("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + macroForm.errorMessage + " Kode: " + macroForm.errorCode, Color.Red);
+                Log.n("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + macroForm.errorMessage + " Kode: " + macroForm.errorCode, Color.Red);
                 for (int i = 0; i < 60; i++)
                 {
                     Application.DoEvents();
@@ -789,7 +731,7 @@ namespace KGSA
             {
                 // CSV finnes ikke eller filen er ikke oppdatert i dag i.e. data ble ikke eksportert riktig med makro
                 macroAttempt++;
-                Logg.Log("Auto: CSV er IKKE oppdatert, eller ingen tilgang. Sjekk CSV lokasjon og makro innstillinger.", Color.Red);
+                Log.n("Auto: CSV er IKKE oppdatert, eller ingen tilgang. Sjekk CSV lokasjon og makro innstillinger.", Color.Red);
                 for (int i = 0; i < 60; i++)
                 {
                     Application.DoEvents();
@@ -801,7 +743,7 @@ namespace KGSA
                 return;
             }
 
-            Logg.Log("Auto: Importerer data..");
+            Log.n("Auto: Importerer data..");
 
             csvFilesToImport.Clear();
             ImportManager importMng = new ImportManager(this, csvFilesToImport);
@@ -810,7 +752,7 @@ namespace KGSA
             {
                 // Feil under importering
                 macroAttempt++;
-                Logg.Log("Auto: Feil oppstod under importering. Kode: " + importMng.returnCode, Color.Red);
+                Log.n("Auto: Feil oppstod under importering. Kode: " + importMng.returnCode, Color.Red);
                 for (int i = 0; i < 60; i++)
                 {
                     Application.DoEvents();
@@ -829,20 +771,20 @@ namespace KGSA
             if (appConfig.epostOnlySendUpdated)
             {
                 int dager = (DateTime.Now - appConfig.dbTo).Days;
-                Logg.Log("Auto: Kontrollerer dato på sist transaksjon.. (dager: " + dager + ")");
+                Log.n("Auto: Kontrollerer dato på sist transaksjon.. (dager: " + dager + ")");
                 if (dager > 1)
                 {
-                    Logg.Log("Auto: Fant ingen transaksjoner fra gårsdagen. Avbryter..", Color.Red);
+                    Log.n("Auto: Fant ingen transaksjoner fra gårsdagen. Avbryter..", Color.Red);
                     return;
                 }
                 else
-                    Logg.Log("Auto: Fant transaksjoner fra gårsdagen. Fortsetter..", Color.Green);
+                    Log.n("Auto: Fant transaksjoner fra gårsdagen. Fortsetter..", Color.Green);
             }
 
             // Legg ved service rapport
             if (appConfig.AutoService && appConfig.epostIncService && service.dbServiceDatoFra.Date != service.dbServiceDatoTil.Date)
             {
-                Logg.Log("Auto: Legger ved service rapport..");
+                Log.n("Auto: Legger ved service rapport..");
                 MakeServiceOversikt(true, bwAutoRanking);
             }
 
@@ -850,23 +792,23 @@ namespace KGSA
             {
                 OnlineImporter importer = new OnlineImporter(this);
 
-                Logg.Log("Auto: Oppdatere Prisguide.no produkter..");
+                Log.n("Auto: Oppdatere Prisguide.no produkter..");
                 processing.SetText = "Oppdaterer Prisguide.no produkter..";
 
                 bool successfull = importer.StartProcessingPrisguide(bwAutoStore);
                 if (!successfull)
-                    Logg.Log("Auto: Misslykket oppdatering av Prisguide.no produkter. Se logg for detaljer.", Color.Red);
+                    Log.n("Auto: Misslykket oppdatering av Prisguide.no produkter. Se logg for detaljer.", Color.Red);
 
-                Logg.Log("Auto: Oppdatere Ukenytt produkter fra Elkjop.no..");
+                Log.n("Auto: Oppdatere Ukenytt produkter fra Elkjop.no..");
                 processing.SetText = "Oppdaterer Ukenytt produkter fra Elkjop.no..";
 
                 successfull = importer.StartProcessingWeekly(bwAutoStore);
                 if (!successfull)
-                    Logg.Log("Auto: Misslykket oppdatering av Ukenytt produkter. Se logg for detaljer.", Color.Red);
+                    Log.n("Auto: Misslykket oppdatering av Ukenytt produkter. Se logg for detaljer.", Color.Red);
             }
 
             processing.SetText = "Klargjør for sending av ranking..";
-            Logg.Log("Auto: Konverterer ranking til PDF..");
+            Log.n("Auto: Konverterer ranking til PDF..");
 
             KgsaEmail kgsaEmail = new KgsaEmail(this);
 
@@ -910,26 +852,29 @@ namespace KGSA
             if (String.IsNullOrEmpty(pdfAlt) && String.IsNullOrEmpty(pdfComputer) && String.IsNullOrEmpty(pdfAudioVideo) && String.IsNullOrEmpty(pdfTelecom))
             {
                 // Feil under pdf generering og sending av epost
-                Logg.Log("Auto: Feil oppstod under generering av PDF og sending av epost. Se logg for detaljer.", Color.Red);
+                Log.n("Auto: Feil oppstod under generering av PDF og sending av epost. Se logg for detaljer.", Color.Red);
                 return;
             }
 
             if (appConfig.pdfExport && !String.IsNullOrEmpty(appConfig.pdfExportFolder) && !String.IsNullOrEmpty(pdfAlt))
             {
-                Logg.Log("Auto: Lagrer kopi av PDF til..");
+                Log.n("Auto: Lagrer kopi av PDF til..");
                 try
                 {
                     File.Copy(pdfAlt, appConfig.pdfExportFolder);
                 }
-                catch { Logg.Log("Auto: Feil oppstod under kopiering av PDF."); }
+                catch { Log.n("Auto: Feil oppstod under kopiering av PDF."); }
             }
 
             // App database update
-            if (appConfig.blueProductAutoUpdate)
+            if (appConfig.blueServerIsEnabled)
             {
-                Logg.Log("Auto: Oppdaterer produktdata databasen for App..");
-                AppManager appMng = new AppManager(this);
-                appMng.ExportProductDatabase(bwAutoRanking);
+                Log.n("Auto: Oppdaterer App-databasene..");
+                AppManager app = new AppManager(this);
+                if (app.UpdateAll(bwAutoRanking))
+                    Log.n("Auto: App-databasene er oppdatert");
+                else
+                    Log.e("Auto: App-databasene er IKKE oppdatert. Se logg for detaljer");
             }
         }
 
@@ -943,7 +888,7 @@ namespace KGSA
             Reload(true);
             ReloadService();
             UpdateUi();
-            Logg.Log("Auto: Avsluttet.");
+            Log.n("Auto: Avsluttet.");
             processing.HideDelayed();
             this.Activate();
         }
@@ -964,7 +909,7 @@ namespace KGSA
 
                     if (processing.userPushedCancelButton)
                     {
-                        Logg.Log("Brukeren avbrøt handlingen.");
+                        Log.n("Brukeren avbrøt handlingen.");
                         return;
                     }
                 }
@@ -973,7 +918,7 @@ namespace KGSA
 
                 processing.SetProgressStyle = ProgressBarStyle.Marquee;
                 processing.SetText = "Starter automatisk ranking rutine..";
-                Logg.Log("Starter automatisk ranking rutine..");
+                Log.n("Starter automatisk ranking rutine..");
                 processing.SetBackgroundWorker = bwAutoRanking;
                 bwAutoRanking.RunWorkerAsync(); // Starter jobb som starter makro, importering, ranking, pdf konvertering og sending på mail.
             }
@@ -1000,7 +945,7 @@ namespace KGSA
 
                     if (processing.userPushedCancelButton)
                     {
-                        Logg.Log("Brukeren avbrøt handlingen.");
+                        Log.n("Brukeren avbrøt handlingen.");
                         return;
                     }
                 }
@@ -1011,7 +956,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1024,7 +969,7 @@ namespace KGSA
 
             retrymacro:
 
-            Logg.Log("Auto: Kjører makro.. [" + macroAttempt + "]");
+            Log.n("Auto: Kjører makro.. [" + macroAttempt + "]");
 
             FormMacro formMacro = (FormMacro)StartMacro(DateTime.Now.AddDays(-1), macroProgramStore, bwAutoStore, macroAttempt);
             e.Result = formMacro.errorCode;
@@ -1034,7 +979,7 @@ namespace KGSA
                 macroAttempt++;
                 if (formMacro.errorCode != 2)
                 {
-                    Logg.Log("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + formMacro.errorMessage + " Kode: " + formMacro.errorCode, Color.Red);
+                    Log.n("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + formMacro.errorMessage + " Kode: " + formMacro.errorCode, Color.Red);
                     processing.SetText = formMacro.errorMessage;
                 }
 
@@ -1056,7 +1001,7 @@ namespace KGSA
             {
                 // CSV finnes ikke eller filen er ikke oppdatert i dag i.e. data ble ikke eksportert riktig med makro
                 macroAttempt++;
-                Logg.Log("Auto: CSV er IKKE oppdatert, eller ingen tilgang. Sjekk CSV lokasjon og makro innstillinger.", Color.Red);
+                Log.n("Auto: CSV er IKKE oppdatert, eller ingen tilgang. Sjekk CSV lokasjon og makro innstillinger.", Color.Red);
                 for (int i = 0; i < 60; i++)
                 {
                     Application.DoEvents();
@@ -1068,7 +1013,7 @@ namespace KGSA
                 return;
             }
 
-            Logg.Log("Auto: Importerer data..");
+            Log.n("Auto: Importerer data..");
             string extracted = obsolete.Decompress(appConfig.csvElguideExportFolder + @"\wobsolete.zip");
             if (!String.IsNullOrEmpty(extracted))
             {
@@ -1076,7 +1021,7 @@ namespace KGSA
                     e.Result = 0;
                 else
                 {
-                    Logg.Log("Auto: Importering mislyktes!", Color.Red);
+                    Log.n("Auto: Importering mislyktes!", Color.Red);
                     macroAttempt++;
                     if (macroAttempt < macroMaxAttempts && formMacro.errorCode != 2) // Vi har flere forsøk igjen, samt bruker har ikke avbrutt prosessen
                         goto retrymacro;
@@ -1087,7 +1032,7 @@ namespace KGSA
             }
             else
             {
-                Logg.Log("Auto: Utpakking mislykket av arkiv.", Color.Red);
+                Log.n("Auto: Utpakking mislykket av arkiv.", Color.Red);
                 if (macroAttempt < macroMaxAttempts && formMacro.errorCode != 2) // Vi har flere forsøk igjen, samt bruker har ikke avbrutt prosessen
                     goto retrymacro;
 
@@ -1095,43 +1040,34 @@ namespace KGSA
                 return;
             }
 
-            if (appConfig.blueInventoryAutoUpdate)
+            if (appConfig.blueServerIsEnabled && appConfig.blueServerDatabaseUpdated.Date != DateTime.Now.Date)
             {
-                Logg.Log("Auto: Oppdaterer varebeholdnings databasen for App..");
-                processing.SetText = "Oppdaterer varebeholdning for App..";
-                AppManager appMng = new AppManager(this);
-                if (appMng.ImportAndConvertInventory(bwAutoStore))
-                {
-                    if (File.Exists(BluetoothServer.inventoryFilename))
-                    {
-                        appConfig.blueInventoryLastDate = DateTime.Now;
-                        appConfig.blueInventoryReady = true;
-                        Logg.Log("Auto: Varebeholdnings databasen er klar for App.");
-                    }
-                    else
-                        appConfig.blueInventoryReady = false;
-                }
+                Log.n("Auto: Oppdaterer App-databasene..");
+                processing.SetText = "Oppdaterer App-databasene..";
+                AppManager app = new AppManager(this);
+                if (app.UpdateAll(bwAutoStore))
+                    Log.n("Auto: App-databasene er klar.");
                 else
-                    appConfig.blueInventoryReady = false;
+                    Log.e("Auto: App-databasene er IKKE klar. Se logg for detaljer");
             }
 
             if (appConfig.onlineImporterAuto)
             {
                 OnlineImporter importer = new OnlineImporter(this);
 
-                Logg.Log("Auto: Oppdatere Prisguide.no produkter..");
+                Log.n("Auto: Oppdatere Prisguide.no produkter..");
                 processing.SetText = "Oppdaterer Prisguide.no produkter..";
 
                 bool successfull = importer.StartProcessingPrisguide(bwAutoStore);
                 if (!successfull)
-                    Logg.Log("Auto: Misslykket oppdatering av Prisguide.no produkter. Se logg for detaljer.", Color.Red);
+                    Log.n("Auto: Misslykket oppdatering av Prisguide.no produkter. Se logg for detaljer.", Color.Red);
 
-                Logg.Log("Auto: Oppdatere Ukenytt produkter fra Elkjop.no..");
+                Log.n("Auto: Oppdatere Ukenytt produkter fra Elkjop.no..");
                 processing.SetText = "Oppdaterer Ukenytt produkter fra Elkjop.no..";
 
                 successfull = importer.StartProcessingWeekly(bwAutoStore);
                 if (!successfull)
-                    Logg.Log("Auto: Misslykket oppdatering av Ukenytt produkter. Se logg for detaljer.", Color.Red);
+                    Log.n("Auto: Misslykket oppdatering av Ukenytt produkter. Se logg for detaljer.", Color.Red);
             }
 
         }
@@ -1142,11 +1078,11 @@ namespace KGSA
             autoMode = false;
             if (e.Cancelled)
             {
-                Logg.Log("Auto: Jobb avbrutt av bruker.");
+                Log.n("Auto: Jobb avbrutt av bruker.");
             }
             else if (e.Error != null)
             {
-                Logg.Log("Auto: Feil oppstod under kjøring av makro. Se logg for detaljer. (" + e.Error.Message + ")");
+                Log.n("Auto: Feil oppstod under kjøring av makro. Se logg for detaljer. (" + e.Error.Message + ")");
             }
             else
             {
@@ -1163,11 +1099,11 @@ namespace KGSA
                     Reload(true);
                     ReloadService();
                     UpdateUi();
-                    Logg.Log("Auto: Makro fullført.");
+                    Log.n("Auto: Makro fullført.");
                 }
                 else if (returnCode == 2)
                 {
-                    Logg.Log("Auto: Jobb avbrutt av bruker.");
+                    Log.n("Auto: Jobb avbrutt av bruker.");
                 }
             }
 
@@ -1233,15 +1169,15 @@ namespace KGSA
             if (result.Length > 3)
             {
                 processing.SetText = "Åpner PDF..";
-                Logg.Log("Åpner.. file://" + result.Replace(' ', (char)160));
+                Log.n("Åpner.. file://" + result.Replace(' ', (char)160));
                 try
                 {
                     System.Diagnostics.Process.Start(result);
                 }
                 catch(FileNotFoundException ex)
                 {
-                    Logg.Unhandled(ex);
-                    Logg.Log("Kunne ikke åpne PDF. Se logg for detaljer.", Color.Red);
+                    Log.Unhandled(ex);
+                    Log.n("Kunne ikke åpne PDF. Se logg for detaljer.", Color.Red);
                 }
                 ProgressStop();
                 processing.SetVisible = false;
@@ -1312,38 +1248,38 @@ namespace KGSA
                             RunMakePDF(all);
                             if (!String.IsNullOrEmpty(filenamePDF))
                             {
-                                Logg.Log("PDF ferdig generert.");
+                                Log.n("PDF ferdig generert.");
                                 if (File.Exists(SD.FileName))
                                 {
                                     File.Delete(SD.FileName);
-                                    Logg.Log("Skriver over eksisterende fil..");
+                                    Log.n("Skriver over eksisterende fil..");
                                 }
                                 File.Copy(filenamePDF, SD.FileName);
-                                Logg.Log("Fullført lagring av PDF. file://" + SD.FileName.Replace(' ', (char)160), Color.Green);
+                                Log.n("Fullført lagring av PDF. file://" + SD.FileName.Replace(' ', (char)160), Color.Green);
                             }
                             else
                             {
-                                Logg.Log("Avbrutt.", Color.Red);
+                                Log.n("Avbrutt.", Color.Red);
                                 return;
                             }
                         }
                         catch (IOException)
                         {
                             MessageBox.Show("KGSA - Feil", "Filen er i bruk eller ble nektet tilgang.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Logg.Log("Filen er i bruk eller ingen tilgang.", Color.Red);
+                            Log.n("Filen er i bruk eller ingen tilgang.", Color.Red);
                         }
                         catch
                         {
-                            Logg.Log("Ukjent feil oppstod under eksportering av databasen. Operasjon avbrutt.", Color.Red);
+                            Log.n("Ukjent feil oppstod under eksportering av databasen. Operasjon avbrutt.", Color.Red);
                         }
                     }
                     else
-                        Logg.Log("Avbrutt.");
+                        Log.n("Avbrutt.");
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1373,38 +1309,38 @@ namespace KGSA
                             RunMakeBudgetPDF(all);
                             if (!String.IsNullOrEmpty(filenamePDF))
                             {
-                                Logg.Log("PDF ferdig generert.");
+                                Log.n("PDF ferdig generert.");
                                 if (File.Exists(SD.FileName))
                                 {
                                     File.Delete(SD.FileName);
-                                    Logg.Log("Skriver over eksisterende fil..");
+                                    Log.n("Skriver over eksisterende fil..");
                                 }
                                 File.Copy(filenamePDF, SD.FileName);
-                                Logg.Log("Fullført lagring av PDF. (" + SD.FileName + ")", Color.Green);
+                                Log.n("Fullført lagring av PDF. (" + SD.FileName + ")", Color.Green);
                             }
                             else
                             {
-                                Logg.Log("Avbrutt.", Color.Red);
+                                Log.n("Avbrutt.", Color.Red);
                                 return;
                             }
                         }
                         catch (IOException)
                         {
                             MessageBox.Show("KGSA - Feil", "Filen er i bruk eller ble nektet tilgang.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Logg.Log("Filen er i bruk eller ingen tilgang.", Color.Red);
+                            Log.n("Filen er i bruk eller ingen tilgang.", Color.Red);
                         }
                         catch
                         {
-                            Logg.Log("Ukjent feil oppstod under eksportering av databasen. Operasjon avbrutt.", Color.Red);
+                            Log.n("Ukjent feil oppstod under eksportering av databasen. Operasjon avbrutt.", Color.Red);
                         }
                     }
                     else
-                        Logg.Log("Avbrutt.");
+                        Log.n("Avbrutt.");
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1414,10 +1350,10 @@ namespace KGSA
             {
                 if (dataGridTransaksjoner.DataSource == null)
                 {
-                    Logg.Log("Transaksjons tabellen er tom!", Color.Red);
+                    Log.n("Transaksjons tabellen er tom!", Color.Red);
                     return;
                 }
-                Logg.Status("Forbereder..");
+                Log.Status("Forbereder..");
                 DataTable dt = GetContentAsDataTable();
 
                 if (dt.Rows.Count > 0)
@@ -1430,18 +1366,18 @@ namespace KGSA
 
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
-                        Logg.Log("Lagrer CSV..");
+                        Log.n("Lagrer CSV..");
                         string filnavn = MakeCSV(dt, "Trans", "Custom", pickerDBTil.Value);
                         File.Copy(filnavn, sfd.FileName, true);
-                        Logg.Log("Fullført eksportering av CSV! (" + sfd.FileName + ")", Color.Green);
+                        Log.n("Fullført eksportering av CSV! (" + sfd.FileName + ")", Color.Green);
                     }
                }
                else
-                    Logg.Log("Transaksjons tabellen er tom!", Color.Red);
+                    Log.n("Transaksjons tabellen er tom!", Color.Red);
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1471,7 +1407,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }
@@ -1503,7 +1439,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -1540,7 +1476,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1576,7 +1512,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1653,7 +1589,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1670,11 +1606,11 @@ namespace KGSA
                         return;
 
                     SetLogCallback d = new SetLogCallback(InvokeLogger);
-                    this.Invoke(d, new object[] { Logg.GetLastLog() });
+                    this.Invoke(d, new object[] { Log.GetLastLog() });
                 }
                 else
                 {
-                    InvokeLogger(Logg.GetLastLog());
+                    InvokeLogger(Log.GetLastLog());
                 }
             }
             catch (Exception ex) { Console.WriteLine("Exception at LogMessage_LogAdded() " + ex.Message); }
@@ -1689,12 +1625,17 @@ namespace KGSA
 
         public static List<string> loggCacheMessages = new List<string>() { };
 
-        private void InvokeLogger(KgsaLog logArg)
+        private void InvokeLogger(KgsaLog log)
         {
             try
             {
-                var log = (KgsaLog)logArg;
+                if (log == null)
+                    return;
+
                 if (log.debug && !appConfig.debug) // hvis det er en debug melding og debug er ikke aktivert; ikke send melding!
+                    return;
+
+                if (log.debugSql && !appConfig.debugSql) // hvis det er en debug SQL melding og debug SQL er ikke aktivert; ikke send melding!
                     return;
 
                 string str = log.message;
@@ -1784,12 +1725,12 @@ namespace KGSA
                         }
                     }
                     else
-                        Logg.Log("Fra og til dato var helt lik!", Color.Red);
+                        Log.n("Fra og til dato var helt lik!", Color.Red);
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1992,7 +1933,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }
@@ -2032,8 +1973,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Kritisk uhåndtert feil oppdaget i currentBudgetPage()! Forsøkte å finne budsjett side", Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Kritisk uhåndtert feil oppdaget i currentBudgetPage()! Forsøkte å finne budsjett side", Color.Red);
             }
             return BudgetCategory.None;
         }
@@ -2202,7 +2143,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2263,7 +2204,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2281,7 +2222,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2433,7 +2374,7 @@ namespace KGSA
                 return false;
 
             if (Loaded && !silent)
-                Logg.Log("Vent litt, er opptatt med andre oppgaver..", Color.Black);
+                Log.n("Vent litt, er opptatt med andre oppgaver..", Color.Black);
 
             if (appConfig.debug)
             {
@@ -2460,7 +2401,7 @@ namespace KGSA
                 if (bwBudget.IsBusy) strBusy += " bwBudget";
                 if (appManagerIsBusy) strBusy += " appManagerIsBusy";
                 if (worker.IsBusy) strBusy += " worker";
-                Logg.Debug(strBusy);
+                Log.d(strBusy);
             }
 
             return true;
@@ -2483,7 +2424,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return true;
             }
         }
@@ -2494,7 +2435,7 @@ namespace KGSA
             {
                 richLog.Text = File.ReadAllText(settingsPath + @"\Log.txt", Encoding.Unicode);
                 richLog.ScrollToCaret();
-                Logg.Log("Åpnet log.");
+                Log.n("Åpnet log.");
             }
             catch(Exception ex)
             {
@@ -2586,7 +2527,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2674,7 +2615,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -2698,7 +2639,7 @@ namespace KGSA
                 string newHashService = appConfig.Avdeling + pickerServiceDato.Value.ToString() + RetrieveLinkerTimestamp().ToShortDateString();
 
 
-                Logg.Log("Klargjør filer for konvertering..");
+                Log.n("Klargjør filer for konvertering..");
                 processing.SetText = "Klargjør filer for konvertering..";
 
                 if (!String.IsNullOrEmpty(type))
@@ -2779,7 +2720,7 @@ namespace KGSA
                         }
                         if (String.IsNullOrEmpty(sourceFiles))
                         {
-                            Logg.Log("Ingen budsjett er klar til eksportering til PDF. Opprett nye budsjett og/eller sjekk over budsjett innstillinger.", Color.Red);
+                            Log.n("Ingen budsjett er klar til eksportering til PDF. Opprett nye budsjett og/eller sjekk over budsjett innstillinger.", Color.Red);
                             return "";
                         }
                     }
@@ -3077,24 +3018,23 @@ namespace KGSA
                 {
                     sourceFiles = file;
                     destinationFile = "\"" + settingsTemp + "\\KGSA " + appConfig.Avdeling + " " + currentPage() + " " + datoStr + ".pdf\"";
-                    //destinationFile = "\"" + System.IO.Path.GetTempPath() + "KGSA " + appConfig.Avdeling + " " + currentPage() + " " + datoStr + ".pdf\"";
                 }
 
                 if (destinationFile != null)
                     filenamePDF = destinationFile.Substring(1, destinationFile.Length - 2);
                 else
                 {
-                    Logg.Log("Feil oppstod under generering av PDF: Ingen destinasjon valgt.", Color.Red);
+                    Log.n("Feil oppstod under generering av PDF: Ingen destinasjon valgt.", Color.Red);
                     return "";
                 }
 
                 if (String.IsNullOrEmpty(sourceFiles))
                 {
-                    Logg.Log("Error: Har ikke data fra alle kategoriene til å lage en fullstendig rapport.", Color.Red);
+                    Log.n("Error: Har ikke data fra alle kategoriene til å lage en fullstendig rapport.", Color.Red);
                     return ""; // mangler filer
                 }
 
-                Logg.Log("Konverterer til PDF..");
+                Log.n("Konverterer til PDF..");
                 processing.SetText = "Konvertere til PDF..";
 
                 if (fileOverride && filenamePDF.Length > 3)
@@ -3106,7 +3046,7 @@ namespace KGSA
                     }
                     catch
                     {
-                        Logg.Debug("PDF (" + filenamePDF + ") er låst. Endrer filnavn..");
+                        Log.d("PDF (" + filenamePDF + ") er låst. Endrer filnavn..");
                         if (destinationFile.Length > 3)
                         {
                             Random r = new Random();
@@ -3123,7 +3063,7 @@ namespace KGSA
                 if (appConfig.pdfLandscape)
                     options += "-O landscape ";
 
-                Logg.Debug("PDF generator: wkhtmltopdf " + options + sourceFiles + destinationFile);
+                Log.d("PDF generator: wkhtmltopdf " + options + sourceFiles + destinationFile);
 
                 var wkhtmltopdf = new ProcessStartInfo();
                 wkhtmltopdf.WindowStyle = ProcessWindowStyle.Hidden;
@@ -3139,14 +3079,14 @@ namespace KGSA
 
                 if (!D.HasExited)
                 {
-                    Logg.Log("Error: PDF generatoren ble tidsavbrutt.", Color.Red);
+                    Log.n("Error: PDF generatoren ble tidsavbrutt.", Color.Red);
                     return "";
                 }
 
                 int result = D.ExitCode;
                 if (result != 0)
                 {
-                    Logg.Log("Error: PDF generator returnerte med feilkode " + result, Color.Red);
+                    Log.n("Error: PDF generator returnerte med feilkode " + result, Color.Red);
                     return "";
                 }
                 
@@ -3154,7 +3094,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }
@@ -3207,37 +3147,37 @@ namespace KGSA
                             if (File.Exists(macroProgramQuick) && File.Exists(macroProgram))
                                 if (!File.ReadAllText(macroProgramQuick).Contains("ImportKveldstall()") && !File.ReadAllText(macroProgram).Contains("Start("))
                                 {
-                                    Logg.Alert("Bare en liten ting før vi fortsetter..\n\nMakro programmene som benyttes i automatisk importering av transaksjoner og ranking var utdatert og er blitt satt tilbake til nytt standard format.\nObs! Nødvendige endringer må gjøres før de kan benyttes igjen.", "KGSA - Makro program oppdatert", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    Logg.Log("Resetter makroer..");
+                                    Log.Alert("Bare en liten ting før vi fortsetter..\n\nMakro programmene som benyttes i automatisk importering av transaksjoner og ranking var utdatert og er blitt satt tilbake til nytt standard format.\nObs! Nødvendige endringer må gjøres før de kan benyttes igjen.", "KGSA - Makro program oppdatert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    Log.n("Resetter makroer..");
                                     File.Delete(macroProgramQuick);
                                     File.Delete(macroProgramService);
                                     File.Delete(macroProgram);
                                     StartupCheck();
-                                    Logg.Log("Makroer endret til standard. Må redigeres før bruk!");
+                                    Log.n("Makroer endret til standard. Må redigeres før bruk!");
                                 }
 
                         // SJEKK LEGACY INNSTILLINGER  -----   STOP
                     }
                     catch (Exception ex)
                     {
-                        Logg.Log("Kritisk feil under lasting av innstillinger: " + ex.Message);
-                        Logg.Unhandled(ex);
+                        Log.n("Kritisk feil under lasting av innstillinger: " + ex.Message);
+                        Log.Unhandled(ex);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logg.Log("Feil ved lesing av settings.xnl. Forsøker å ta kopi av fil før gjenoppretting..", Color.Red, true);
+                Log.n("Feil ved lesing av settings.xnl. Forsøker å ta kopi av fil før gjenoppretting..", Color.Red, true);
                 try
                 {
                     if (File.Exists(FormMain.settingsPath + @"\settings.xml.bk"))
                     {
-                        Logg.Debug("Sletter backup settings.xml.bk..");
+                        Log.d("Sletter backup settings.xml.bk..");
                         File.Delete(FormMain.settingsPath + @"\settings.xml.bk");
                     }
-                    Logg.Debug("Kopierer " + FormMain.settingsFile + " til settings.xml.bk..");
+                    Log.d("Kopierer " + FormMain.settingsFile + " til settings.xml.bk..");
                     File.Copy(FormMain.settingsFile, FormMain.settingsPath + @"\settings.xml.bk");
-                    Logg.Debug("Sletter slettings settingx.xml..");
+                    Log.d("Sletter slettings settingx.xml..");
                     File.Delete(FormMain.settingsFile);
                     appConfig = new AppSettings();
                     ReloadDatabase();
@@ -3245,10 +3185,10 @@ namespace KGSA
                 }
                 catch (Exception ix)
                 {
-                    Logg.Unhandled(ix);
+                    Log.Unhandled(ix);
                 }
-                Logg.Unhandled(ex);
-                Logg.Alert("Feil ved lasting av innstillinger\n\nStandard innstillinger vil bli lastet inn etter en omstart av programmet.\n\nEn kopi av de gamle innstillingene ble kopiert til: " + FormMain.settingsPath + @"\settings.xml.bk", "Innstillinger tilbakestilt", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Log.Unhandled(ex);
+                Log.Alert("Feil ved lasting av innstillinger\n\nStandard innstillinger vil bli lastet inn etter en omstart av programmet.\n\nEn kopi av de gamle innstillingene ble kopiert til: " + FormMain.settingsPath + @"\settings.xml.bk", "Innstillinger tilbakestilt", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 forceShutdown = true;
                 this.Close();
             }
@@ -3286,7 +3226,7 @@ namespace KGSA
                 }
                 catch(Exception ex)
                 {
-                    Logg.Unhandled(ex);
+                    Log.Unhandled(ex);
                 }
                 if (!Directory.Exists(settingsPath))
                 {
@@ -3418,7 +3358,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             
         }
@@ -3427,7 +3367,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Log("Oppstart: Ny installasjon. Setter standard innstillinger..");
+                Log.n("Oppstart: Ny installasjon. Setter standard innstillinger..");
 
                 File.Delete(settingsFile);
                 LoadSettings();
@@ -3438,8 +3378,8 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Unntak oppstod under installasjons rutinen. Hvis problemet vedvarer reinstaller programmet.", Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Unntak oppstod under installasjons rutinen. Hvis problemet vedvarer reinstaller programmet.", Color.Red);
             }
         }
 
@@ -3450,7 +3390,7 @@ namespace KGSA
                 if (IsBusy())
                     return;
 
-                Logg.Status("Åpner innstillinger..");
+                Log.Status("Åpner innstillinger..");
                 this.Update();
                 if (lagretAvdeling > 1000)
                     appConfig.Avdeling = lagretAvdeling;
@@ -3458,13 +3398,13 @@ namespace KGSA
                 SaveSettings();
                 var settingsForm = new FormSettings(this);
                 settingsForm.StartPosition = FormStartPosition.CenterScreen;
-                Logg.Status("");
+                Log.Status("");
 
                 DialogResult result = settingsForm.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK || settingsForm.forceUpdate)
                 {
                     processing.SetVisible = true;
-                    Logg.Status("Oppdaterer..");
+                    Log.Status("Oppdaterer..");
                     processing.SetValue = 5;
                     LoadSettings();
                     lagretAvdeling = appConfig.Avdeling;
@@ -3473,7 +3413,7 @@ namespace KGSA
                     RetrieveDb();
                     RetrieveDbService();
                     RetrieveDbStore();
-                    Logg.Status("Laster fra databasen..");
+                    Log.Status("Laster fra databasen..");
                     processing.SetValue = 50;
 
                     if (EmptyDatabase())
@@ -3496,17 +3436,17 @@ namespace KGSA
                         ClearHash("ServiceOversikt");
                         ClearHash("ServiceList");
                     }
-                    Logg.Status("Fullfører endringer..");
+                    Log.Status("Fullfører endringer..");
                     processing.SetValue = 90;
                     UpdateUi();
                     processing.SetValue = 99;
                     processing.SetVisible = false;
-                    Logg.Status("");
+                    Log.Status("");
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -3537,7 +3477,7 @@ namespace KGSA
                 }
                 if (EmptyDatabase())
                 {
-                    Logg.Log("Databasen er tom. Importer transaksjoner fra Elguide!");
+                    Log.n("Databasen er tom. Importer transaksjoner fra Elguide!");
 
                     labelRankingLastDateBig.ForeColor = SystemColors.ControlText;
                     labelRankingLastDateBig.Text = "(tom)";
@@ -3701,21 +3641,21 @@ namespace KGSA
                     {
                         buttonOppdater.BackColor = SystemColors.ControlLight;
                         buttonOppdater.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + katArg + "]: bruker mellomlagret kopi!");
+                        Log.d("[" + katArg + "]: bruker mellomlagret kopi!");
                         return true;
                     }
                     else
                     {
                         buttonOppdater.BackColor = SystemColors.ControlLight;
                         buttonOppdater.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + katArg + "]: Genererer ny ranking..");
+                        Log.d("[" + katArg + "]: Genererer ny ranking..");
                         return false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
             return false;
@@ -3758,21 +3698,21 @@ namespace KGSA
 
                         buttonBudgetUpdate.BackColor = SystemColors.ControlLight;
                         buttonBudgetUpdate.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + BudgetCategoryClass.TypeToName(cat) + "]: bruker mellomlagret kopi!");
+                        Log.d("[" + BudgetCategoryClass.TypeToName(cat) + "]: bruker mellomlagret kopi!");
                         return true;
                     }
                     else
                     {
                         buttonBudgetUpdate.BackColor = SystemColors.ControlLight;
                         buttonBudgetUpdate.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + BudgetCategoryClass.TypeToName(cat) + "]: Genererer ny ranking..");
+                        Log.d("[" + BudgetCategoryClass.TypeToName(cat) + "]: Genererer ny ranking..");
                         return false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
             return false;
@@ -3797,21 +3737,21 @@ namespace KGSA
                     {
                         buttonServiceOppdater.BackColor = SystemColors.ControlLight;
                         buttonServiceOppdater.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + katArg + "]: bruker mellomlagret kopi!");
+                        Log.d("[" + katArg + "]: bruker mellomlagret kopi!");
                         return true;
                     }
                     else
                     {
                         buttonServiceOppdater.BackColor = SystemColors.ControlLight;
                         buttonServiceOppdater.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + katArg + "]: Genererer ny ranking..");
+                        Log.d("[" + katArg + "]: Genererer ny ranking..");
                         return false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
             return false;
@@ -3834,7 +3774,7 @@ namespace KGSA
                     || forced || newInstall
                     || appConfig.dbFrom > appConfig.dbTo)
                 {
-                    Logg.Log("Oppdaterer databasen..", null, true);
+                    Log.n("Oppdaterer databasen..", null, true);
 
                     SqlCeCommand cmd = new SqlCeCommand("SELECT MIN(Dato) AS Expr1 FROM tblSalg WHERE (Avdeling = '" + appConfig.Avdeling + "')", connection);
                     string temp = cmd.ExecuteScalar().ToString();
@@ -3860,7 +3800,7 @@ namespace KGSA
                 if (!autoMode)
                 {
                     // Oppdaterer avdelinger..
-                    Logg.Log("Oppdaterer avdelinger..", null, true);
+                    Log.n("Oppdaterer avdelinger..", null, true);
                     bwHentAvdelinger.RunWorkerAsync();
                 }
 
@@ -3876,7 +3816,7 @@ namespace KGSA
                             ChangeRankDateTimePicker(appConfig.dbTo, appConfig.dbFrom, appConfig.dbTo);
                             ChangeBudgetDateTimePicker(appConfig.dbTo, appConfig.dbFrom, appConfig.dbTo);
                             StatusInformation.Text = "Database:  " + appConfig.dbFrom.ToString("d. MMMM yyyy", norway) + "  -  " + appConfig.dbTo.ToString("d. MMMM yyyy", norway) + "  ";
-                            Logg.Log("Databasen har transaksjoner mellom " + appConfig.dbFrom.ToString("d. MMMM yyyy", norway) + " og " + appConfig.dbTo.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
+                            Log.n("Databasen har transaksjoner mellom " + appConfig.dbFrom.ToString("d. MMMM yyyy", norway) + " og " + appConfig.dbTo.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
                         }
                     }
                     catch
@@ -3896,7 +3836,7 @@ namespace KGSA
             }
             catch
             {
-                Logg.Log("Feil ved lasting av databasen, eller databasen er tom.", Color.Red);
+                Log.n("Feil ved lasting av databasen, eller databasen er tom.", Color.Red);
                 appConfig.dbFrom = DateTime.Now;
                 appConfig.dbTo = DateTime.Now;
                 ChangeRankDateTimePicker(DateTime.Now, rangeMin, rangeMax);
@@ -3922,7 +3862,7 @@ namespace KGSA
                             appConfig.dbStoreTo = appConfig.dbStoreTo.AddDays(-1);
 
                         ChangeStoreDateTimePicker(appConfig.dbStoreTo, appConfig.dbStoreFrom, appConfig.dbStoreTo);
-                        Logg.Log("Lager databasen har statuser mellom " + appConfig.dbStoreFrom.ToString("d. MMMM yyyy", norway) + " og " + appConfig.dbStoreTo.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
+                        Log.n("Lager databasen har statuser mellom " + appConfig.dbStoreFrom.ToString("d. MMMM yyyy", norway) + " og " + appConfig.dbStoreTo.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
                     }
                     catch
                     {
@@ -3936,8 +3876,8 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Log("Feil ved lasting av lager databasen, eller databasen er tom.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.n("Feil ved lasting av lager databasen, eller databasen er tom.", Color.Red);
+                Log.Unhandled(ex);
                 ChangeStoreDateTimePicker(DateTime.Now, rangeMin, rangeMax);
             }
         }
@@ -3981,8 +3921,8 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Unntak ved henting av transaksjoner, eller databasen er tom.");
+                Log.Unhandled(ex);
+                Log.n("Unntak ved henting av transaksjoner, eller databasen er tom.");
             }
         }
 
@@ -4206,7 +4146,7 @@ namespace KGSA
                     }
                     else
                     {
-                        Logg.Log("Ingenting å søke etter.", Color.Red);
+                        Log.n("Ingenting å søke etter.", Color.Red);
                     }
                 }
                 else if (kat == "varegruppe")
@@ -4231,7 +4171,7 @@ namespace KGSA
                     }
                     else
                     {
-                        Logg.Log("Ingenting å søke etter.", Color.Red);
+                        Log.n("Ingenting å søke etter.", Color.Red);
                     }
                 }
                 else if (kat == "search" && !String.IsNullOrEmpty(searchArg))
@@ -4272,7 +4212,7 @@ namespace KGSA
                 }
                 catch
                 {
-                    Logg.Log("Feil: Fant ikke selgerkoden!");
+                    Log.n("Feil: Fant ikke selgerkoden!");
                 }
             }
             else
@@ -4337,7 +4277,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -4415,7 +4355,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -4475,7 +4415,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -4508,13 +4448,11 @@ namespace KGSA
                 // Show / Hide experimental features
                 if (appConfig.experimental)
                 {
-                    toolStripSeparatorAndroidApp.Visible = true;
-                    androidAppToolStripMenuItem.Visible = true;
+                    androidAppToolStripMenuItem1.Visible = true;
                 }
                 else
                 {
-                    toolStripSeparatorAndroidApp.Visible = false;
-                    androidAppToolStripMenuItem.Visible = false;
+                    androidAppToolStripMenuItem1.Visible = false;
                 }
 
                 inkluderBudsjettMålIKveldstallToolStripMenuItem.Checked = appConfig.dailyBudgetIncludeInQuickRanking;
@@ -4523,21 +4461,14 @@ namespace KGSA
                 // Setup bluetooth server menues
                 if (appConfig.blueServerIsEnabled)
                 {
-                    btAutoToolStripMenuItem.Checked = true;
-                }
-                if (blueServer == null)
-                {
-                    btOffToolStripMenuItem.Checked = true;
-                    btOnToolStripMenuItem.Checked = false;
+                    avToolStripMenuItem.Checked = false;
+                    påAutoToolStripMenuItem.Checked = true;
                 }
                 else
                 {
-                    btOnToolStripMenuItem.Checked = blueServer.IsOnline();
-                    btOffToolStripMenuItem.Checked = !blueServer.IsOnline();
+                    avToolStripMenuItem.Checked = true;
+                    påAutoToolStripMenuItem.Checked = false;
                 }
-                btAutoInvToolStripMenuItem.Checked = appConfig.blueInventoryAutoUpdate;
-                btAutoDataToolStripMenuItem.Checked = appConfig.blueProductAutoUpdate;
-                btAutoEanToolStripMenuItem.Checked = appConfig.blueEanAutoUpdate;
 
                 // Oppdater Ny graf kontroller
                 comboBox_GraphLengde.SelectedIndex = appConfig.graphLengthIndex;
@@ -4556,7 +4487,7 @@ namespace KGSA
                             buttonServiceMacro.Enabled = false;
                     } catch (Exception ex) {
                         buttonServiceMacro.Enabled = false;
-                        Logg.Unhandled(ex);
+                        Log.Unhandled(ex);
                     }
                     try {
                         if (File.Exists(macroProgram))
@@ -4565,7 +4496,7 @@ namespace KGSA
                             buttonRankingMakro.Enabled = false;
                     } catch (Exception ex) {
                         buttonRankingMakro.Enabled = false;
-                        Logg.Unhandled(ex);
+                        Log.Unhandled(ex);
                     }
                     try {
                         if (File.Exists(macroProgramStore))
@@ -4574,7 +4505,7 @@ namespace KGSA
                             buttonLagerMakro.Enabled = false;
                     } catch (Exception ex) {
                         buttonLagerMakro.Enabled = false;
-                        Logg.Unhandled(ex);
+                        Log.Unhandled(ex);
                     }
                 }
                 else
@@ -4591,7 +4522,7 @@ namespace KGSA
                 if (appConfig.autoRank && !EmptyDatabase())
                 {
                     SetTimer();
-                    Logg.Log("Automatisk sending av ranking aktivert. Neste automatiske utsending: " + timerNextRun.ToShortTimeString(), Color.Black, true);
+                    Log.n("Automatisk sending av ranking aktivert. Neste automatiske utsending: " + timerNextRun.ToShortTimeString(), Color.Black, true);
                     UpdateTimer();
                 }
                 else
@@ -4601,7 +4532,7 @@ namespace KGSA
                 if (appConfig.autoQuick && !EmptyDatabase())
                 {
                     SetTimerQuick();
-                    Logg.Log("Automatisk sending av kveldsranking aktivert. Neste automatiske utsending: "
+                    Log.n("Automatisk sending av kveldsranking aktivert. Neste automatiske utsending: "
                         + timerNextRunQuick.ToShortTimeString(), Color.Black, true);
                     UpdateTimerQuick();
                 }
@@ -4612,7 +4543,7 @@ namespace KGSA
                 if (appConfig.AutoService)
                 {
                     SetTimerService();
-                    Logg.Log("Automatisk importering av servicer aktivert. Neste automatiske import: "
+                    Log.n("Automatisk importering av servicer aktivert. Neste automatiske import: "
                         + timerNextRunService.ToShortTimeString(), Color.Black, true);
                     UpdateTimerService();
                 }
@@ -4623,7 +4554,7 @@ namespace KGSA
                 if (appConfig.AutoStore)
                 {
                     SetTimerAutoStore();
-                    Logg.Log("Automatisk importering av lager aktivert. Neste automatiske import: "
+                    Log.n("Automatisk importering av lager aktivert. Neste automatiske import: "
                         + timerNextRunAutoStore.ToShortTimeString(), Color.Black, true);
                     UpdateTimerAutoStore();
                 }
@@ -4653,22 +4584,6 @@ namespace KGSA
                 else
                     SetStatusInfo("db", "service", "", DateTime.MinValue);
 
-                if (appConfig.webserverEnabled && appConfig.webserverPort > 0
-                    && appConfig.webserverPort <= 65535 && !String.IsNullOrEmpty(appConfig.webserverHost))
-                {
-                    if (server != null)
-                    {
-                        if (server.ws.IsOnline())
-                            Logg.Log("Webserver er aktivert og lytter på: http://"
-                                + appConfig.webserverHost + ":" + appConfig.webserverPort + "/", Color.Green);
-                        else
-                            MessageBox.Show("Obs! Webserver er aktivert men lytter ikke til angitt adresse ("
-                                + appConfig.webserverHost + ")\nSjekk innstillinger og/eller brannmur."
-                                + " Prøv evt. å starte programmet som administrator.",
-                                "KGSA - Advarsel", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                }
-
                 if (appConfig.histogramVis)
                 {
                     panel4.Visible = true;
@@ -4684,6 +4599,9 @@ namespace KGSA
                     panel4.Visible = false;
                     toolStripMenuItemVisHist.Checked = false;
                 }
+
+                checkBoxLogDebug.Checked = appConfig.debug;
+                checkBoxLogDebugSql.Checked = appConfig.debugSql;
 
                 if (appConfig.importSetting.StartsWith("Full"))
                     ShowHideGui_FullTrans(true);
@@ -4753,7 +4671,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -4836,21 +4754,21 @@ namespace KGSA
                     if (check.TotalMinutes < 15 && check.TotalMinutes > 1)
                     {
                         if (Math.Round(check.TotalMinutes) == 1)
-                            Logg.Log("Starter automatisk innhenting av lager om 1 minutt.");
+                            Log.n("Starter automatisk innhenting av lager om 1 minutt.");
                         else
-                            Logg.Log("Starter automatisk innhenting av lager om " + Math.Round(check.TotalMinutes - 1) + " minutter.");
+                            Log.n("Starter automatisk innhenting av lager om " + Math.Round(check.TotalMinutes - 1) + " minutter.");
                         return;
                     }
                 }
                 else
                 {
                     timerAutoStore.Stop();
-                    Logg.Log("Automatisk innhenting av transaksjoner deaktivert.");
+                    Log.n("Automatisk innhenting av transaksjoner deaktivert.");
                 }
             }
             catch
             {
-                Logg.Log("Unntak i timer-funksjon. Omstart av programmet anbefales.", Color.Red);
+                Log.n("Unntak i timer-funksjon. Omstart av programmet anbefales.", Color.Red);
             }
         }
 
@@ -4894,21 +4812,21 @@ namespace KGSA
                     if (check.TotalMinutes < 15 && check.TotalMinutes > 1)
                     {
                         if (Math.Round(check.TotalMinutes) == 1)
-                            Logg.Log("Starter automatisk innhenting av transaksjoner om 1 minutt.");
+                            Log.n("Starter automatisk innhenting av transaksjoner om 1 minutt.");
                         else
-                            Logg.Log("Starter automatisk innhenting av transaksjoner om " + Math.Round(check.TotalMinutes) + " minutter.");
+                            Log.n("Starter automatisk innhenting av transaksjoner om " + Math.Round(check.TotalMinutes) + " minutter.");
                         return;
                     }
                 }
                 else
                 {
                     timerAutoRanking.Stop();
-                    Logg.Log("Automatisk innhenting av transaksjoner deaktivert.");
+                    Log.n("Automatisk innhenting av transaksjoner deaktivert.");
                 }
             }
             catch
             {
-                Logg.Log("Unntak i timer-funksjon. Omstart av programmet anbefales.", Color.Red);
+                Log.n("Unntak i timer-funksjon. Omstart av programmet anbefales.", Color.Red);
             }
         }
 
@@ -4952,9 +4870,9 @@ namespace KGSA
                     if (check.TotalMinutes < 15 && check.TotalMinutes > 1)
                     {
                         if (Math.Round(check.TotalMinutes) == 1)
-                            Logg.Log("Starter automatisk innhenting av kveldstall om 1 minutt.");
+                            Log.n("Starter automatisk innhenting av kveldstall om 1 minutt.");
                         else
-                            Logg.Log("Starter automatisk innhenting av kveldstall om " + Math.Round(check.TotalMinutes - 1) + " minutter.");
+                            Log.n("Starter automatisk innhenting av kveldstall om " + Math.Round(check.TotalMinutes - 1) + " minutter.");
                         return;
                     }
                 }
@@ -4965,7 +4883,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -4991,12 +4909,12 @@ namespace KGSA
                     {
                         if (File.Exists(saveFileDB.FileName))
                         {
-                            Logg.Log("File eksisterer allerede, skriver over..", Color.Black, true);
+                            Log.n("File eksisterer allerede, skriver over..", Color.Black, true);
                             File.Delete(saveFileDB.FileName);
                         }
                         processing.SetText = "Eksporterer databasen..";
                         File.Copy(settingsPath + @"\" + databaseName, saveFileDB.FileName);
-                        Logg.Log("Fullført eksportering av databasen. (" + saveFileDB.FileName + ")", Color.Green);
+                        Log.n("Fullført eksportering av databasen. (" + saveFileDB.FileName + ")", Color.Green);
                         processing.SetText = "Ferdig!";
                     }
                     catch (IOException ex)
@@ -5013,7 +4931,7 @@ namespace KGSA
             }
             catch
             {
-                Logg.Log("Feil under eksportering av databasen.", Color.Red);
+                Log.n("Feil under eksportering av databasen.", Color.Red);
             }
         }
 
@@ -5047,13 +4965,13 @@ namespace KGSA
 
                             if (!connection.TableExists("tblSelgerkoder") || !connection.FieldExists("tblSalg", "Mva"))
                             {
-                                Logg.Log("Databasen (" + importFileDB.FileName + ") er ikke kompatibel med denne versjonen av KGSA.", Color.Red);
+                                Log.n("Databasen (" + importFileDB.FileName + ") er ikke kompatibel med denne versjonen av KGSA.", Color.Red);
                                 MessageBox.Show("Databasen er ikke kompatibel med denne versjonen av KGSA.\nImportering avbrutt!", "KGSA - Database ikke kompatibel", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                                 processing.SetText = "Importering avbrutt..";
                                 return;
                             }
 
-                            Logg.Log("Importerer ny database (" + importFileDB.FileName + ") ..");
+                            Log.n("Importerer ny database (" + importFileDB.FileName + ") ..");
                             try
                             {
                                 database.CloseConnection();
@@ -5090,8 +5008,8 @@ namespace KGSA
                             }
                             catch(Exception ex)
                             {
-                                Logg.Unhandled(ex);
-                                Logg.Log("Ukjent feil oppstod under importering av databasen. Se logg for detaljer.", Color.Red);
+                                Log.Unhandled(ex);
+                                Log.n("Ukjent feil oppstod under importering av databasen. Se logg for detaljer.", Color.Red);
                             }
                             finally
                             {
@@ -5114,7 +5032,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
     }

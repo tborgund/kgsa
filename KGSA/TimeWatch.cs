@@ -7,8 +7,17 @@ namespace KGSA
 {
     public class TimeWatch
     {
-        DateTime time;
+        DateTime currentTime;
         DateTime update;
+
+        public string show
+        {
+            get
+            {
+                double ts = (DateTime.Now - currentTime).TotalSeconds;
+                return string.Format("{0:n0}", Math.Round(ts, 2));
+            }
+        }
 
         public TimeWatch()
         {
@@ -16,13 +25,13 @@ namespace KGSA
 
         public void Start()
         {
-            time = DateTime.Now;
+            currentTime = DateTime.Now;
             update = DateTime.Now;
         }
 
         public double Stop()
         {
-            double ts = (DateTime.Now - time).TotalSeconds;
+            double ts = (DateTime.Now - currentTime).TotalSeconds;
             return Math.Round(ts, 2);
         }
 

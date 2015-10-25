@@ -19,7 +19,7 @@ namespace KGSA
             {
                 processing.SetVisible = true;
                 processing.SetText = "Importerer lager med makro..";
-                Logg.Log("Importerer lager med makro..");
+                Log.n("Importerer lager med makro..");
                 processing.SetValue = 25;
                 processing.SetBackgroundWorker = bwAutoStore;
                 bwAutoStore.RunWorkerAsync();
@@ -41,7 +41,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return true;
             }
         }
@@ -55,18 +55,18 @@ namespace KGSA
                     RunObsoleteImport(extracted);
                 else
                 {
-                    Logg.Log("Mislykkes forsøk ved utpakking av (" + appConfig.csvElguideExportFolder + @"\wobsolete.csv" + ")");
+                    Log.n("Mislykkes forsøk ved utpakking av (" + appConfig.csvElguideExportFolder + @"\wobsolete.csv" + ")");
                     MessageBox.Show("Obs! Utpakking av arkiv mislykkes eller wobsolete.zip ble ikke funnet. Se logg for detaljer.\nPrøv igjen eller pakk ut manuelt før importering.", "KGSA - Info", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
             catch (FileNotFoundException ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Fant ikke fil (" + ex.FileName + ")", Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Fant ikke fil (" + ex.FileName + ")", Color.Red);
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -83,21 +83,21 @@ namespace KGSA
                     SaveSettings();
                     DateTime dato = obsolete.FindNearestDate(appConfig.dbStoreViewpoint);
                     if (dato.Date == appConfig.dbStoreViewpoint.Date)
-                        Logg.Log("Lager-utvikling følges fra dato " + dato.ToShortDateString(), Color.Green);
+                        Log.n("Lager-utvikling følges fra dato " + dato.ToShortDateString(), Color.Green);
                     else
                     {
                         appConfig.dbStoreViewpoint = dato;
-                        Logg.Log("Lager-utvikling følges fra dato " + dato.ToShortDateString() + " (valgt nærmeste dato)", Color.Green);
+                        Log.n("Lager-utvikling følges fra dato " + dato.ToShortDateString() + " (valgt nærmeste dato)", Color.Green);
                     }
                     ClearHashStore();
                     RunStore("Obsolete");
                 }
                 else
-                    Logg.Log("Ingen dato valgt.");
+                    Log.n("Ingen dato valgt.");
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -144,7 +144,7 @@ namespace KGSA
                     ClearHashStore();
                 if (EmptyStoreDatabase())
                 {
-                    Logg.Log("Lager databasen er tom. Importer wobsolete fra Elguide!");
+                    Log.n("Lager databasen er tom. Importer wobsolete fra Elguide!");
                     webStore.Navigate(htmlImportStore);
 
                     buttonOppdaterLager.BackColor = SystemColors.ControlLight;
@@ -154,6 +154,9 @@ namespace KGSA
                     labelStoreDatoUnder.Text = "";
                     labelStoreDato.ForeColor = SystemColors.ControlText;
                     labelStoreDatoUnder.ForeColor = SystemColors.ControlText;
+
+                    if (blueServer != null && blueServer.IsOnline())
+                        blueServer.StopServer();
 
                     ShowHideGui_EmptyStore(false);
                 }
@@ -167,6 +170,20 @@ namespace KGSA
 
                     labelStoreDato.Text = appConfig.dbStoreTo.ToString("dddd", norway);
                     labelStoreDatoUnder.Text = appConfig.dbStoreTo.ToString("d. MMM", norway);
+
+                    if (appConfig.blueServerIsEnabled && appConfig.experimental)
+                    {
+                        if (blueServer == null)
+                            blueServer = new BluetoothServer(this);
+
+                        if (!blueServer.IsOnline())
+                            blueServer.StartServer(true);
+                    }
+                    else
+                    {
+                        if (blueServer != null && blueServer.IsOnline())
+                            blueServer.StopServer();
+                    }
 
                     if ((DateTime.Now - appConfig.dbStoreTo).Days >= 3)
                     {
@@ -182,8 +199,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                FormError errorMsg = new FormError("Kritisk feil ved initialisering av lager databasen.\nInstaller programmet på nytt hvis problemet vedvarer.", ex);
-                errorMsg.ShowDialog(this);
+                Log.Unhandled(ex);
+                Log.ErrorDialog(ex, "Kritisk feil ved initialisering av lager databasen.\nInstaller programmet på nytt hvis problemet vedvarer.", "KGSA Database");
             }
         }
 
@@ -269,7 +286,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
         public void UpdateStore(string katArg = "")
@@ -340,7 +357,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -395,14 +412,14 @@ namespace KGSA
                 appConfig.strLagerPrisguideOverview = newHash;
             }
             else
-                Logg.Log("Ingen kategori valgt.");
+                Log.n("Ingen kategori valgt.");
         }
 
         private void bwStore_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             ProgressStop();
             if (!IsBusy(true, true))
-                Logg.Status("Klar.");
+                Log.Status("Klar.");
             groupBoxLagerKat.Enabled = true;
         }
 
@@ -450,7 +467,7 @@ namespace KGSA
                     this.Update();
                     SearchDB(page, month, type, data);
                     processing.SetVisible = false;
-                    Logg.Status("Ferdig.");
+                    Log.Status("Ferdig.");
                 }
                 else if (url.Contains("#prisguide=") && (page.Equals("LagerPrisguide") || page.Equals("LagerPrisguideOversikt")))
                 {
@@ -491,7 +508,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.ErrorDialog(ex, ex.Message, "Navigerings feil");
+                Log.ErrorDialog(ex, ex.Message, "Navigerings feil");
             }
         }
 
@@ -506,7 +523,7 @@ namespace KGSA
                     savedStorePage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webStore.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -574,7 +591,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webStore.Navigate(htmlStopped);
                     }
                     else
@@ -589,7 +606,7 @@ namespace KGSA
                             File.WriteAllLines(htmlStoreObsolete, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webStore.Navigate(htmlStoreObsolete);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -598,7 +615,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
+                Log.n("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
                     webStore.Navigate(htmlError);
@@ -619,7 +636,7 @@ namespace KGSA
                     savedStorePage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webStore.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -649,7 +666,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webStore.Navigate(htmlStopped);
                     }
                     else
@@ -664,7 +681,7 @@ namespace KGSA
                             File.WriteAllLines(htmlStoreObsoleteList, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webStore.Navigate(htmlStoreObsoleteList);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -673,7 +690,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
+                Log.n("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
                     webStore.Navigate(htmlError);
@@ -694,7 +711,7 @@ namespace KGSA
                     savedStorePage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webStore.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -724,7 +741,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webStore.Navigate(htmlStopped);
                     }
                     else
@@ -739,7 +756,7 @@ namespace KGSA
                             File.WriteAllLines(htmlStoreObsoleteImports, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webStore.Navigate(htmlStoreObsoleteImports);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -748,7 +765,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Log("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
+                Log.n("Feil ved generering av ranking for [" + katArg + "] Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
                     webStore.Navigate(htmlError);
@@ -790,21 +807,21 @@ namespace KGSA
                     {
                         buttonOppdaterLager.BackColor = SystemColors.ControlLight;
                         buttonOppdaterLager.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + katArg + "]: bruker mellomlagret kopi!");
+                        Log.d("[" + katArg + "]: bruker mellomlagret kopi!");
                         return true;
                     }
                     else
                     {
                         buttonOppdaterLager.BackColor = SystemColors.ControlLight;
                         buttonOppdaterLager.ForeColor = SystemColors.ControlText;
-                        Logg.Debug("[" + katArg + "]: Genererer ny side..");
+                        Log.d("[" + katArg + "]: Genererer ny side..");
                         return false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
             return false;

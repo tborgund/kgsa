@@ -97,7 +97,7 @@ namespace KGSA
 
                 if (main.arrayDbAvd == null || main.arrayDbAvd.ToList().Count == 0 && main.appConfig.rankingAvdelingShowAll)
                 {
-                    Logg.Log("Vent til avdelingslisten er oppdatert..", Color.Red);
+                    Log.n("Vent til avdelingslisten er oppdatert..", Color.Red);
                     return null;
                     // Starter bakgrunnsoppgave for oppdatering av avdelinger
                     //if (!main.bwHentAvdelinger.IsBusy)
@@ -133,7 +133,7 @@ namespace KGSA
                     if (StopRankingPending())
                         return dtWork;
 
-                    Logg.Status("Oppdaterer [Snittpriser].. " + avdeling.Get(avdStr));
+                    Log.Status("Oppdaterer [Snittpriser].. " + avdeling.Get(avdStr));
 
                     var rowsGet = sqlResult.Select("(Avdeling = " + avdStr + ")");
                     using (DataTable sqlResultAvd = rowsGet.Any() ? rowsGet.CopyToDataTable() : sqlResult.Clone())
@@ -288,7 +288,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -533,7 +533,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Feil oppstod under ranking av snittpriser." };
             }
         }
@@ -591,7 +591,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }

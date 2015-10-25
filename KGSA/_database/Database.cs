@@ -37,8 +37,7 @@ namespace KGSA
 
         public Database(FormMain form)
         {
-            this.main = form;
-
+            main = form;
             try
             {
                 if (!File.Exists(FormMain.fileDatabase))
@@ -49,8 +48,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                FormError errorMsg = new FormError("Feil oppstod ved oppretting av ny database. Anbefaler omstart av programmer og/eller re-installasjon.", ex);
-                errorMsg.ShowDialog();
+                Log.ErrorDialog(ex, "Feil oppstod ved oppretting av ny database. Anbefaler omstart av programmet og/eller re-installasjon.", "KGSA Databasen");
+                return;
             }
 
             try
@@ -81,13 +80,11 @@ namespace KGSA
             {
                 FormError errorMsg = new FormError("SQLCE uhåndtert unntak oppstod ved Database()", ex);
                 errorMsg.ShowDialog();
-                return;
             }
             catch (Exception ex)
             {
                 FormError errorMsg = new FormError("Generelt uhåndtert unntak oppstod ved Database()", ex);
                 errorMsg.ShowDialog();
-                return;
             }
         }
 
@@ -151,11 +148,11 @@ namespace KGSA
         {
             try
             {
-                Logg.Log("Database: Henter frem database status.. vent litt");
+                Log.n("Database: Henter frem database status.. vent litt");
 
                 string size = BytesToString(new FileInfo(FormMain.fileDatabase).Length);
 
-                Logg.Log("Database: Filnavn: " + FormMain.fileDatabase + " Størrelse: " + size + " Versjon: " + FormMain.databaseVersion, Color.Blue, true);
+                Log.n("Database: Filnavn: " + FormMain.fileDatabase + " Størrelse: " + size + " Versjon: " + FormMain.databaseVersion, Color.Blue, true);
 
                 using (SqlCeCommand command = new SqlCeCommand("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES", main.connection))
                 {
@@ -169,15 +166,16 @@ namespace KGSA
                         {
                             int count = 0;
                             int.TryParse(cmdScalar.ExecuteScalar().ToString(), out count);
-                            Logg.Log("Database: Tabell navn: " + table.Rows[i][0] + " Antall rader: " + count.ToString("#,##0"), Color.Blue, true);
+                            Log.n("Database: Tabell navn: " + table.Rows[i][0] + " Antall rader: " + count.ToString("#,##0"), Color.Blue, true);
                         }
                     }
                 }
-                Logg.Log("Database: Status ferdig. Se logg.");
+                Log.n("Database: Status ferdig. Se logg.");
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
+                Log.e("Unntak ved PrintStatus(): " + ex.Message);
             }
         }
 
@@ -190,40 +188,40 @@ namespace KGSA
                     MessageBox.Show("Under validering av databasen har vi oppdaget gamle tabeller "
                         + "som ikke kan konverteres til denne versjon av programmet.\nLager beholdning "
                         + "må importeres på nytt.", "KGSA - Oppgradering av database", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Logg.Log("Database: Sletter gammel lager tabell (tblObsolete)..");
+                    Log.n("Database: Sletter gammel lager tabell (tblObsolete)..");
                     var cmd = new SqlCeCommand("DROP TABLE [tblObsolete]", main.connection);
                     cmd.ExecuteNonQuery();
-                    Logg.Log("Database: tblObsolete fjernet.");
+                    Log.n("Database: tblObsolete fjernet.");
                 }
                 else if (main.connection.TableExists("tblObsolete") && main.connection.TableExists("tblUkurans"))
                 {
                     var cmd = new SqlCeCommand("DROP TABLE [tblObsolete]", main.connection);
                     cmd.ExecuteNonQuery();
-                    Logg.Log("Database: tblObsolete fjernet. (Fjernet automatisk, ny tabell finnes)");
+                    Log.n("Database: tblObsolete fjernet. (Fjernet automatisk, ny tabell finnes)");
                 }
 
                 if (main.connection.TableExists("tblVaregruppe"))
                 {
                     var cmd = new SqlCeCommand("DROP TABLE [tblVaregruppe]", main.connection);
                     cmd.ExecuteNonQuery();
-                    Logg.Log("Database: tblVaregruppe fjernet.");
+                    Log.n("Database: tblVaregruppe fjernet.");
                 }
 
                 if (!main.connection.FieldExists("tblSelgerkoder", "Navn")) // tblSelgerkoder mangler kolonnen Navn..
                 {
                     if (MessageBox.Show("Under validering av databasen har vi oppdaget manglende kolonne(r) i selgerkode tabellen.\nEn oppgradering av databasen er nødvendig\nSkal vi starte oppgraderingen nå og forsøke å flytte over alle gamle selgerkoder?", "KGSA - Oppgradering av database", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == System.Windows.Forms.DialogResult.Yes)
                     {
-                        Logg.Log("Database: Henter ut gamle selgerkoder..");
+                        Log.n("Database: Henter ut gamle selgerkoder..");
                         DataTable dt = main.database.GetSqlDataTable("SELECT * FROM tblSelgerkoder");
-                        Logg.Log("Database: Fant " + dt.Rows.Count + " selgerkoder.");
+                        Log.n("Database: Fant " + dt.Rows.Count + " selgerkoder.");
 
-                        Logg.Log("Database: Oppretter ny tabell for tblSelgerkoder..");
+                        Log.n("Database: Oppretter ny tabell for tblSelgerkoder..");
 
                         tableSelgerkoder.Reset();
 
                         try
                         {
-                            Logg.Log("Database: Flytter eksisterende selgerkoder tilbake..");
+                            Log.n("Database: Flytter eksisterende selgerkoder tilbake..");
                             if (dt != null)
                             {
                                 main.salesCodes = new SalesCodes(main);
@@ -254,24 +252,24 @@ namespace KGSA
                                         if (main.salesCodes.AddAll(sk, kat, prov, finans, mod, strom, rtgsa))
                                             teller++;
                                         else
-                                            Logg.Log("Klarte ikke konvertere " + dt.Rows[i]["Selgerkode"].ToString() + "..");
+                                            Log.n("Klarte ikke konvertere " + dt.Rows[i]["Selgerkode"].ToString() + "..");
                                     }
                                     catch
                                     {
-                                        Logg.Log("Klarte ikke konvertere " + dt.Rows[i]["Selgerkode"].ToString() + "..");
+                                        Log.n("Klarte ikke konvertere " + dt.Rows[i]["Selgerkode"].ToString() + "..");
                                     }
                                 }
-                                Logg.Log("Database: Fullført flytting av " + teller + " selgerkoder.");
+                                Log.n("Database: Fullført flytting av " + teller + " selgerkoder.");
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logg.Unhandled(ex);
-                            Logg.Log("En feil oppstod under flytting av gamle selgerkoder til ny tabell. Se logg for detaljer.", Color.Red);
+                            Log.Unhandled(ex);
+                            Log.n("En feil oppstod under flytting av gamle selgerkoder til ny tabell. Se logg for detaljer.", Color.Red);
                             MessageBox.Show("En feil oppstod under konvertering av gamle selgerkoder til ny tabell. Noen selgerkoder kan være tapt.\n\nSorry!", "KGSA - Feil", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         }
 
-                        Logg.Log("Database: Tabell oppgradert.", Color.Green);
+                        Log.n("Database: Tabell oppgradert.", Color.Green);
                     }
                     else
                         MessageBox.Show("Merk at programmet vil ikke fungere som det skal til databasen er oppgradert.\nDu vil bli påminnet om oppgraderingen neste gang programmet starter på nytt", "KGSA - Informasjon", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -293,7 +291,7 @@ namespace KGSA
                     }
                     catch
                     {
-                        Logg.Alert("Fikke ikke slettet gammel epostliste, filen var låst.");
+                        Log.Alert("Fikke ikke slettet gammel epostliste, filen var låst.");
                     }
                 }
             }
@@ -311,20 +309,56 @@ namespace KGSA
             }
         }
 
+        public int GetCount(string sql)
+        {
+            try
+            {
+                if (main.connection.State != ConnectionState.Open)
+                {
+                    Log.e("Database: Forbindelsen til databasen er lukket. Vent til forbindelsen er gjenopprettet eller start om programmet.");
+                    return 0;
+                }
+
+                TimeWatch tw = new TimeWatch();
+                tw.Start();
+                Log.DebugSql("SQL GetCount: " + sql);
+
+                int count = 0;
+                using (SqlCeCommand command = new SqlCeCommand(sql, main.connection))
+                {
+                    count = (Int32)command.ExecuteScalar();
+                }
+
+                Log.DebugSql("SQL GetCount: Retrieved row count (" + count + ") after " + tw.Stop() + " seconds.");
+                return count;
+            }
+            catch (SqlCeException ex)
+            {
+                FormError errorMsg = new FormError("SQLCE uhåndtert unntak oppstod ved main.database.GetCount(string sql)", ex);
+                errorMsg.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                FormError errorMsg = new FormError("Generelt uhåndtert unntak oppstod ved main.database.GetCount(string sql)", ex);
+                errorMsg.ShowDialog();
+            }
+            return 0;
+        }
+
         public DataTable GetSqlDataTable(string sql)
         {
             try
             {
                 if (main.connection.State != ConnectionState.Open)
                 {
-                    Logg.Log("Database: Forbindelsen til databasen er lukket. Vent til forbindelsen er gjenopprettet eller start om programmet.", Color.Red);
+                    Log.n("Database: Forbindelsen til databasen er lukket. Vent til forbindelsen er gjenopprettet eller start om programmet.", Color.Red);
                     return null;
                 }
 
                 string hash = sql.GetHashCode().ToString();
                 TimeWatch tw = new TimeWatch();
                 tw.Start();
-                Logg.DebugSql("SQL Reader (" + hash + "): " + sql);
+                Log.DebugSql("SQL Reader (" + hash + "): " + sql);
 
                 if (main.appConfig.useSqlCache)
                 {
@@ -334,7 +368,7 @@ namespace KGSA
                         {
                             if (sqlCache.Tables[i].TableName.Equals(hash))
                             {
-                                Logg.DebugSql("SQL Reader (" + hash + "): Hentet MELLOMLAGRET tabell med " + sqlCache.Tables[i].Rows.Count + " linjer etter " + tw.Stop() + " sekunder.");
+                                Log.DebugSql("SQL Reader (" + hash + "): Hentet MELLOMLAGRET tabell med " + sqlCache.Tables[i].Rows.Count + " linjer etter " + tw.Stop() + " sekunder.");
                                 return sqlCache.Tables[i];
                             }
                         }
@@ -365,7 +399,7 @@ namespace KGSA
                     }
                 }
 
-                Logg.DebugSql("SQL Reader (" + hash + "): Hentet tabell med " + table.Rows.Count + " linjer etter " + tw.Stop() + " sekunder.");
+                Log.DebugSql("SQL Reader (" + hash + "): Hentet tabell med " + table.Rows.Count + " linjer etter " + tw.Stop() + " sekunder.");
                 return table;
             }
             catch (SqlCeException ex)
@@ -420,7 +454,7 @@ namespace KGSA
         {
             this.sqlceDatabase = new DataSet();
             this.sqlCache = new DataSet();
-            Logg.Debug("Database: Cache cleared!");
+            Log.d("Database: Cache cleared!");
         }
 
         public DataTable CallMonthTable(DateTime date, string avdeling)
@@ -446,7 +480,7 @@ namespace KGSA
                             DateTime oldDate = Convert.ToDateTime(sqlceDatabase.Tables[i].Rows[0]["Dato"]);
                             if (oldDate.Month == date.Month && oldDate.Year == date.Year)
                             {
-                                Logg.Debug("Table cache hit (" + avdeling + " - " + date.ToString("MMMM yyyy") + ")");
+                                Log.d("Table cache hit (" + avdeling + " - " + date.ToString("MMMM yyyy") + ")");
                                 return sqlceDatabase.Tables[i];
                             }
                         }
@@ -457,8 +491,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil i SQL mellomlager, forsøker ny spørring..", null, true);
+                Log.Unhandled(ex);
+                Log.n("Feil i SQL mellomlager, forsøker ny spørring..", null, true);
             }
 
             DateTime first = FormMain.GetFirstDayOfMonth(date);
@@ -470,7 +504,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Debug("Table cache NO-hit (" + avdeling + " - " + date.ToString("MMMM yyyy") + ")");
+                Log.d("Table cache NO-hit (" + avdeling + " - " + date.ToString("MMMM yyyy") + ")");
                 DateTime first = FormMain.GetFirstDayOfMonth(date);
                 DateTime last = FormMain.GetLastDayOfMonth(date);
                 DataTable month = GetSqlDataTable("SELECT * FROM tblSalg WHERE Avdeling = " + avdeling + " AND (Dato >= '" + first.ToString("yyy-MM-dd") + "') AND (Dato <= '" + last.ToString("yyy-MM-dd") + "')");
@@ -490,7 +524,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return CreateEmptyMonthTable();
         }

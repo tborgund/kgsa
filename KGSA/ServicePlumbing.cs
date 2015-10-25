@@ -66,7 +66,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return main.appConfig.visningNull;
             }
         }
@@ -87,7 +87,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return main.appConfig.visningNull;
             }
         }
@@ -104,7 +104,7 @@ namespace KGSA
 
                 if (msgbox == DialogResult.Yes)
                 {
-                    Logg.Log("Tømmer service databasen..");
+                    Log.n("Tømmer service databasen..");
 
                     main.database.tableService.Reset();
                     main.database.tableServiceLogg.Reset();
@@ -112,7 +112,7 @@ namespace KGSA
                     dbServiceDatoFra = FormMain.rangeMin;
                     dbServiceDatoTil = FormMain.rangeMin;
 
-                    Logg.Log("Service databasen nullstilt.", Color.Green);
+                    Log.n("Service databasen nullstilt.", Color.Green);
                     return true;
                 }
             }
@@ -159,7 +159,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return 0;
             }
         }
@@ -190,7 +190,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 

@@ -30,7 +30,7 @@ namespace KGSA
                 if (!runningInBackground) main.savedStorePage = strCat;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + strCat + "]..");
+                    Log.n("Oppdaterer [" + strCat + "]..");
                     OpenPage_Loading();
 
                     doc = new List<string>();
@@ -53,7 +53,7 @@ namespace KGSA
                     if (FormMain.stopRanking)
                     {
                         main.ClearHash(strCat);
-                        Logg.Log("Lasting avbrutt", Color.Red);
+                        Log.n("Lasting avbrutt", Color.Red);
                         OpenPage_Stopped();
                         FormMain.stopRanking = false;
                     }
@@ -62,7 +62,7 @@ namespace KGSA
                         File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
                         OpenPage(htmlPage);
                         if (!runningInBackground)
-                            Logg.Log("Side [" + strCat + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
+                            Log.n("Side [" + strCat + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
                     }
                 }
                 else
@@ -70,7 +70,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!runningInBackground)
                 {
                     OpenPage_Error();
@@ -91,7 +91,7 @@ namespace KGSA
                 if (!runningInBackground) main.savedStorePage = strCat;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + strCat + "]..");
+                    Log.n("Oppdaterer [" + strCat + "]..");
                     OpenPage_Loading();
 
                     doc = new List<string>();
@@ -116,7 +116,7 @@ namespace KGSA
                     if (FormMain.stopRanking)
                     {
                         main.ClearHash(strCat);
-                        Logg.Log("Lasting avbrutt", Color.Red);
+                        Log.n("Lasting avbrutt", Color.Red);
                         OpenPage_Stopped();
                         FormMain.stopRanking = false;
                     }
@@ -125,7 +125,7 @@ namespace KGSA
                         File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
                         OpenPage(htmlPage);
                         if (!runningInBackground)
-                            Logg.Log("Side [" + strCat + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
+                            Log.n("Side [" + strCat + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
                     }
                 }
                 else
@@ -133,7 +133,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!runningInBackground)
                 {
                     OpenPage_Error();
@@ -148,7 +148,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Debug("Henter ukeannonse..");
+                Log.d("Henter ukeannonse..");
                 DataTable table = main.obsolete.GetWeekly(date);
                 if (table == null || table.Rows.Count == 0)
                 {
@@ -235,8 +235,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil ved generering av side: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Feil ved generering av side: " + ex.Message, Color.Red);
             }
         }
 
@@ -244,7 +244,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Debug("Henter ukeannonse oversikt..");
+                Log.d("Henter ukeannonse oversikt..");
                 
                 DataTable table = main.database.tableWeekly.GetWeeklyList(main.appConfig.Avdeling);
                 if (table == null || table.Rows.Count == 0)
@@ -339,8 +339,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil ved generering av side: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Feil ved generering av side: " + ex.Message, Color.Red);
             }
         }
 
@@ -348,7 +348,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Debug("Henter ukenytt liste..");
+                Log.d("Henter ukenytt liste..");
                 DataTable table = main.database.tableWeekly.GetWeeklyList(main.appConfig.Avdeling);
 
                 doc.Add("<form class='hidePdf' name='jumpSelect'><br>");
@@ -373,8 +373,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil ved generering av side: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Feil ved generering av side: " + ex.Message, Color.Red);
             }
         }
     }

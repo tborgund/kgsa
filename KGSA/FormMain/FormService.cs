@@ -74,7 +74,7 @@ namespace KGSA
             else
             {
                 ChangeServiceDateTimePicker(service.dbServiceDatoTil, service.dbServiceDatoFra, service.dbServiceDatoTil);
-                Logg.Log("Service databasen har servicer mellom " + service.dbServiceDatoFra.ToString("d. MMMM yyyy", norway) + " og " + service.dbServiceDatoTil.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
+                Log.n("Service databasen har servicer mellom " + service.dbServiceDatoFra.ToString("d. MMMM yyyy", norway) + " og " + service.dbServiceDatoTil.ToString("d. MMMM yyyy", norway) + " for din avdeling.", Color.Black, true);
             }
 
         }
@@ -85,7 +85,7 @@ namespace KGSA
             {
                 processing.SetVisible = true;
                 processing.SetText = "Importerer servicer..";
-                Logg.Log("Importerer servicer..");
+                Log.n("Importerer servicer..");
                 processing.SetValue = 25;
                 processing.SetBackgroundWorker = bwImportService;
                 bwImportService.RunWorkerAsync(str);
@@ -98,7 +98,7 @@ namespace KGSA
             {
                 processing.SetVisible = true;
                 processing.SetText = "Importerer servicer med makro..";
-                Logg.Log("Importerer servicer med makro..");
+                Log.n("Importerer servicer med makro..");
                 processing.SetValue = 25;
                 processing.SetBackgroundWorker = bwAutoImportService;
                 bwAutoImportService.RunWorkerAsync(str);
@@ -121,7 +121,7 @@ namespace KGSA
 
                     if (processing.userPushedCancelButton)
                     {
-                        Logg.Log("Brukeren avbrøt handlingen.");
+                        Log.n("Brukeren avbrøt handlingen.");
                         return;
                     }
                 }
@@ -132,7 +132,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -163,7 +163,7 @@ namespace KGSA
                 bool complete = (bool)e.Result;
                 if (complete)
                 {
-                    Logg.Log("Service Import: Service import fullført uten feil.");
+                    Log.n("Service Import: Service import fullført uten feil.");
                     database.ClearCacheTables();
                     RetrieveDbService();
                     ReloadService();
@@ -173,7 +173,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             processing.HideDelayed();
             this.Activate();
@@ -221,16 +221,16 @@ namespace KGSA
                         if (timerNextRunService.DayOfWeek == DayOfWeek.Sunday && appConfig.ignoreSunday)
                             timerNextRunService = timerNextRunService.AddDays(1);
 
-                        Logg.Debug("Neste service import: " + timerNextRunService);
+                        Log.d("Neste service import: " + timerNextRunService);
                         return;
                     }
 
                     if (check.TotalMinutes < 15 && check.TotalMinutes > 1)
                     {
                         if (Math.Round(check.TotalMinutes) == 1)
-                            Logg.Log("Starter automatisk innhenting av servicer om 1 minutt.");
+                            Log.n("Starter automatisk innhenting av servicer om 1 minutt.");
                         else
-                            Logg.Log("Starter automatisk innhenting av servicer om " + Math.Round(check.TotalMinutes - 1) + " minutter.");
+                            Log.n("Starter automatisk innhenting av servicer om " + Math.Round(check.TotalMinutes - 1) + " minutter.");
                         return;
                     }
                 }
@@ -241,7 +241,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -256,13 +256,13 @@ namespace KGSA
 
                 retrymacro:
 
-                Logg.Log("AutoService: Kjører Service makro.. [" + macroAttempt + "]");
+                Log.n("AutoService: Kjører Service makro.. [" + macroAttempt + "]");
                 var macroForm = (FormMacro)StartMacro(DateTime.Now, macroProgramService, bwAutoImportService, macroAttempt);
                 if (macroForm.errorCode != 0)
                 {
                     // Feil oppstod under kjøring av macro
                     macroAttempt++;
-                    Logg.Log("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + macroForm.errorMessage + " Kode: " + macroForm.errorCode, Color.Red);
+                    Log.n("Auto: Feil oppstod under kjøring av makro. Feilbeskjed: " + macroForm.errorMessage + " Kode: " + macroForm.errorCode, Color.Red);
                     for (int i = 0; i < 60; i++)
                     {
                         Application.DoEvents();
@@ -282,18 +282,18 @@ namespace KGSA
 
                     if (service.Import(appConfig.csvElguideExportFolder + "iserv.csv", processing, bwAutoImportService))
                     {
-                        Logg.Log("AutoService: Service import fullført uten feil.");
+                        Log.n("AutoService: Service import fullført uten feil.");
                         MakeServiceOversikt(true, bwAutoImportService);
-                        Logg.Log("AutoService: Service rapport laget.");
+                        Log.n("AutoService: Service rapport laget.");
                     }
                 }
 
-                Logg.Log("AutoService: Ferdig.");
+                Log.n("AutoService: Ferdig.");
                 e.Result = macroForm.errorCode;
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -304,11 +304,11 @@ namespace KGSA
 
             if (e.Cancelled)
             {
-                Logg.Log("Auto: Jobb kansellert.");
+                Log.n("Auto: Jobb kansellert.");
             }
             else if (e.Error != null)
             {
-                Logg.Log("Auto: Feil oppstod under kjøring av makro. Se logg for detaljer. (" + e.Error.Message + ")");
+                Log.n("Auto: Feil oppstod under kjøring av makro. Se logg for detaljer. (" + e.Error.Message + ")");
             }
             else
             {
@@ -321,11 +321,11 @@ namespace KGSA
                     RetrieveDbService();
                     ReloadService();
                     UpdateUi();
-                    Logg.Log("Auto: Makro fullført.");
+                    Log.n("Auto: Makro fullført.");
                 }
                 else if (returnCode == 2)
                 {
-                    Logg.Log("Auto: Jobb avbrutt av bruker.");
+                    Log.n("Auto: Jobb avbrutt av bruker.");
                 }
             }
 
@@ -469,14 +469,14 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
         private void MakeServiceDetails(int serviceID)
         {
-            Logg.Debug("Søker service logg..");
-            Logg.Status("Søker service logg..");
+            Log.d("Søker service logg..");
+            Log.Status("Søker service logg..");
             try
             {
                 var doc = new List<string>();
@@ -499,7 +499,7 @@ namespace KGSA
                 FormError errorMsg = new FormError("Feil ved generering av service detaljer.", ex);
                 errorMsg.ShowDialog(this);
             }
-            Logg.Status("Klar.");
+            Log.Status("Klar.");
         }
 
         public void RunServiceList(string statusFilter = "", string loggFilter = "")
@@ -529,7 +529,7 @@ namespace KGSA
 
         private void MakeServiceList(string statusFilter = "", string loggFilter = "", bool bg = false, BackgroundWorker bw = null)
         {
-            Logg.Log("Lager [ServiceList] ranking..");
+            Log.n("Lager [ServiceList] ranking..");
             bool abort = HarSisteVersjonService("ServiceList", appConfig.strServiceList);
             try
             {
@@ -578,7 +578,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webService.Navigate(htmlError);
@@ -592,7 +592,7 @@ namespace KGSA
         {
             ProgressStop();
             if (!IsBusy(true, true))
-                Logg.Status("Klar.");
+                Log.Status("Klar.");
         }
 
         private void RunServiceOversikt()
@@ -622,7 +622,7 @@ namespace KGSA
             {
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webService.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -680,7 +680,7 @@ namespace KGSA
                     errorMsg.ShowDialog(this);
                 }
                 else
-                    Logg.Unhandled(ex);
+                    Log.Unhandled(ex);
             }
         }
 
@@ -688,7 +688,7 @@ namespace KGSA
         {
             ProgressStop();
             if (!IsBusy(true, true))
-                Logg.Status("Klar");
+                Log.Status("Klar");
         }
     }
 
@@ -700,7 +700,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Debug("Merk behandlet service id: " + serviceId + " | text: " + text);
+                Log.d("Merk behandlet service id: " + serviceId + " | text: " + text);
                 int varBit = 0;
                 if (text == "Nei")
                     varBit = 1;

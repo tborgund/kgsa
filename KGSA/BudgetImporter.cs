@@ -59,7 +59,7 @@ namespace KGSA
             if (FindAndDownloadBudget(worker))
             {
                 e.Result = true;
-                Logg.Log("Dagens budsjett for " + selectedDate.ToShortDateString() + " er lastet ned og lagret", Color.Green);
+                Log.n("Dagens budsjett for " + selectedDate.ToShortDateString() + " er lastet ned og lagret", Color.Green);
                 return;
             }
             e.Result = false;
@@ -78,13 +78,13 @@ namespace KGSA
             {
                 main.processing.SetVisible = false;
                 if (runInBackground)
-                    Logg.Log("Fant ikke dagens budsjett i innboks " + main.appConfig.epostPOP3username + ". Sjekk logg for detaljer.", Color.Red);
+                    Log.n("Fant ikke dagens budsjett i innboks " + main.appConfig.epostPOP3username + ". Sjekk logg for detaljer.", Color.Red);
                 else
-                    Logg.Alert("Fant ikke dagens budsjett i innboks " + main.appConfig.epostPOP3username + ".\nSjekk logg for detaljer.", "Nedlasting av Dagens budsjett", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Log.Alert("Fant ikke dagens budsjett i innboks " + main.appConfig.epostPOP3username + ".\nSjekk logg for detaljer.", "Nedlasting av Dagens budsjett", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (e.Cancelled || (worker != null && worker.CancellationPending))
             {
-                Logg.Log("Prosessen ble stopped av bruker", Color.Red);
+                Log.n("Prosessen ble stopped av bruker", Color.Red);
                 main.processing.SetText = "Avbrutt";
                 main.processing.HideDelayed();
             }
@@ -102,13 +102,13 @@ namespace KGSA
                 string path = Path.Combine(main.appConfig.csvElguideExportFolder, "inego.csv");
                 if (!File.Exists(path))
                 {
-                    Logg.Log("Fant ikke CSV: " + path, Color.Red);
+                    Log.n("Fant ikke CSV: " + path, Color.Red);
                     return null;
                 }
 
                 else if (File.GetLastWriteTime(path).Date != DateTime.Now.Date)
                 {
-                    Logg.Log("CSV var ikke oppdatert i dag. Eksporter fra Elguide program 136 først", Color.Red);
+                    Log.n("CSV var ikke oppdatert i dag. Eksporter fra Elguide program 136 først", Color.Red);
                     return null;
                 }
 
@@ -132,7 +132,7 @@ namespace KGSA
 
                 if (table.Rows.Count < 6)
                 {
-                    Logg.Log("CSV " + Path.GetFileName(path) + " inneholder fem eller mindre linjer. Eksporter fra Elguide på nytt og prøv igjen", Color.Red);
+                    Log.n("CSV " + Path.GetFileName(path) + " inneholder fem eller mindre linjer. Eksporter fra Elguide på nytt og prøv igjen", Color.Red);
                     return null;
                 }
 
@@ -214,8 +214,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Uventet feil under importering av CSV fra avdeling " + avdeling + ". Feilmelding: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Uventet feil under importering av CSV fra avdeling " + avdeling + ". Feilmelding: " + ex.Message, Color.Red);
             }
             return null;
         }
@@ -232,12 +232,12 @@ namespace KGSA
                 {
                     if (!File.Exists(main.appConfig.csvElguideExportFolder + file))
                     {
-                        Logg.Log("Fant ikke " + file, Color.Red);
+                        Log.n("Fant ikke " + file, Color.Red);
                         return null;
                     }
                     else if (File.GetLastWriteTime(main.appConfig.csvElguideExportFolder + file).Date != DateTime.Now.Date)
                     {
-                        Logg.Log("Avbryter importering av " + file + " fordi filen er ikke oppdatert!", Color.Red);
+                        Log.n("Avbryter importering av " + file + " fordi filen er ikke oppdatert!", Color.Red);
                         return null;
                     }
 
@@ -261,7 +261,7 @@ namespace KGSA
 
                     if (dt.Rows.Count < 2)
                     {
-                        Logg.Log("Sales CSV fil (" + file + ") var for kort. " + dt.Rows.Count + " linjer.", Color.Red);
+                        Log.n("Sales CSV fil (" + file + ") var for kort. " + dt.Rows.Count + " linjer.", Color.Red);
                         return null;
                     }
 
@@ -276,7 +276,7 @@ namespace KGSA
                             salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
                             salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
                             budgetInfo.Salg.Add(salg);
-                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
+                            Log.d("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
                             continue;
                         }
 
@@ -288,7 +288,7 @@ namespace KGSA
                             salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
                             salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
                             budgetInfo.Salg.Add(salg);
-                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
+                            Log.d("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
                             continue;
                         }
 
@@ -300,7 +300,7 @@ namespace KGSA
                             salg.Btokr = Convert.ToDouble(dt.Rows[i][4].ToString());
                             salg.Salgspris = Convert.ToDouble(dt.Rows[i][2].ToString());
                             budgetInfo.Salg.Add(salg);
-                            Logg.Debug("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
+                            Log.d("Fant " + salg.Type + ": " + salg.Antall + " - " + salg.Btokr + " - " + salg.Salgspris);
                             continue;
                         }
                     }
@@ -309,8 +309,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil oppstod under importering av tjeneste CSV fra Elguide", Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Feil oppstod under importering av tjeneste CSV fra Elguide", Color.Red);
             }
             return null;
         }
@@ -320,7 +320,7 @@ namespace KGSA
             bool attachmentFound = false;
             try
             {
-                Logg.Log("Kobler til e-post server \"" + main.appConfig.epostPOP3server + "\"..");
+                Log.n("Kobler til e-post server \"" + main.appConfig.epostPOP3server + "\"..");
                 using (Pop3Client client = new Pop3Client())
                 {
                     client.Connect(main.appConfig.epostPOP3server, main.appConfig.epostPOP3port, main.appConfig.epostPOP3ssl);
@@ -333,22 +333,22 @@ namespace KGSA
                         }
                     }
 
-                    Logg.Debug("Logger inn med brukernavn \"" + main.appConfig.epostBrukernavn + "\"..");
+                    Log.d("Logger inn med brukernavn \"" + main.appConfig.epostBrukernavn + "\"..");
                     SimpleAES aes = new SimpleAES();
                     client.Authenticate(main.appConfig.epostPOP3username, aes.DecryptString(main.appConfig.epostPOP3password));
                     int count = client.GetMessageCount();
 
-                    Logg.Debug("Innlogging fullført. Antall meldinger i innboks: " + count);
+                    Log.d("Innlogging fullført. Antall meldinger i innboks: " + count);
                     if (count == 0)
                     {
-                        Logg.Log("Innboks for \"" + main.appConfig.epostPOP3username + "\" er tom. "
+                        Log.n("Innboks for \"" + main.appConfig.epostPOP3username + "\" er tom. "
                             + "Endre innstillinger i ditt e-post program til å la e-post ligge igjen på server", Color.Red);
                         client.Disconnect();
                         return false;
                     }
 
                     main.processing.SetText = "Søker i innboks.. (totalt " + count + " meldinger)";
-                    Logg.Log("Søker i innboks.. (totalt " + count + " meldinger)");
+                    Log.n("Søker i innboks.. (totalt " + count + " meldinger)");
                     for (int i = count + 1; i-- > 1;)
                     {
                         if (attachmentFound || maxEmailAttemptsReached)
@@ -358,23 +358,23 @@ namespace KGSA
                             if (bw.CancellationPending)
                                 break;
 
-                        Logg.Debug("Sjekker meldingshode " + (count - i + 1) + "..");
+                        Log.d("Sjekker meldingshode " + (count - i + 1) + "..");
                         MessageHeader header = client.GetMessageHeaders(i);
                         if (HeaderMatch(header))
                         {
                             if (header.DateSent.Date != selectedDate.Date)
                             {
-                                Logg.Debug("Fant C810 e-post med annen dato: " + header.DateSent.ToShortDateString()
+                                Log.d("Fant C810 e-post med annen dato: " + header.DateSent.ToShortDateString()
                                     + " ser etter: " + selectedDate.ToShortDateString() + " Emne: \"" + header.Subject
                                     + "\" Fra: \"" + header.From.MailAddress + "\"");
                                 continue;
                             }
 
-                            Logg.Debug("--------- Fant C810 e-post kandidat: Fra: \""
+                            Log.d("--------- Fant C810 e-post kandidat: Fra: \""
                                 + header.From.MailAddress.Address + "\" Emne: \"" + header.Subject
                                 + "\" Sendt: " + header.DateSent.ToShortDateString() + " (" + header.DateSent.ToShortTimeString() + ")");
 
-                            Logg.Debug("Laster ned e-post # " + i + "..");
+                            Log.d("Laster ned e-post # " + i + "..");
                             Message message = client.GetMessage(i);
 
                             foreach (MessagePart attachment in message.FindAllAttachments())
@@ -382,7 +382,7 @@ namespace KGSA
                                 if (attachmentFound)
                                     break;
 
-                                Logg.Debug("Vedlegg: " + attachment.FileName);
+                                Log.d("Vedlegg: " + attachment.FileName);
                                 if (AttachmentMatch(attachment))
                                     attachmentFound = ParseAndSaveDailyBudget(attachment,
                                         message.Headers.DateSent,
@@ -392,7 +392,7 @@ namespace KGSA
                         }
 
                         if (!attachmentFound)
-                            Logg.Debug("Fant ingen C810 vedlegg i e-post # " + i);
+                            Log.d("Fant ingen C810 vedlegg i e-post # " + i);
                     }
                     client.Disconnect();
                 }
@@ -400,26 +400,26 @@ namespace KGSA
                 if (attachmentFound)
                     return true;
                 else if (!attachmentFound && maxEmailAttemptsReached)
-                    Logg.Log("Maksimum antall e-post nedlastninger er overgått. Innboks søk er avsluttet", Color.Red);
+                    Log.n("Maksimum antall e-post nedlastninger er overgått. Innboks søk er avsluttet", Color.Red);
                 else
-                    Logg.Log("Fant ingen C810 e-post med budsjett for dato " + selectedDate.ToShortDateString() + ". Innboks søk er avsluttet", Color.Red);
+                    Log.n("Fant ingen C810 e-post med budsjett for dato " + selectedDate.ToShortDateString() + ". Innboks søk er avsluttet", Color.Red);
             }
             catch (PopServerNotFoundException)
             {
-                Logg.Log("E-post server finnes ikke eller DNS problem ved tilkobling til " + main.appConfig.epostPOP3server, Color.Red);
+                Log.n("E-post server finnes ikke eller DNS problem ved tilkobling til " + main.appConfig.epostPOP3server, Color.Red);
             }
             catch (PopServerNotAvailableException ex)
             {
-                Logg.Log("E-post server \"" + main.appConfig.epostPOP3server + "\" svarer ikke. Feilmelding: " + ex.Message, Color.Red);
+                Log.n("E-post server \"" + main.appConfig.epostPOP3server + "\" svarer ikke. Feilmelding: " + ex.Message, Color.Red);
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("Authentication failed") || ex.Message.Contains("credentials"))
-                    Logg.Log("Feil brukernavn eller passord angitt for " + main.appConfig.epostPOP3username + ". Sjekk e-post innstillinger!", Color.Red);
+                    Log.n("Feil brukernavn eller passord angitt for " + main.appConfig.epostPOP3username + ". Sjekk e-post innstillinger!", Color.Red);
                 else
                 {
-                    Logg.Unhandled(ex);
-                    Logg.Log("Feil ved henting av epost. Beskjed: " + ex.Message);
+                    Log.Unhandled(ex);
+                    Log.n("Feil ved henting av epost. Beskjed: " + ex.Message);
                 }
             }
             return false;
@@ -430,11 +430,11 @@ namespace KGSA
             KpiBudget kpiBudget = ParseC810(attachment.Body);
             if (kpiBudget != null)
             {
-                Logg.Log("Vedlegget '" + attachment.FileName + "' fra e-posten: \""
+                Log.n("Vedlegget '" + attachment.FileName + "' fra e-posten: \""
                     + subject + "\" fra: \"" + address + "\" sendt: " + sentDate.ToShortDateString() + " er avlest og verifisert.");
                 if (SaveBudget(kpiBudget))
                 {
-                    Logg.Debug("Budsjett lagret til databasen");
+                    Log.d("Budsjett lagret til databasen");
                     return true;
                 }
             }
@@ -442,7 +442,7 @@ namespace KGSA
             if (countEmailAttempts > limitEmailAttempts)
                 maxEmailAttemptsReached = true;
 
-            Logg.Log("Vedlegget '" + attachment.FileName + "' fra e-posten: \""
+            Log.n("Vedlegget '" + attachment.FileName + "' fra e-posten: \""
                 + subject + "\" fra: \"" + address + "\" sendt: " + sentDate.ToShortDateString() + " er ugyldig, feil eller var ikke av typen C810");
             return false;
         }
@@ -453,7 +453,7 @@ namespace KGSA
             {
                 if (kpiBudget == null || kpiBudget.element == null || kpiBudget.element.Count == 0)
                 {
-                    Logg.Log("Budsjett data er ubrukelig og kan ikke lagres", Color.Red);
+                    Log.n("Budsjett data er ubrukelig og kan ikke lagres", Color.Red);
                     return false;
                 }
 
@@ -481,16 +481,16 @@ namespace KGSA
                 {
                     main.database.tableDailyBudget.RemoveDate(main.appConfig.Avdeling, kpiBudget.Date);
 
-                    Logg.Debug("Lagrer budsjett (id " + budgetId + ") med dato "
+                    Log.d("Lagrer budsjett (id " + budgetId + ") med dato "
                         + kpiBudget.Date.ToShortDateString() + " til databasen..");
                     main.database.DoBulkCopy(table, TableDailyBudget.TABLE_NAME);
                     return true;
                 }
-                Logg.Debug("Budsjett ble ikke lagret til databasen. Mangler viktig data");
+                Log.d("Budsjett ble ikke lagret til databasen. Mangler viktig data");
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return false;
         }
@@ -567,7 +567,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return null;
         }
@@ -588,7 +588,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Debug("FindIndex unntak: " + ex.Message);
+                Log.d("FindIndex unntak: " + ex.Message);
             }
             return -1;
         }
@@ -597,12 +597,12 @@ namespace KGSA
         {
             if (index == -1)
             {
-                Logg.Debug(errorMsg);
+                Log.d(errorMsg);
                 return false;
             }
             else if (index < minimum)
             {
-                Logg.Debug(minErrorMsg);
+                Log.d(minErrorMsg);
                 return false;
             }
             return true;

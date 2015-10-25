@@ -46,7 +46,7 @@ namespace KGSA
             if (!EmptyDatabase())
             {
                 groupRankingChoices.Enabled = false;
-                Logg.Log("Oppdaterer [" + selgerArg + "] ..", Color.Black, false, true);
+                Log.n("Oppdaterer [" + selgerArg + "] ..", Color.Black, false, true);
                 bwVinnSelger.RunWorkerAsync(selgerArg);
             }
             else
@@ -142,14 +142,14 @@ namespace KGSA
                 appConfig.strSnittpriser = newHash;
             }
             else
-                Logg.Log("Ingen kategori valgt for beregning av ranking.");
+                Log.n("Ingen kategori valgt for beregning av ranking.");
         }
 
         private void bwRanking_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             ProgressStop();
             if (!IsBusy(true, true))
-                Logg.Status("Klar.");
+                Log.Status("Klar.");
             groupRankingChoices.Enabled = true;
         }
 
@@ -226,20 +226,20 @@ namespace KGSA
                 appConfig.strBudgetAllSales = newHash;
             }
             else
-                Logg.Log("Ingen kategori valgt for beregning av budsjett.");
+                Log.n("Ingen kategori valgt for beregning av budsjett.");
         }
 
         private void bwBudget_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             ProgressStop();
             if (!IsBusy(true, true))
-                Logg.Status("Klar.");
+                Log.Status("Klar.");
             groupBudgetChoices.Enabled = true;
         }
 
         private void ViewGraph(string argKat, bool bg = false, BackgroundWorker bw = null)
         {
-            Logg.Log("Lager [" + argKat + "] grafer..");
+            Log.n("Lager [" + argKat + "] grafer..");
             try
             {
                 if (!bg)
@@ -320,12 +320,12 @@ namespace KGSA
                 if (!bg)
                 {
                     webRanking.Navigate(htmlGraf);
-                    Logg.Log("Generering av graf for " + argKat + " tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                    Log.n("Generering av graf for " + argKat + " tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch(Exception ex)
             {
-                Logg.Log("Feil ved generering av grafikk for " + argKat + ". Exception: " + ex.ToString(), Color.Red);
+                Log.n("Feil ved generering av grafikk for " + argKat + ". Exception: " + ex.ToString(), Color.Red);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -338,7 +338,7 @@ namespace KGSA
         public static bool stopRanking = false;
         private void BuildButikkRanking(bool bg = false, BackgroundWorker bw = null)
         {
-            Logg.Log("Lager [Butikk] ranking..");
+            Log.n("Lager [Butikk] ranking..");
             bool abort = HarSisteVersjon("Butikk", appConfig.strButikk);
             try
             {
@@ -456,7 +456,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash("Butikk");
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -471,7 +471,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingButikk, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingButikk);
-                            if (!bg) Logg.Log("Ranking [Butikk] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [Butikk] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -480,7 +480,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -501,7 +501,7 @@ namespace KGSA
                     savedBudgetPage = cat;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + " Budget]..");
+                    Log.n("Oppdaterer [" + katArg + " Budget]..");
                     if (!bg)
                         webBudget.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -518,7 +518,7 @@ namespace KGSA
                     if (ranking.budgetInfo == null)
                     {
                         ClearBudgetHash(cat);
-                        Logg.Log("Mangler budsjett for " + katArg + ".");
+                        Log.n("Mangler budsjett for " + katArg + ".");
                         doc = new List<string>();
                         doc.Add(File.ReadAllText(htmlSetupBudget));
                         File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
@@ -575,7 +575,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearBudgetHash(cat);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webBudget.Navigate(htmlStopped);
                     }
                     else
@@ -590,7 +590,7 @@ namespace KGSA
                             File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webBudget.Navigate(htmlPage);
-                            if (!bg) Logg.Log("Budsjett [" + katArg + " Budget] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Budsjett [" + katArg + " Budget] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -599,7 +599,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webBudget.Navigate(htmlError);
@@ -611,7 +611,7 @@ namespace KGSA
 
         public void BuildWebRankingData(List<string> doc, DateTime date)
         {
-            Logg.Log("Web: Lager [Data] ranking..", Color.DarkGoldenrod);
+            Log.n("Web: Lager [Data] ranking..", Color.DarkGoldenrod);
             try
             {
                 DateTime dtFra = GetFirstDayOfMonth(date);
@@ -664,17 +664,17 @@ namespace KGSA
                 }
 
                 doc.Add(Resources.htmlEnd);
-                Logg.Log("Web: Ranking [Data] tok " + timewatch.Stop() + " sekunder.", Color.DarkGoldenrod, true);
+                Log.n("Web: Ranking [Data] tok " + timewatch.Stop() + " sekunder.", Color.DarkGoldenrod, true);
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
         public void BuildWebRankingAudioVideo(List<string> doc, DateTime date)
         {
-            Logg.Log("Web: Lager [AudioVideo] ranking..", Color.DarkGoldenrod);
+            Log.n("Web: Lager [AudioVideo] ranking..", Color.DarkGoldenrod);
             try
             {
                 DateTime dtFra = GetFirstDayOfMonth(date);
@@ -723,17 +723,17 @@ namespace KGSA
                 }
 
                 doc.Add(Resources.htmlEnd);
-                Logg.Log("Web: Ranking [AudioVideo] tok " + timewatch.Stop() + " sekunder.", Color.DarkGoldenrod, true);
+                Log.n("Web: Ranking [AudioVideo] tok " + timewatch.Stop() + " sekunder.", Color.DarkGoldenrod, true);
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
         public void BuildWebRankingTele(List<string> doc, DateTime date)
         {
-            Logg.Log("Web: Lager [Tele] ranking..", Color.DarkGoldenrod);
+            Log.n("Web: Lager [Tele] ranking..", Color.DarkGoldenrod);
             try
             {
                 DateTime dtFra = GetFirstDayOfMonth(date);
@@ -782,11 +782,11 @@ namespace KGSA
                 }
 
                 doc.Add(Resources.htmlEnd);
-                Logg.Log("Web: Ranking [Tele] tok " + timewatch.Stop() + " sekunder.", Color.DarkGoldenrod, true);
+                Log.n("Web: Ranking [Tele] tok " + timewatch.Stop() + " sekunder.", Color.DarkGoldenrod, true);
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -801,7 +801,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -924,7 +924,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -939,7 +939,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingData, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingData);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -948,7 +948,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -969,7 +969,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -1075,7 +1075,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -1090,7 +1090,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingKnowHow, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingKnowHow);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -1099,7 +1099,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -1120,7 +1120,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -1223,7 +1223,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -1238,7 +1238,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingAudioVideo, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingAudioVideo);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -1247,7 +1247,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -1268,7 +1268,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -1371,7 +1371,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -1386,7 +1386,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingTele, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingTele);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -1395,7 +1395,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -1416,7 +1416,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -1495,7 +1495,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -1510,7 +1510,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingOversikt, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingOversikt);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -1519,7 +1519,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -1540,7 +1540,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -1596,7 +1596,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -1611,7 +1611,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingToppselgere, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingToppselgere);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -1620,7 +1620,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -1641,7 +1641,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -1716,7 +1716,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -1731,7 +1731,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingLister, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingLister);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -1740,7 +1740,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -1752,7 +1752,7 @@ namespace KGSA
 
         private void BuildVinnRankingSelger(string selgerArg)
         {
-            Logg.Log("Henter vinnprodukt transaksjoner for selger..");
+            Log.n("Henter vinnprodukt transaksjoner for selger..");
             try
             {
                 webRanking.Navigate(htmlLoading);
@@ -1774,7 +1774,7 @@ namespace KGSA
                 if (stopRanking)
                 {
                     stopRanking = false;
-                    Logg.Log("Ranking stoppet.", Color.Red);
+                    Log.n("Ranking stoppet.", Color.Red);
                     webRanking.Navigate(htmlStopped);
                 }
                 else
@@ -1785,7 +1785,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
 
                 webRanking.Navigate(htmlError);
                 FormError errorMsg = new FormError("Feil ved generering av vinnprodukt transaksjoner for kunde.", ex);
@@ -1805,7 +1805,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "]..");
+                    Log.n("Oppdaterer [" + katArg + "]..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -1923,7 +1923,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -1938,7 +1938,7 @@ namespace KGSA
                             File.WriteAllLines(htmlRankingVinn, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlRankingVinn);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -1947,7 +1947,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -1988,7 +1988,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "] ..");
+                    Log.n("Oppdaterer [" + katArg + "] ..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -2025,7 +2025,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -2040,7 +2040,7 @@ namespace KGSA
                             File.WriteAllLines(htmlAvdTjenester, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlAvdTjenester);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -2049,7 +2049,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -2070,7 +2070,7 @@ namespace KGSA
                     savedPage = katArg;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + katArg + "] ..");
+                    Log.n("Oppdaterer [" + katArg + "] ..");
                     if (!bg)
                         webRanking.Navigate(htmlLoading);
                     var doc = new List<string>();
@@ -2111,7 +2111,7 @@ namespace KGSA
                     {
                         stopRanking = false;
                         ClearHash(katArg);
-                        Logg.Log("Ranking stoppet.", Color.Red);
+                        Log.n("Ranking stoppet.", Color.Red);
                         webRanking.Navigate(htmlStopped);
                     }
                     else
@@ -2126,7 +2126,7 @@ namespace KGSA
                             File.WriteAllLines(htmlAvdSnittpriser, doc.ToArray(), Encoding.Unicode);
                             if (!bg)
                                 webRanking.Navigate(htmlAvdSnittpriser);
-                            if (!bg) Logg.Log("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                            if (!bg) Log.n("Ranking [" + katArg + "] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                         }
                     }
                 }
@@ -2135,7 +2135,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!bg)
                 {
                     webRanking.Navigate(htmlError);
@@ -2156,9 +2156,9 @@ namespace KGSA
                 if (page == "Butikk" || page == "Data" || page == "Tele" || page == "AudioVideo" || page == "KnowHow")
                     RunReport(page);
                 else if (page == "Rapport")
-                    Logg.Log("Velg en kategori først.", Color.Black);
+                    Log.n("Velg en kategori først.", Color.Black);
                 else
-                    Logg.Log("Beklager, kan ikke lage rapport av gjeldene side.", Color.Black);
+                    Log.n("Beklager, kan ikke lage rapport av gjeldene side.", Color.Black);
             }
         }
 
@@ -2169,7 +2169,7 @@ namespace KGSA
                 if (!EmptyDatabase())
                 {
                     groupRankingChoices.Enabled = false;
-                    Logg.Log("Lager [" + katArg + "] rapport ..", Color.Black, false, true);
+                    Log.n("Lager [" + katArg + "] rapport ..", Color.Black, false, true);
                     bwReport.RunWorkerAsync(katArg);
                     HighlightButton();
                 }
@@ -2193,14 +2193,14 @@ namespace KGSA
             else if (katArg == "Tele")
                 makeTeleReport();
             else
-                Logg.Log("Ingen kategori valgt for rapport generering.");
+                Log.n("Ingen kategori valgt for rapport generering.");
         }
 
         private void bwReport_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             ProgressStop();
             if (!IsBusy(true, true))
-                Logg.Status("Klar.");
+                Log.Status("Klar.");
             groupRankingChoices.Enabled = true;
         }
 
@@ -2225,7 +2225,7 @@ namespace KGSA
                 if (stopRanking)
                 {
                     stopRanking = false;
-                    Logg.Log("Rapport stoppet.", Color.Red);
+                    Log.n("Rapport stoppet.", Color.Red);
                     webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
@@ -2233,7 +2233,7 @@ namespace KGSA
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
                     webRanking.Navigate(htmlRapport);
-                    Logg.Log("Rapport [KnowHow] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                    Log.n("Rapport [KnowHow] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
@@ -2265,7 +2265,7 @@ namespace KGSA
                 if (stopRanking)
                 {
                     stopRanking = false;
-                    Logg.Log("Rapport stoppet.", Color.Red);
+                    Log.n("Rapport stoppet.", Color.Red);
                     webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
@@ -2273,7 +2273,7 @@ namespace KGSA
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
                     webRanking.Navigate(htmlRapport);
-                    Logg.Log("Rapport [Data] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                    Log.n("Rapport [Data] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
@@ -2305,7 +2305,7 @@ namespace KGSA
                 if (stopRanking)
                 {
                     stopRanking = false;
-                    Logg.Log("Rapport stoppet.", Color.Red);
+                    Log.n("Rapport stoppet.", Color.Red);
                     webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
@@ -2313,7 +2313,7 @@ namespace KGSA
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
                     webRanking.Navigate(htmlRapport);
-                    Logg.Log("Rapport [AudioVideo] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                    Log.n("Rapport [AudioVideo] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
@@ -2345,7 +2345,7 @@ namespace KGSA
                 if (stopRanking)
                 {
                     stopRanking = false;
-                    Logg.Log("Rapport stoppet.", Color.Red);
+                    Log.n("Rapport stoppet.", Color.Red);
                     webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
@@ -2353,7 +2353,7 @@ namespace KGSA
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
                     webRanking.Navigate(htmlRapport);
-                    Logg.Log("Rapport [Tele] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                    Log.n("Rapport [Tele] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch (Exception ex)
@@ -2384,7 +2384,7 @@ namespace KGSA
                 if (stopRanking)
                 {
                     stopRanking = false;
-                    Logg.Log("Rapport stoppet.", Color.Red);
+                    Log.n("Rapport stoppet.", Color.Red);
                     webRanking.Navigate(htmlStopped);
                     timewatch.Stop();
                 }
@@ -2392,7 +2392,7 @@ namespace KGSA
                 {
                     File.WriteAllLines(htmlRapport, doc.ToArray(), Encoding.Unicode);
                     webRanking.Navigate(htmlRapport);
-                    Logg.Log("Rapport [Butikk] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
+                    Log.n("Rapport [Butikk] tok " + timewatch.Stop() + " sekunder.", Color.Black, true);
                 }
             }
             catch(Exception ex)

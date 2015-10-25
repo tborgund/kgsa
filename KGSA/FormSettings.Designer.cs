@@ -370,27 +370,10 @@
             this.label109 = new System.Windows.Forms.Label();
             this.radioLagerUtviklingMTD = new System.Windows.Forms.RadioButton();
             this.radioLagerUtviklingDato = new System.Windows.Forms.RadioButton();
-            this.tabPageWebserver = new System.Windows.Forms.TabPage();
-            this.groupBox36 = new System.Windows.Forms.GroupBox();
-            this.label126 = new System.Windows.Forms.Label();
-            this.textBoxWebserverPassword = new System.Windows.Forms.TextBox();
-            this.label125 = new System.Windows.Forms.Label();
-            this.label124 = new System.Windows.Forms.Label();
-            this.textBoxWebserverUser = new System.Windows.Forms.TextBox();
-            this.checkBoxWebserverSimpleAut = new System.Windows.Forms.CheckBox();
-            this.groupBox35 = new System.Windows.Forms.GroupBox();
-            this.label139 = new System.Windows.Forms.Label();
-            this.label123 = new System.Windows.Forms.Label();
-            this.comboBoxWebserverBindings = new System.Windows.Forms.ComboBox();
-            this.label122 = new System.Windows.Forms.Label();
-            this.numericWebserverPort = new System.Windows.Forms.NumericUpDown();
-            this.label121 = new System.Windows.Forms.Label();
-            this.label120 = new System.Windows.Forms.Label();
-            this.checkBoxWebserverEnabled = new System.Windows.Forms.CheckBox();
             this.tabPageVedlikehold = new System.Windows.Forms.TabPage();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.button18 = new System.Windows.Forms.Button();
-            this.debugCheckBox = new System.Windows.Forms.CheckBox();
+            this.checkBoxDebug = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.buttonMaintenancePrintStatus = new System.Windows.Forms.Button();
             this.label23 = new System.Windows.Forms.Label();
@@ -423,6 +406,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.errorMessage = new System.Windows.Forms.Label();
+            this.checkBoxDebugShowSql = new System.Windows.Forms.CheckBox();
             this.tabControlMain.SuspendLayout();
             this.tabPageGenerelt.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -506,10 +490,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericStoreObsoleteFilter)).BeginInit();
             this.groupBox30.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLagerPriserMaxDager)).BeginInit();
-            this.tabPageWebserver.SuspendLayout();
-            this.groupBox36.SuspendLayout();
-            this.groupBox35.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericWebserverPort)).BeginInit();
             this.tabPageVedlikehold.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -530,7 +510,6 @@
             this.tabControlMain.Controls.Add(this.tabPageService);
             this.tabControlMain.Controls.Add(this.tabPageGraf);
             this.tabControlMain.Controls.Add(this.tabPageLager);
-            this.tabControlMain.Controls.Add(this.tabPageWebserver);
             this.tabControlMain.Controls.Add(this.tabPageVedlikehold);
             this.tabControlMain.Location = new System.Drawing.Point(12, 12);
             this.tabControlMain.Multiline = true;
@@ -659,7 +638,6 @@
             this.checkBoxActivateExperimental.TabIndex = 48;
             this.checkBoxActivateExperimental.Text = "Aktiver eksperimentelle funksjoner.";
             this.checkBoxActivateExperimental.UseVisualStyleBackColor = true;
-            this.checkBoxActivateExperimental.CheckedChanged += new System.EventHandler(this.checkBoxActivateExperimental_CheckedChanged);
             // 
             // label132
             // 
@@ -826,10 +804,10 @@
             this.tabPageRanking.Controls.Add(this.groupBox25);
             this.tabPageRanking.Controls.Add(this.groupBox24);
             this.tabPageRanking.Controls.Add(this.groupBox3);
-            this.tabPageRanking.Location = new System.Drawing.Point(4, 40);
+            this.tabPageRanking.Location = new System.Drawing.Point(4, 22);
             this.tabPageRanking.Name = "tabPageRanking";
             this.tabPageRanking.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRanking.Size = new System.Drawing.Size(642, 417);
+            this.tabPageRanking.Size = new System.Drawing.Size(642, 435);
             this.tabPageRanking.TabIndex = 9;
             this.tabPageRanking.Text = "Ranking";
             this.tabPageRanking.UseVisualStyleBackColor = true;
@@ -1316,10 +1294,10 @@
             this.tabPagePdf.Controls.Add(this.groupBox23);
             this.tabPagePdf.Controls.Add(this.groupBox18);
             this.tabPagePdf.Controls.Add(this.groupBox15);
-            this.tabPagePdf.Location = new System.Drawing.Point(4, 40);
+            this.tabPagePdf.Location = new System.Drawing.Point(4, 22);
             this.tabPagePdf.Name = "tabPagePdf";
             this.tabPagePdf.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePdf.Size = new System.Drawing.Size(642, 417);
+            this.tabPagePdf.Size = new System.Drawing.Size(642, 435);
             this.tabPagePdf.TabIndex = 15;
             this.tabPagePdf.Text = "PDF";
             this.tabPagePdf.UseVisualStyleBackColor = true;
@@ -1778,10 +1756,10 @@
             this.tabPageToppselgere.Controls.Add(this.groupBox26);
             this.tabPageToppselgere.Controls.Add(this.groupBox13);
             this.tabPageToppselgere.Controls.Add(this.groupBox22);
-            this.tabPageToppselgere.Location = new System.Drawing.Point(4, 40);
+            this.tabPageToppselgere.Location = new System.Drawing.Point(4, 22);
             this.tabPageToppselgere.Name = "tabPageToppselgere";
             this.tabPageToppselgere.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageToppselgere.Size = new System.Drawing.Size(642, 417);
+            this.tabPageToppselgere.Size = new System.Drawing.Size(642, 435);
             this.tabPageToppselgere.TabIndex = 14;
             this.tabPageToppselgere.Text = "Toppselgere";
             this.tabPageToppselgere.UseVisualStyleBackColor = true;
@@ -2141,10 +2119,10 @@
             // 
             this.tabPageOversikt.Controls.Add(this.groupBox33);
             this.tabPageOversikt.Controls.Add(this.groupKrav);
-            this.tabPageOversikt.Location = new System.Drawing.Point(4, 40);
+            this.tabPageOversikt.Location = new System.Drawing.Point(4, 22);
             this.tabPageOversikt.Name = "tabPageOversikt";
             this.tabPageOversikt.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOversikt.Size = new System.Drawing.Size(642, 417);
+            this.tabPageOversikt.Size = new System.Drawing.Size(642, 435);
             this.tabPageOversikt.TabIndex = 13;
             this.tabPageOversikt.Text = "Oversikt";
             this.tabPageOversikt.UseVisualStyleBackColor = true;
@@ -2366,10 +2344,10 @@
             this.tabPageUtseende.Controls.Add(this.groupBox12);
             this.tabPageUtseende.Controls.Add(this.groupBox4);
             this.tabPageUtseende.Controls.Add(this.groupBox5);
-            this.tabPageUtseende.Location = new System.Drawing.Point(4, 40);
+            this.tabPageUtseende.Location = new System.Drawing.Point(4, 22);
             this.tabPageUtseende.Name = "tabPageUtseende";
             this.tabPageUtseende.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageUtseende.Size = new System.Drawing.Size(642, 417);
+            this.tabPageUtseende.Size = new System.Drawing.Size(642, 435);
             this.tabPageUtseende.TabIndex = 2;
             this.tabPageUtseende.Text = "Utseende";
             this.tabPageUtseende.UseVisualStyleBackColor = true;
@@ -3031,10 +3009,10 @@
             // 
             this.tabPageFavoritter.Controls.Add(this.groupBox32);
             this.tabPageFavoritter.Controls.Add(this.groupBox8);
-            this.tabPageFavoritter.Location = new System.Drawing.Point(4, 40);
+            this.tabPageFavoritter.Location = new System.Drawing.Point(4, 22);
             this.tabPageFavoritter.Name = "tabPageFavoritter";
             this.tabPageFavoritter.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFavoritter.Size = new System.Drawing.Size(642, 417);
+            this.tabPageFavoritter.Size = new System.Drawing.Size(642, 435);
             this.tabPageFavoritter.TabIndex = 5;
             this.tabPageFavoritter.Text = "Favoritter";
             this.tabPageFavoritter.UseVisualStyleBackColor = true;
@@ -3169,10 +3147,10 @@
             // 
             this.tabPageAvansert.Controls.Add(this.groupBox37);
             this.tabPageAvansert.Controls.Add(this.groupBox27);
-            this.tabPageAvansert.Location = new System.Drawing.Point(4, 40);
+            this.tabPageAvansert.Location = new System.Drawing.Point(4, 22);
             this.tabPageAvansert.Name = "tabPageAvansert";
             this.tabPageAvansert.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageAvansert.Size = new System.Drawing.Size(642, 417);
+            this.tabPageAvansert.Size = new System.Drawing.Size(642, 435);
             this.tabPageAvansert.TabIndex = 20;
             this.tabPageAvansert.Text = "Avansert";
             this.tabPageAvansert.UseVisualStyleBackColor = true;
@@ -3422,10 +3400,10 @@
             this.tabPageEpost.Controls.Add(this.groupBox28);
             this.tabPageEpost.Controls.Add(this.groupBox20);
             this.tabPageEpost.Controls.Add(this.groupBox1);
-            this.tabPageEpost.Location = new System.Drawing.Point(4, 40);
+            this.tabPageEpost.Location = new System.Drawing.Point(4, 22);
             this.tabPageEpost.Name = "tabPageEpost";
             this.tabPageEpost.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageEpost.Size = new System.Drawing.Size(642, 417);
+            this.tabPageEpost.Size = new System.Drawing.Size(642, 435);
             this.tabPageEpost.TabIndex = 7;
             this.tabPageEpost.Text = "E-post";
             this.tabPageEpost.UseVisualStyleBackColor = true;
@@ -3690,9 +3668,9 @@
             // tabPageService
             // 
             this.tabPageService.Controls.Add(this.groupBox19);
-            this.tabPageService.Location = new System.Drawing.Point(4, 40);
+            this.tabPageService.Location = new System.Drawing.Point(4, 22);
             this.tabPageService.Name = "tabPageService";
-            this.tabPageService.Size = new System.Drawing.Size(642, 417);
+            this.tabPageService.Size = new System.Drawing.Size(642, 435);
             this.tabPageService.TabIndex = 12;
             this.tabPageService.Text = "Service";
             this.tabPageService.UseVisualStyleBackColor = true;
@@ -3821,10 +3799,10 @@
             // tabPageGraf
             // 
             this.tabPageGraf.Controls.Add(this.groupBox9);
-            this.tabPageGraf.Location = new System.Drawing.Point(4, 40);
+            this.tabPageGraf.Location = new System.Drawing.Point(4, 22);
             this.tabPageGraf.Name = "tabPageGraf";
             this.tabPageGraf.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGraf.Size = new System.Drawing.Size(642, 417);
+            this.tabPageGraf.Size = new System.Drawing.Size(642, 435);
             this.tabPageGraf.TabIndex = 16;
             this.tabPageGraf.Text = "Graf";
             this.tabPageGraf.UseVisualStyleBackColor = true;
@@ -4053,10 +4031,10 @@
             this.tabPageLager.Controls.Add(this.groupBox10);
             this.tabPageLager.Controls.Add(this.groupBox31);
             this.tabPageLager.Controls.Add(this.groupBox30);
-            this.tabPageLager.Location = new System.Drawing.Point(4, 40);
+            this.tabPageLager.Location = new System.Drawing.Point(4, 22);
             this.tabPageLager.Name = "tabPageLager";
             this.tabPageLager.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLager.Size = new System.Drawing.Size(642, 417);
+            this.tabPageLager.Size = new System.Drawing.Size(642, 435);
             this.tabPageLager.TabIndex = 18;
             this.tabPageLager.Text = "Lager";
             this.tabPageLager.UseVisualStyleBackColor = true;
@@ -4305,193 +4283,6 @@
             this.radioLagerUtviklingDato.Text = "Beregn utvikling fra angitt dato:";
             this.radioLagerUtviklingDato.UseVisualStyleBackColor = true;
             // 
-            // tabPageWebserver
-            // 
-            this.tabPageWebserver.Controls.Add(this.groupBox36);
-            this.tabPageWebserver.Controls.Add(this.groupBox35);
-            this.tabPageWebserver.Location = new System.Drawing.Point(4, 40);
-            this.tabPageWebserver.Name = "tabPageWebserver";
-            this.tabPageWebserver.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWebserver.Size = new System.Drawing.Size(642, 417);
-            this.tabPageWebserver.TabIndex = 19;
-            this.tabPageWebserver.Text = "Webserver (Alpha)";
-            this.tabPageWebserver.UseVisualStyleBackColor = true;
-            // 
-            // groupBox36
-            // 
-            this.groupBox36.Controls.Add(this.label126);
-            this.groupBox36.Controls.Add(this.textBoxWebserverPassword);
-            this.groupBox36.Controls.Add(this.label125);
-            this.groupBox36.Controls.Add(this.label124);
-            this.groupBox36.Controls.Add(this.textBoxWebserverUser);
-            this.groupBox36.Controls.Add(this.checkBoxWebserverSimpleAut);
-            this.groupBox36.Location = new System.Drawing.Point(6, 171);
-            this.groupBox36.Name = "groupBox36";
-            this.groupBox36.Size = new System.Drawing.Size(630, 240);
-            this.groupBox36.TabIndex = 1;
-            this.groupBox36.TabStop = false;
-            this.groupBox36.Text = "Sikkerhet";
-            // 
-            // label126
-            // 
-            this.label126.AutoSize = true;
-            this.label126.Location = new System.Drawing.Point(20, 128);
-            this.label126.Name = "label126";
-            this.label126.Size = new System.Drawing.Size(208, 13);
-            this.label126.TabIndex = 5;
-            this.label126.Text = "Standard brukernavn/passord: User/user1";
-            // 
-            // textBoxWebserverPassword
-            // 
-            this.textBoxWebserverPassword.Location = new System.Drawing.Point(119, 91);
-            this.textBoxWebserverPassword.Name = "textBoxWebserverPassword";
-            this.textBoxWebserverPassword.PasswordChar = '*';
-            this.textBoxWebserverPassword.Size = new System.Drawing.Size(156, 20);
-            this.textBoxWebserverPassword.TabIndex = 4;
-            // 
-            // label125
-            // 
-            this.label125.AutoSize = true;
-            this.label125.Location = new System.Drawing.Point(20, 94);
-            this.label125.Name = "label125";
-            this.label125.Size = new System.Drawing.Size(48, 13);
-            this.label125.TabIndex = 3;
-            this.label125.Text = "Passord:";
-            // 
-            // label124
-            // 
-            this.label124.AutoSize = true;
-            this.label124.Location = new System.Drawing.Point(20, 61);
-            this.label124.Name = "label124";
-            this.label124.Size = new System.Drawing.Size(65, 13);
-            this.label124.TabIndex = 2;
-            this.label124.Text = "Brukernavn:";
-            // 
-            // textBoxWebserverUser
-            // 
-            this.textBoxWebserverUser.Location = new System.Drawing.Point(119, 58);
-            this.textBoxWebserverUser.Name = "textBoxWebserverUser";
-            this.textBoxWebserverUser.Size = new System.Drawing.Size(156, 20);
-            this.textBoxWebserverUser.TabIndex = 1;
-            // 
-            // checkBoxWebserverSimpleAut
-            // 
-            this.checkBoxWebserverSimpleAut.AutoSize = true;
-            this.checkBoxWebserverSimpleAut.Location = new System.Drawing.Point(23, 27);
-            this.checkBoxWebserverSimpleAut.Name = "checkBoxWebserverSimpleAut";
-            this.checkBoxWebserverSimpleAut.Size = new System.Drawing.Size(140, 17);
-            this.checkBoxWebserverSimpleAut.TabIndex = 0;
-            this.checkBoxWebserverSimpleAut.Text = "Krev enkel autentisering";
-            this.checkBoxWebserverSimpleAut.UseVisualStyleBackColor = true;
-            // 
-            // groupBox35
-            // 
-            this.groupBox35.Controls.Add(this.label139);
-            this.groupBox35.Controls.Add(this.label123);
-            this.groupBox35.Controls.Add(this.comboBoxWebserverBindings);
-            this.groupBox35.Controls.Add(this.label122);
-            this.groupBox35.Controls.Add(this.numericWebserverPort);
-            this.groupBox35.Controls.Add(this.label121);
-            this.groupBox35.Controls.Add(this.label120);
-            this.groupBox35.Controls.Add(this.checkBoxWebserverEnabled);
-            this.groupBox35.Location = new System.Drawing.Point(6, 6);
-            this.groupBox35.Name = "groupBox35";
-            this.groupBox35.Size = new System.Drawing.Size(630, 159);
-            this.groupBox35.TabIndex = 0;
-            this.groupBox35.TabStop = false;
-            this.groupBox35.Text = "Generelt           ";
-            // 
-            // label139
-            // 
-            this.label139.AutoSize = true;
-            this.label139.ForeColor = System.Drawing.Color.ForestGreen;
-            this.label139.Location = new System.Drawing.Point(54, 0);
-            this.label139.Name = "label139";
-            this.label139.Size = new System.Drawing.Size(25, 13);
-            this.label139.TabIndex = 47;
-            this.label139.Text = "NY!";
-            // 
-            // label123
-            // 
-            this.label123.AutoSize = true;
-            this.label123.Location = new System.Drawing.Point(20, 56);
-            this.label123.Name = "label123";
-            this.label123.Size = new System.Drawing.Size(73, 13);
-            this.label123.TabIndex = 7;
-            this.label123.Text = "Bind server til:";
-            // 
-            // comboBoxWebserverBindings
-            // 
-            this.comboBoxWebserverBindings.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxWebserverBindings.FormattingEnabled = true;
-            this.comboBoxWebserverBindings.Items.AddRange(new object[] {
-            "Importer bare KG/SA relaterte salg",
-            "Importer alle transaksjoner (alle avd.)",
-            "Importer alle trans. (bare Favoritte avd.)"});
-            this.comboBoxWebserverBindings.Location = new System.Drawing.Point(119, 53);
-            this.comboBoxWebserverBindings.Name = "comboBoxWebserverBindings";
-            this.comboBoxWebserverBindings.Size = new System.Drawing.Size(176, 21);
-            this.comboBoxWebserverBindings.TabIndex = 6;
-            // 
-            // label122
-            // 
-            this.label122.AutoSize = true;
-            this.label122.Location = new System.Drawing.Point(236, 89);
-            this.label122.Name = "label122";
-            this.label122.Size = new System.Drawing.Size(198, 13);
-            this.label122.TabIndex = 5;
-            this.label122.Text = "Eksempel: 1024 - 65535 Standard: 8080";
-            // 
-            // numericWebserverPort
-            // 
-            this.numericWebserverPort.Location = new System.Drawing.Point(119, 87);
-            this.numericWebserverPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.numericWebserverPort.Minimum = new decimal(new int[] {
-            1024,
-            0,
-            0,
-            0});
-            this.numericWebserverPort.Name = "numericWebserverPort";
-            this.numericWebserverPort.Size = new System.Drawing.Size(92, 20);
-            this.numericWebserverPort.TabIndex = 3;
-            this.numericWebserverPort.Value = new decimal(new int[] {
-            8080,
-            0,
-            0,
-            0});
-            // 
-            // label121
-            // 
-            this.label121.AutoSize = true;
-            this.label121.Location = new System.Drawing.Point(20, 89);
-            this.label121.Name = "label121";
-            this.label121.Size = new System.Drawing.Size(83, 13);
-            this.label121.TabIndex = 2;
-            this.label121.Text = "Webserver port:";
-            // 
-            // label120
-            // 
-            this.label120.AutoSize = true;
-            this.label120.Location = new System.Drawing.Point(219, 28);
-            this.label120.Name = "label120";
-            this.label120.Size = new System.Drawing.Size(299, 13);
-            this.label120.TabIndex = 1;
-            this.label120.Text = "Obs! Endringer trer ikke i kraft før etter omstart av programmet.";
-            // 
-            // checkBoxWebserverEnabled
-            // 
-            this.checkBoxWebserverEnabled.AutoSize = true;
-            this.checkBoxWebserverEnabled.Location = new System.Drawing.Point(23, 27);
-            this.checkBoxWebserverEnabled.Name = "checkBoxWebserverEnabled";
-            this.checkBoxWebserverEnabled.Size = new System.Drawing.Size(114, 17);
-            this.checkBoxWebserverEnabled.TabIndex = 0;
-            this.checkBoxWebserverEnabled.Text = "Aktiver Webserver";
-            this.checkBoxWebserverEnabled.UseVisualStyleBackColor = true;
-            // 
             // tabPageVedlikehold
             // 
             this.tabPageVedlikehold.Controls.Add(this.groupBox16);
@@ -4505,8 +4296,9 @@
             // 
             // groupBox16
             // 
+            this.groupBox16.Controls.Add(this.checkBoxDebugShowSql);
             this.groupBox16.Controls.Add(this.button18);
-            this.groupBox16.Controls.Add(this.debugCheckBox);
+            this.groupBox16.Controls.Add(this.checkBoxDebug);
             this.groupBox16.Location = new System.Drawing.Point(6, 312);
             this.groupBox16.Name = "groupBox16";
             this.groupBox16.Size = new System.Drawing.Size(633, 99);
@@ -4524,15 +4316,15 @@
             this.button18.UseVisualStyleBackColor = true;
             this.button18.Click += new System.EventHandler(this.button18_Click);
             // 
-            // debugCheckBox
+            // checkBoxDebug
             // 
-            this.debugCheckBox.AutoSize = true;
-            this.debugCheckBox.Location = new System.Drawing.Point(22, 30);
-            this.debugCheckBox.Name = "debugCheckBox";
-            this.debugCheckBox.Size = new System.Drawing.Size(92, 17);
-            this.debugCheckBox.TabIndex = 7;
-            this.debugCheckBox.Text = "Aktiver debug";
-            this.debugCheckBox.UseVisualStyleBackColor = true;
+            this.checkBoxDebug.AutoSize = true;
+            this.checkBoxDebug.Location = new System.Drawing.Point(22, 30);
+            this.checkBoxDebug.Name = "checkBoxDebug";
+            this.checkBoxDebug.Size = new System.Drawing.Size(92, 17);
+            this.checkBoxDebug.TabIndex = 7;
+            this.checkBoxDebug.Text = "Aktiver debug";
+            this.checkBoxDebug.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
@@ -4569,7 +4361,7 @@
             this.buttonMaintenancePrintStatus.Name = "buttonMaintenancePrintStatus";
             this.buttonMaintenancePrintStatus.Size = new System.Drawing.Size(128, 23);
             this.buttonMaintenancePrintStatus.TabIndex = 37;
-            this.buttonMaintenancePrintStatus.Text = "Print innhold til logg";
+            this.buttonMaintenancePrintStatus.Text = "Print database til Logg";
             this.buttonMaintenancePrintStatus.UseVisualStyleBackColor = true;
             this.buttonMaintenancePrintStatus.Click += new System.EventHandler(this.buttonMaintenancePrintStatus_Click);
             // 
@@ -4827,6 +4619,16 @@
             this.errorMessage.Size = new System.Drawing.Size(0, 13);
             this.errorMessage.TabIndex = 33;
             // 
+            // checkBoxDebugShowSql
+            // 
+            this.checkBoxDebugShowSql.AutoSize = true;
+            this.checkBoxDebugShowSql.Location = new System.Drawing.Point(22, 53);
+            this.checkBoxDebugShowSql.Name = "checkBoxDebugShowSql";
+            this.checkBoxDebugShowSql.Size = new System.Drawing.Size(116, 17);
+            this.checkBoxDebugShowSql.TabIndex = 10;
+            this.checkBoxDebugShowSql.Text = "Vis utvidet SQL log";
+            this.checkBoxDebugShowSql.UseVisualStyleBackColor = true;
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -4963,12 +4765,6 @@
             this.groupBox30.ResumeLayout(false);
             this.groupBox30.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLagerPriserMaxDager)).EndInit();
-            this.tabPageWebserver.ResumeLayout(false);
-            this.groupBox36.ResumeLayout(false);
-            this.groupBox36.PerformLayout();
-            this.groupBox35.ResumeLayout(false);
-            this.groupBox35.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericWebserverPort)).EndInit();
             this.tabPageVedlikehold.ResumeLayout(false);
             this.groupBox16.ResumeLayout(false);
             this.groupBox16.PerformLayout();
@@ -5095,7 +4891,7 @@
         private System.Windows.Forms.Label labelSizeMainDb;
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.Button button18;
-        private System.Windows.Forms.CheckBox debugCheckBox;
+        private System.Windows.Forms.CheckBox checkBoxDebug;
         private System.Windows.Forms.Button button20;
         private System.Windows.Forms.TabPage tabPageService;
         private System.Windows.Forms.GroupBox groupBox19;
@@ -5264,22 +5060,6 @@
         private System.Windows.Forms.Label label119;
         private System.Windows.Forms.NumericUpDown numericListerMax;
         private System.Windows.Forms.CheckBox checkBoxListerAccessories;
-        private System.Windows.Forms.TabPage tabPageWebserver;
-        private System.Windows.Forms.GroupBox groupBox35;
-        private System.Windows.Forms.CheckBox checkBoxWebserverEnabled;
-        private System.Windows.Forms.NumericUpDown numericWebserverPort;
-        private System.Windows.Forms.Label label121;
-        private System.Windows.Forms.Label label120;
-        private System.Windows.Forms.Label label122;
-        private System.Windows.Forms.Label label123;
-        private System.Windows.Forms.ComboBox comboBoxWebserverBindings;
-        private System.Windows.Forms.GroupBox groupBox36;
-        private System.Windows.Forms.Label label124;
-        private System.Windows.Forms.TextBox textBoxWebserverUser;
-        private System.Windows.Forms.CheckBox checkBoxWebserverSimpleAut;
-        private System.Windows.Forms.TextBox textBoxWebserverPassword;
-        private System.Windows.Forms.Label label125;
-        private System.Windows.Forms.Label label126;
         private System.Windows.Forms.Button button23;
         private System.Windows.Forms.CheckBox checkBoxEmailUseBcc;
         private System.Windows.Forms.CheckBox checkBoxEmailUseSsl;
@@ -5317,7 +5097,6 @@
         private System.Windows.Forms.Label label134;
         private System.Windows.Forms.Label label136;
         private System.Windows.Forms.Label label138;
-        private System.Windows.Forms.Label label139;
         private System.Windows.Forms.CheckBox checkBoxVinnSimple;
         private System.Windows.Forms.CheckBox checkBoxVinnVisAftersales;
         private System.Windows.Forms.CheckBox checkBoxActivateExperimental;
@@ -5375,5 +5154,6 @@
         private System.Windows.Forms.CheckBox checkBoxPDFweekly;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.CheckBox checkBoxDebugShowSql;
     }
 }

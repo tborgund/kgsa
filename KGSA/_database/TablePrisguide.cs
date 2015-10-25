@@ -58,7 +58,7 @@ namespace KGSA
                 var cmdIndexDate = new SqlCeCommand(sqlIndexDate, main.connection);
                 cmdIndexDate.ExecuteNonQuery();
             }
-            Logg.Debug("Table " + TABLE_NAME + " ready!");
+            Log.d("Table " + TABLE_NAME + " ready!");
         }
 
         public void Reset()
@@ -69,7 +69,7 @@ namespace KGSA
                 cmdDrop.ExecuteNonQuery();
             }
             Create();
-            Logg.Debug("Table " + TABLE_NAME + " cleared and ready!");
+            Log.d("Table " + TABLE_NAME + " cleared and ready!");
         }
 
         public DataTable GetDataTable()
@@ -92,10 +92,10 @@ namespace KGSA
             string sql = "DELETE FROM " + TABLE_NAME + " WHERE " + KEY_AVDELING + " = " + main.appConfig.Avdeling
                 + " AND CONVERT(NVARCHAR(10),Date,121) >= CONVERT(NVARCHAR(10),'" + date.ToString("yyyy-MM-dd")
                 + "',121) AND CONVERT(NVARCHAR(10),Date,121) <= CONVERT(NVARCHAR(10),'" + date.ToString("yyyy-MM-dd") + "',121)";
-            Logg.Debug("SQL: " + sql);
+            Log.d("SQL: " + sql);
             SqlCeCommand command = new SqlCeCommand(sql, main.connection);
             var result = command.ExecuteNonQuery();
-            Logg.Debug(TABLE_NAME + ": Slettet " + result + " oppføringer for dato: " + date.ToShortDateString());
+            Log.d(TABLE_NAME + ": Slettet " + result + " oppføringer for dato: " + date.ToShortDateString());
         }
 
         public DataTable GetPrisguideTable(int avdeling, DateTime date)
@@ -133,7 +133,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return FormMain.rangeMin;
         }

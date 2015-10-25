@@ -50,7 +50,11 @@ namespace KGSA
         {
             this.noBlockingMode = noBlocking;
             if (hasBluetoothSupport(true))
+            {
+                if (main.appConfig.blueServerDatabaseUpdated.Date != DateTime.Now.Date)
+                    Log.BtServer("App-databasene trenger oppdatering. Sist oppdatert: " + main.appConfig.blueServerDatabaseUpdated.ToShortDateString(), true);
                 runServer();
+            }
         }
 
         public void StopServer()
@@ -70,24 +74,23 @@ namespace KGSA
             if (bluetoothRadio == null)
             {
                 if (noBlocking)
-                    Logg.BtServer("Ingen støttet bluetooth maskinvare er tilkoblet eller slått på.", true);
+                    Log.BtServer("Ingen støttet bluetooth maskinvare er tilkoblet eller slått på.", true);
                 else
-                    Logg.Alert("Ingen støttet bluetooth maskinvare er tilkoblet eller slått på.", "Bluetooth maskinvare mangler", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+                    Log.Alert("Ingen støttet bluetooth maskinvare er tilkoblet eller slått på.", "Bluetooth maskinvare mangler", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
                 return false;
             }
             else
             {
-                Logg.BtServer("Bluetooth enhet funnet: " + bluetoothRadio.Name + " (" + bluetoothRadio.LocalAddress + ") Modus: " + bluetoothRadio.Mode.ToString());
+                Log.BtServer("Bluetooth enhet funnet: " + bluetoothRadio.Name + " (" + bluetoothRadio.LocalAddress + ") Modus: " + bluetoothRadio.Mode.ToString());
                 if (!bluetoothRadio.Mode.ToString().Equals("Discoverable"))
                 {
                     if (noBlocking)
-                    {
-                        Logg.BtServer("Advarsel: Denne maskinen er ikke synlig for andre Bluetooth enheter. Det anbefales at den gjøres synlig for at App'en kan oppdateres automatisk.", true);
-                    }
+                        Log.BtServer("Advarsel: Denne maskinen er ikke synlig for andre Bluetooth enheter."
+                            + " Det anbefales at den gjøres synlig for at App'en kan oppdateres automatisk.", true);
                     else
-                    {
-                        Logg.Alert("Advarsel: Denne maskinen er ikke synlig for andre Bluetooth enheter. Det anbefales at den gjøres synlig for at App'en kan oppdateres automatisk.", "Bluetooth ikke synlig", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
-                    }
+                        Log.Alert("Advarsel: Denne maskinen er ikke synlig for andre Bluetooth enheter."
+                            + " Det anbefales at den gjøres synlig for at App'en kan oppdateres automatisk.",
+                            "Bluetooth ikke synlig", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
                 }
                 return true;
             }
@@ -97,11 +100,6 @@ namespace KGSA
         {
             bluetoothServerThread = new Thread(new ThreadStart(ServerListeningThread));
             bluetoothServerThread.Start();
-            if (noBlockingMode)
-            {
-                main.btOnToolStripMenuItem.Checked = true;
-                main.btOffToolStripMenuItem.Checked = false;
-            }
         }
 
         internal void ServerListeningThread()
@@ -118,18 +116,18 @@ namespace KGSA
                 catch (Exception ex)
                 {
                     serverStarted = false;
-                    Logg.Unhandled(ex);
+                    Log.Unhandled(ex);
                     if (noBlockingMode)
                     {
-                        Logg.BtServer("Bluetooth enhet er ikke støttet, er slått av, eller mangler." + ex.Message, true);
+                        Log.BtServer("Bluetooth enhet er ikke støttet, er slått av, eller mangler." + ex.Message, true);
                     }
                     else
                     {
-                        Logg.ErrorDialog(ex, "Problem oppstod ved start av Bluetooth listener.\nBluetooth enhet er ikke støttet, er slått av, eller mangler. Kan også oppstå når der er problem med programvaren/driver til Bluetooth maskinvaren.", "Bluetooth serveren kan ikke starte.");
+                        Log.ErrorDialog(ex, "Problem oppstod ved start av Bluetooth listener.\nBluetooth enhet er ikke støttet, er slått av, eller mangler. Kan også oppstå når der er problem med programvaren/driver til Bluetooth maskinvaren.", "Bluetooth serveren kan ikke starte.");
                     }
                 }
 
-                Logg.BtServer("Bluetooth server har startet. Aksepterer tilkoblinger fra alle MScanner mobiler fra versjon " + main.appConfig.blueServerMinimumAcceptedVersion);
+                Log.BtServer("Bluetooth server har startet. Aksepterer tilkoblinger fra alle MScanner mobiler fra versjon " + main.appConfig.blueServerMinimumAcceptedVersion);
                 while (true)
                 {
                     try
@@ -145,21 +143,21 @@ namespace KGSA
                             }
                         }
                     }
-                    catch (SocketException ex) { Logg.BtServer("Lese/skrive feil: " + ex.Message); break; }
-                    catch (Exception ex) { Logg.Unhandled(ex); break; }
+                    catch (SocketException ex) { Log.BtServer("Lese/skrive feil: " + ex.Message); break; }
+                    catch (Exception ex) { Log.Unhandled(ex); break; }
                 }
 
                 if (blueListener != null)
                     blueListener.Stop();
 
                 if (blueListener != null)
-                    Logg.BtServer("Server avslått");
+                    Log.BtServer("Server avslått");
 
                 serverStarted = false;
             }
             catch (Exception ex)
             {
-                Logg.BtServer("Generell feil: " + ex.Message);
+                Log.BtServer("Generell feil: " + ex.Message);
             }
             finally
             {
@@ -177,13 +175,26 @@ namespace KGSA
             Stream stream = null;
             try
             {
-                Logg.BtServer("MScanner med navn " + client.RemoteMachineName + " kobler til..");
+                Log.BtServer("MScanner med navn " + client.RemoteMachineName + " kobler til..");
                 this.clientName = client.RemoteMachineName;
                 this.clientAccepted = false;
                 this.clientAppName = "Unknown";
                 this.clientAppVersion = 0;
                 stream = client.GetStream();
                 stream.ReadTimeout = 10 * 1000;
+
+                if (main.appConfig.blueServerDatabaseUpdated.Date != DateTime.Now.Date)
+                {
+                    Log.BtServer("App-databasene trenger oppdatering. Sist oppdatert: " + main.appConfig.blueServerDatabaseUpdated.ToShortDateString());
+                    if (FormMain.appManagerIsBusy)
+                        Log.BtServer("AppManager er opptatt: App-databasene er iferd med å bli oppdatert");
+                    else
+                    {
+                        AppManager app = new AppManager(main);
+                        app.UpdateAllAsync();
+                        return;
+                    }
+                }
 
                 while (true)
                 {
@@ -208,7 +219,7 @@ namespace KGSA
                         }
                         if (strServerMsg.StartsWith(CMD_GOODBYE))
                         {
-                            Logg.BtServer("(" + this.clientName + ") Goodbye!");
+                            Log.BtServer("(" + this.clientName + ") Goodbye!");
                             break;
                         }
 
@@ -216,8 +227,8 @@ namespace KGSA
                     }
                     catch (Exception ex)
                     {
-                        Logg.BtServer("Kommunikasjons feil med " + this.clientName + ". Kobler fra..", true);
-                        Logg.Unhandled(ex);
+                        Log.BtServer("Kommunikasjons feil med " + this.clientName + ". Kobler fra..", true);
+                        Log.Unhandled(ex);
                         break;
                     }
                 }
@@ -231,11 +242,11 @@ namespace KGSA
                 if (client != null)
                     client.Close();
 
-                Logg.BtServer("(" + this.clientName + ") Koblet fra.");
+                Log.BtServer("(" + this.clientName + ") Koblet fra.");
             }
             catch (Exception ex)
             {
-                Logg.BtServer("Generell feil: " + ex.Message);
+                Log.BtServer("Generell feil: " + ex.Message);
             }
             finally
             {
@@ -261,7 +272,7 @@ namespace KGSA
                 string[] lines = strClientMsg.Split(';');
                 if (lines == null || !lines[0].Equals(APP_PACKAGE_NAME) || Convert.ToDouble(lines[1]) < main.appConfig.blueServerMinimumAcceptedVersion)
                 {
-                    Logg.BtServer(this.clientName + " har ikke en kompatibel versjon av MScanner. Kobles fra..");
+                    Log.BtServer(this.clientName + " har ikke en kompatibel versjon av MScanner. Kobles fra..");
                     sendMessage(stream, RESP_REJECTED);
                     return false;
                 }
@@ -269,22 +280,22 @@ namespace KGSA
                 this.clientAppName = lines[0];
                 this.clientAppVersion = Convert.ToInt32(lines[1]);
 
-                Logg.BtServer(this.clientName + " koblet til. Navn: " + this.clientAppName + " App versjon: " + this.clientAppVersion);
+                Log.BtServer(this.clientName + " koblet til. Navn: " + this.clientAppName + " App versjon: " + this.clientAppVersion);
                 if (!sendMessage(stream, RESP_ACCEPTED + ";" + main.appConfig.blueProductExportDate.ToString("dd.MM.yy") + ";" + main.appConfig.blueInventoryExportDate.ToString("dd.MM.yy")))
                 {
-                    Logg.BtServer("Kommunikasjons feil med " + this.clientName + ". Kobles fra..");
+                    Log.BtServer("Kommunikasjons feil med " + this.clientName + ". Kobles fra..");
                     return false;
                 }
 
                 clientAccepted = true;
-                Logg.BtServer(this.clientName + " er klar til å sende kommandoer.");
+                Log.BtServer(this.clientName + " er klar til å sende kommandoer.");
 
                 return true;
             }
             catch (Exception ex)
             {
-                Logg.BtServer("Feil under initialisering av tilkoblingen til " + this.clientName + ". Kobles fra..");
-                Logg.Unhandled(ex);
+                Log.BtServer("Feil under initialisering av tilkoblingen til " + this.clientName + ". Kobles fra..");
+                Log.Unhandled(ex);
             }
             this.clientAccepted = false;
             return false;
@@ -297,17 +308,17 @@ namespace KGSA
                 string[] lines = strClientMsg.Split(';');
                 if (lines == null || lines.Length != 2 || String.IsNullOrEmpty(lines[1]))
                 {
-                    Logg.BtServer("(" + this.clientName + ") Kommunikasjons problem. Kobler fra..");
+                    Log.BtServer("(" + this.clientName + ") Kommunikasjons problem. Kobler fra..");
                     return false;
                 }
 
                 string dateFormat = "dd.MM.yy";
                 DateTime date = DateTime.ParseExact(lines[1], dateFormat, FormMain.norway);
 
-                Logg.BtServer("(" + this.clientName + ") Er sist oppdatert " + date.ToShortDateString());
+                Log.BtServer("(" + this.clientName + ") Er sist oppdatert " + date.ToShortDateString());
 
                 try { Thread.Sleep(1500); } // We may disconnect devices if we reply too fast. Most communication methods has otherwise mandatory delays
-                catch (Exception ex) { Logg.Unhandled(ex); }
+                catch (Exception ex) { Log.Unhandled(ex); }
 
                 string filepath = FormMain.settingsPath + @"\" + filenameArg;
 
@@ -323,7 +334,7 @@ namespace KGSA
                 }
                 catch (IOException ex)
                 {
-                    Logg.Log("Kan ikke lese database! Feilmelding: " + ex.Message, Color.Red);
+                    Log.n("Kan ikke lese database! Feilmelding: " + ex.Message, Color.Red);
                     if (fsSource != null)
                         fsSource.Close();
                     if (memoryStream != null)
@@ -334,43 +345,43 @@ namespace KGSA
                 long dataLength = memoryStream.Length;
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
-                Logg.BtServer("Forbereder sending.. Størrelse: " + BytesToString((long)dataLength));
+                Log.BtServer("Forbereder sending.. Størrelse: " + BytesToString((long)dataLength));
 
                 if (!sendMessage(stream, RESP_SENDING_FILE + ";" + filenameArg + ";" + dataLength.ToString()))
                 {
-                    Logg.BtServer("(" + this.clientName + ") Kommunikasjons problem. Kobler fra..", true);
+                    Log.BtServer("(" + this.clientName + ") Kommunikasjons problem. Kobler fra..", true);
                     return false;
                 }
 
                 strClientMsg = waitForMessage(stream);
                 if (!strClientMsg.Equals(CMD_START_TRANSFER))
                 {
-                    Logg.BtServer("Ukjent kommando sendt fra " + this.clientName + ": '" + strClientMsg + "'", true);
+                    Log.BtServer("Ukjent kommando sendt fra " + this.clientName + ": '" + strClientMsg + "'", true);
                     return false;
                 }
 
-                Logg.BtServer("Sender fil til " + this.clientName + "..");
+                Log.BtServer("Sender fil til " + this.clientName + "..");
                 if (!sendFile(stream, memoryStream))
                 {
-                    Logg.BtServer("(" + this.clientName + ") Filoverføring uventet avbrutt.", true);
+                    Log.BtServer("(" + this.clientName + ") Filoverføring uventet avbrutt.", true);
                     return false;
                 }
 
-                Logg.BtServer("(" + this.clientName + ") Filoverføring ferdig. Venter på verifikasjon..");
+                Log.BtServer("(" + this.clientName + ") Filoverføring ferdig. Venter på verifikasjon..");
                 strClientMsg = waitForMessage(stream);
                 if (!strClientMsg.Equals(CMD_OK))
                 {
-                    Logg.BtServer("Ukjent kommando sendt fra " + this.clientName + ": '" + strClientMsg + "'", true);
+                    Log.BtServer("Ukjent kommando sendt fra " + this.clientName + ": '" + strClientMsg + "'", true);
                     return false;
                 }
-                Logg.BtServer("(" + this.clientName + ") Mottat fil uten feil");
+                Log.BtServer("(" + this.clientName + ") Mottat fil uten feil");
 
                 return true;
             }
             catch (Exception ex)
             {
-                Logg.BtServer("Feil under tilkobling av " + this.clientName + ". Kobles fra..");
-                Logg.Debug("Unntak ved serverUpdateRoutine(): " + ex.Message);
+                Log.BtServer("Feil under tilkobling av " + this.clientName + ". Kobles fra..");
+                Log.d("Unntak ved serverUpdateRoutine(): " + ex.Message);
             }
             this.clientAccepted = false;
             return false;
@@ -392,16 +403,16 @@ namespace KGSA
             try
             {
                 try { Thread.Sleep(2000); }
-                catch (Exception ex) { Logg.Unhandled(ex); }
+                catch (Exception ex) { Log.Unhandled(ex); }
 
                 byte[] send = Encoding.UTF8.GetBytes(message);
                 stream.Write(send, 0, send.Length);
-                Logg.Debug("btserver: Melding sendt til '" + message + "'");
+                Log.d("btserver: Melding sendt til '" + message + "'");
                 return true;
             }
             catch (Exception)
             {
-                Logg.Debug("btserver: Kunne ikke sende melding til klient: " + message);
+                Log.d("btserver: Kunne ikke sende melding til klient: " + message);
             }
             return false;
         }
@@ -414,7 +425,7 @@ namespace KGSA
             try
             {
                 try { Thread.Sleep(2000); }
-                catch (Exception ex) { Logg.Unhandled(ex); }
+                catch (Exception ex) { Log.Unhandled(ex); }
 
                 while ((bytes = inStream.Read(buffer, 0, buffer.Length)) != 0)
                 {
@@ -426,10 +437,10 @@ namespace KGSA
 
                 return true;
             }
-            catch (TimeoutException) { Logg.Debug("btserver: klient tok for lang tid til å svare."); }
+            catch (TimeoutException) { Log.d("btserver: klient tok for lang tid til å svare."); }
             catch (Exception ex)
             {
-                Logg.Debug("btserver: Unntak ved lesing/skriving til bluetooth klient. Melding: " + ex.Message);
+                Log.d("btserver: Unntak ved lesing/skriving til bluetooth klient. Melding: " + ex.Message);
                 if (inStream != null)
                     inStream.Close();
             }
@@ -454,17 +465,17 @@ namespace KGSA
                         String str = Encoding.UTF8.GetString(buffer).TrimEnd('\0');
                         if (str != null && str.Length > 0)
                         {
-                            Logg.Debug("btserver: Melding fra klient: '" + str + "'");
+                            Log.d("btserver: Melding fra klient: '" + str + "'");
                             return str;
                         }
                         else
-                            Logg.Debug("btserver: Melding fra klient var tom (ikke Null)!");
+                            Log.d("btserver: Melding fra klient var tom (ikke Null)!");
                     }
                 }
-                catch (TimeoutException) { Logg.Debug("btserver: klient tok for lang tid til å svare."); break; }
+                catch (TimeoutException) { Log.d("btserver: klient tok for lang tid til å svare."); break; }
                 catch (Exception ex)
                 {
-                    Logg.Debug("btserver: Unntak ved lesing/skriving til bluetooth klient. Melding: " + ex.Message);
+                    Log.d("btserver: Unntak ved lesing/skriving til bluetooth klient. Melding: " + ex.Message);
                     break;
                 }
             }

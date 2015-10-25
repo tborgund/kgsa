@@ -78,7 +78,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Debug("Unntak ved rapport generering.", ex);
+                Log.d("Unntak ved rapport generering.", ex);
             }
         }
 

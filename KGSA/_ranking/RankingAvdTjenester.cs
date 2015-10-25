@@ -94,7 +94,7 @@ namespace KGSA
                 }
                 else
                 {
-                    Logg.Log("Ingen rank mode valgt: " + rankMode, Color.Red);
+                    Log.n("Ingen rank mode valgt: " + rankMode, Color.Red);
                     return null;
                 }
 
@@ -107,7 +107,7 @@ namespace KGSA
 
                 if (main.arrayDbAvd == null || main.arrayDbAvd.ToList().Count == 0 && main.appConfig.rankingAvdelingShowAll)
                 {
-                    Logg.Log("Vent til avdelingslisten er oppdatert..", Color.Red);
+                    Log.n("Vent til avdelingslisten er oppdatert..", Color.Red);
                     return null;
                 }
 
@@ -137,7 +137,7 @@ namespace KGSA
                     if (StopRankingPending())
                         return dtWork;
 
-                    Logg.Status(status + " " + avdeling.Get(avdStr));
+                    Log.Status(status + " " + avdeling.Get(avdStr));
 
                     var rowsGet = sqlce.Select("(Avdeling = " + avdStr + ")");
                     using (DataTable sqlceAvd = rowsGet.Any() ? rowsGet.CopyToDataTable() : sqlce.Clone())
@@ -365,7 +365,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -380,7 +380,7 @@ namespace KGSA
 
                 string status = "Oppdaterer [Tjenester] .. " + service;
 
-                Logg.Status(status);
+                Log.Status(status);
                 var hashId = random.Next(999, 99999);
 
                 string urlID = "linkx";
@@ -471,7 +471,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Feil oppstod under ranking av alle tjenester." };
             }
         }

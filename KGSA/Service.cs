@@ -62,7 +62,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -89,7 +89,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -110,7 +110,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -182,7 +182,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -227,7 +227,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -292,7 +292,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -307,7 +307,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }
@@ -404,7 +404,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -456,7 +456,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1074,11 +1074,11 @@ namespace KGSA
                     }
                 }
                 else
-                    Logg.Debug("Service: Databasen oppfyller ikke krav for lagring av historikk.");
+                    Log.d("Service: Databasen oppfyller ikke krav for lagring av historikk.");
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1230,7 +1230,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -1245,7 +1245,7 @@ namespace KGSA
 
                     var command = new SqlCeCommand("DELETE FROM tblServiceHistory WHERE (Dato = '" + obj.oppdatert.ToString("yyy-MM-dd") + "') AND (Avdeling = '" + avd + "')", main.connection);
                     var deleted = command.ExecuteNonQuery();
-                    Logg.Debug("Oppdatert historikk for " + obj.avdeling + " - " + obj.oppdatert);
+                    Log.d("Oppdatert historikk for " + obj.avdeling + " - " + obj.oppdatert);
 
                     string sql = "INSERT INTO tblServiceHistory (Avdeling, Dato, Totalt, Aktive, Ferdig, Tat, Over14, Over14prosent, Over21, Over21prosent, Tilarbeid) " +
         "VALUES (@Avdeling, @Dato, @Totalt, @Aktive, @Ferdig, @Tat, @Over14, @Over14prosent, @Over21, @Over21prosent, @Tilarbeid)";
@@ -1277,7 +1277,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -1357,7 +1357,7 @@ namespace KGSA
             }
             catch (IndexOutOfRangeException ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (MessageBox.Show("Oppdaget en mulig utdatert service database!\nVil du forsøke en oppgradering av databasen?\n\nAdvarsel: Alle importerte servicer vil bli slettet!\n(historisk data vil bli bevart)", "KGSA - Informasjon", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3) == DialogResult.Yes)
                 {
                     main.database.tableService.Reset();
@@ -1366,13 +1366,13 @@ namespace KGSA
 
                     dbServiceDatoFra = FormMain.rangeMin;
                     dbServiceDatoTil = FormMain.rangeMin;
-                    Logg.Log("Oppgradering fullført. Importer servicer på nytt!", Color.Green);
+                    Log.n("Oppgradering fullført. Importer servicer på nytt!", Color.Green);
                 }
                 return new DataTable();
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -1436,7 +1436,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -1498,7 +1498,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -1581,7 +1581,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -1594,7 +1594,7 @@ namespace KGSA
                 main.processing = processing;
                 if (!File.Exists(filename))
                 {
-                    Logg.Log("Service Import: Fant ikke CSV service fil eller ble nektet tilgang. (" + filename + ")", Color.Red);
+                    Log.n("Service Import: Fant ikke CSV service fil eller ble nektet tilgang. (" + filename + ")", Color.Red);
                     return false;
                 }
 
@@ -1609,12 +1609,12 @@ namespace KGSA
                     foreach (ErrorInfo err in engine.ErrorManager.Errors)
                     {
                         importReadErrors++;
-                        Logg.Log("Import: Klarte ikke lese linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
-                        Logg.Debug("Exception: " + err.ExceptionInfo.ToString());
+                        Log.n("Import: Klarte ikke lese linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
+                        Log.d("Exception: " + err.ExceptionInfo.ToString());
 
                         if (importReadErrors > 100)
                         {
-                            Logg.Log("Feil: CSV er ikke en service eksportering eller filen er skadet. (" + filename + ")", Color.Red);
+                            Log.n("Feil: CSV er ikke en service eksportering eller filen er skadet. (" + filename + ")", Color.Red);
                             return false;
                         }
 
@@ -1645,12 +1645,12 @@ namespace KGSA
                     int dager = (dtLast - dtFirst).Days;
                     if (dager < 60)
                     {
-                        Logg.Log("Feil: CSV inneholder for kort periode. Velg minst 60 dager perioder.", Color.Red);
+                        Log.n("Feil: CSV inneholder for kort periode. Velg minst 60 dager perioder.", Color.Red);
                         return false;
                     }
                     if (dtLast < dbServiceDatoTil)
                     {
-                        Logg.Log("Feil: CSV inneholder bare servicer som er eldre enn eksisterende servicer.", Color.Red);
+                        Log.n("Feil: CSV inneholder bare servicer som er eldre enn eksisterende servicer.", Color.Red);
                         return false;
                     }
 
@@ -1663,13 +1663,13 @@ namespace KGSA
 
                     var command = new SqlCeCommand("DELETE FROM tblService WHERE (DatoMottat >= '" + dtFirst.ToString("yyy-MM-dd") + "') AND (DatoMottat <= '" + dtLast.ToString("yyy-MM-dd") + "') AND (" + sqlStrAvd + ")", main.connection);
                     var result = command.ExecuteNonQuery();
-                    Logg.Debug("Slettet " + result + " servicer.");
+                    Log.d("Slettet " + result + " servicer.");
 
                     command = new SqlCeCommand("DELETE FROM tblServiceLogg", main.connection);
                     result = command.ExecuteNonQuery();
-                    Logg.Debug("Slettet " + result + " logg oppføringer.");
+                    Log.d("Slettet " + result + " logg oppføringer.");
 
-                    Logg.Log("Prosesserer " + count.ToString("#,##0") + " service oppføringer.. (" + filename + ")");
+                    Log.n("Prosesserer " + count.ToString("#,##0") + " service oppføringer.. (" + filename + ")");
 
                     if (main.appConfig.importSetting == "FullFavoritt")
                         foreach (string avdel in FormMain.Favoritter)
@@ -1701,7 +1701,7 @@ namespace KGSA
                                         bw.ReportProgress(i, new StatusProgress(count, "Prosessere servicer oppføringer..", 0, 100));
                                     if (bw.CancellationPending)
                                     {
-                                        Logg.Log("Service importering avbrutt av bruker!", Color.Red);
+                                        Log.n("Service importering avbrutt av bruker!", Color.Red);
                                         return false;
                                     }
                                 }
@@ -1752,8 +1752,8 @@ namespace KGSA
             }
             catch (IOException ex)
             {
-                Logg.Log("CSV var låst for lesing. Forleng ventetid i makro hvis overføringen ikke ble ferdig i tide.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.n("CSV var låst for lesing. Forleng ventetid i makro hvis overføringen ikke ble ferdig i tide.", Color.Red);
+                Log.Unhandled(ex);
                 return false;
             }
             catch (Exception ex)
@@ -1795,7 +1795,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
 
         }
@@ -1806,21 +1806,21 @@ namespace KGSA
             {
                 if (dbServiceDatoFra == dbServiceDatoTil)
                 {
-                    Logg.Log("Service databasen er tom!");
+                    Log.n("Service databasen er tom!");
                     return;
                 }
 
                 string strDrop = "ALTER TABLE tblService DROP COLUMN [FerdigBehandlet]";
                 string strAdd = "ALTER TABLE tblService ADD COLUMN [FerdigBehandlet] bit NULL";
 
-                Logg.Log("Nullstiller markering..");
+                Log.n("Nullstiller markering..");
 
                 var command = new SqlCeCommand(strDrop, main.connection);
                 command.ExecuteNonQuery();
                 command = new SqlCeCommand(strAdd, main.connection);
                 command.ExecuteNonQuery();
 
-                Logg.Log("Markering nullstilt.", Color.Green);
+                Log.n("Markering nullstilt.", Color.Green);
             }
             catch (Exception ex)
             {

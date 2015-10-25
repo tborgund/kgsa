@@ -459,13 +459,13 @@ namespace KGSA
                 }
                 else
                 {
-                    Logg.Log("Auto: Fant ikke rad (" + row + ")");
+                    Log.n("Auto: Fant ikke rad (" + row + ")");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 errorCode = 6;
                 return false;
             }
@@ -506,13 +506,13 @@ namespace KGSA
                 else
                 {
                     Message("Fant ingen rader.");
-                    Logg.Log("Auto: Fant ingen rader.", null, true);
+                    Log.n("Auto: Fant ingen rader.", null, true);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
@@ -708,7 +708,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return "";
             }
         }
@@ -723,7 +723,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -754,14 +754,14 @@ namespace KGSA
                 else
                 {
                     if (!nosave)
-                        Logg.Debug("Macro: " + str);
+                        Log.d("Macro: " + str);
                     this.labelLog.Text = str;
                     this.labelLog.ForeColor = c.HasValue ? c.Value : Color.Black;
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -771,8 +771,8 @@ namespace KGSA
             errorMessage = message;
             
             if (ex != null)
-                Logg.Unhandled(ex);
-            Logg.Log("Makro: " + message + " Kode: " + code, Color.Red);
+                Log.Unhandled(ex);
+            Log.n("Makro: " + message + " Kode: " + code, Color.Red);
             Message(message, Color.Red);
         }
 
@@ -807,7 +807,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 

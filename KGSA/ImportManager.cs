@@ -73,7 +73,7 @@ namespace KGSA
 
                     if (!File.Exists(file))
                     {
-                        Logg.Log("Finner ikke fil " + file, Color.Red);
+                        Log.n("Finner ikke fil " + file, Color.Red);
                         if (unattended) {
                             if (MessageBox.Show("Finner ikke fil " + file + "\n\nKontroller import lokasjon!",
                                 "KGSA - Finner ikke fil", MessageBoxButtons.OKCancel, MessageBoxIcon.Error)
@@ -88,7 +88,7 @@ namespace KGSA
                     decimal s1 = f.Length;
                     this.csvSizeGuess = Math.Round(s1 / numberScale, 2);
 
-                    Logg.Log("Leser CSV fra Elguide '" + file + "'..");
+                    Log.n("Leser CSV fra Elguide '" + file + "'..");
                     var csvTrans = ReadCsv(file, bw, unattended);
                     if (csvTrans == null)
                     {
@@ -100,7 +100,7 @@ namespace KGSA
                     Array.Resize<csvImport>(ref csvTransAll, oldLength + csvTrans.Length);
                     Array.Copy(csvTrans, 0, csvTransAll, oldLength, csvTrans.Length);
 
-                    Logg.Debug("Lest ferdig '" + file + "' - Totalt: " + csvTrans.Length);
+                    Log.d("Lest ferdig '" + file + "' - Totalt: " + csvTrans.Length);
                 }
 
                 if (bw.CancellationPending) {
@@ -109,7 +109,7 @@ namespace KGSA
                 }
 
                 if (csvTransAll.Length < 25) {
-                    Logg.Log("Import: Ingen eller for få transaksjoner funnet!"
+                    Log.n("Import: Ingen eller for få transaksjoner funnet!"
                         + "Kontroller om eksportering er korrekt eller sjekk innstillinger.", Color.Red);
                     {
                         this.returnCode = 4;
@@ -119,7 +119,7 @@ namespace KGSA
 
                 int csvLengde = csvTransAll.Length;
 
-                Logg.Log("Prosesserer " + csvLengde.ToString("#,##0") + " transaksjoner..");
+                Log.n("Prosesserer " + csvLengde.ToString("#,##0") + " transaksjoner..");
                 main.processing.SetText = "Prosesserer " + csvLengde.ToString("#,##0") + " transaksjoner..";
                 main.processing.SetProgressStyle = ProgressBarStyle.Marquee;
 
@@ -157,7 +157,7 @@ namespace KGSA
                     }
                 }
                 string[] arrayAvdelinger = csvAvdelinger.Split(';');
-                Logg.Debug("Avdelinger funnet i fil (funnetAvdelinger): Antall: (" + arrayAvdelinger.Length + ") Innhold: " + csvAvdelinger);
+                Log.d("Avdelinger funnet i fil (funnetAvdelinger): Antall: (" + arrayAvdelinger.Length + ") Innhold: " + csvAvdelinger);
 
                 string sqlRemoveAvd = "";
                 if (main.appConfig.importSetting.Equals("FullFavoritt")) // vi skal bare importere favoritt avdelinger
@@ -173,7 +173,7 @@ namespace KGSA
                 if (sqlRemoveAvd.Length > 3) // Fjen sist "OR" fra sql string for å gjøre den gyldig
                     sqlRemoveAvd = sqlRemoveAvd.Remove(sqlRemoveAvd.Length - 3);
 
-                Logg.Log("Import: CSV inneholder " + csvLengde + " transaksjoner, solgt mellom "
+                Log.n("Import: CSV inneholder " + csvLengde + " transaksjoner, solgt mellom "
                     + dtFirst.ToString("dddd d. MMMM yyyy", FormMain.norway) + " og "
                     + dtLast.ToString("dddd d. MMMM yyyy", FormMain.norway) + ".", Color.Black, true);
 
@@ -181,7 +181,7 @@ namespace KGSA
                 string strSqlDateLast = dtLast.ToString("yyy-MM-dd");
 
                 if (valider < 25) {
-                    Logg.Log("Import: Bare et begrenset antall transaksjoner var gyldig ("
+                    Log.n("Import: Bare et begrenset antall transaksjoner var gyldig ("
                         + valider + "), kan ikke fortsett. Eksporter transaksjoner på nytt!", Color.Red);
                     {
                         this.returnCode = 1;
@@ -251,9 +251,9 @@ namespace KGSA
                         else
                         {
                             importReadErrors++;
-                            Logg.Log("Import: Format feil ved linje " + i
+                            Log.n("Import: Format feil ved linje " + i
                                 + ": Felt var for lange for databasen, hopper over.", Color.Orange);
-                            Logg.Debug("Linje: " + dtRow[0] + ";" + dtRow[1] + ";" + dtRow[2] + ";"
+                            Log.d("Linje: " + dtRow[0] + ";" + dtRow[1] + ";" + dtRow[2] + ";"
                                 + dtRow[3] + ";" + dtRow[4] + ";" + dtRow[5] + ";" + dtRow[6] + ";"
                                 + dtRow[7] + ";" + dtRow[8] + ";" + dtRow[9]);
                         }
@@ -262,9 +262,9 @@ namespace KGSA
 
                 if (addPrize && dictPrizes.Count > 0)
                 {
-                    Logg.Log("Lager: Oppdaterer vareinfo med priser fra " + dictPrizes.Count + " forskjellige varer..", null, true);
+                    Log.n("Lager: Oppdaterer vareinfo med priser fra " + dictPrizes.Count + " forskjellige varer..", null, true);
                     UpdatePrizes(dictPrizes);
-                    Logg.Log("Lager: Ferdig med oppdatering av priser", null, true);
+                    Log.n("Lager: Ferdig med oppdatering av priser", null, true);
                 }
 
                 // På ditte tidspunktet kan ikke prosessen avbrytes..
@@ -273,7 +273,7 @@ namespace KGSA
 
                 if (table.Rows.Count >= 25)
                 {
-                    Logg.Log("Import: Klar til å lagre transaksjoner. Sletter overlappende transaksjoner nå..");
+                    Log.n("Import: Klar til å lagre transaksjoner. Sletter overlappende transaksjoner nå..");
                     try
                     {
                         // Slett overlappende transaksjoner vi har i databasen fra før..
@@ -284,23 +284,23 @@ namespace KGSA
 
                         SqlCeCommand command = new SqlCeCommand(sqlRemove, main.connection);
                         var result = command.ExecuteNonQuery();
-                        Logg.Debug("Import: Slettet " + result + " transaksjoner fra databasen.");
+                        Log.d("Import: Slettet " + result + " transaksjoner fra databasen.");
 
                     }
                     catch (Exception ex)
                     {
-                        Logg.Unhandled(ex);
+                        Log.Unhandled(ex);
                     }
                 }
 
-                Logg.Log("Import: Lagrer " + table.Rows.Count.ToString("#,##0") + " transaksjoner..");
+                Log.n("Import: Lagrer " + table.Rows.Count.ToString("#,##0") + " transaksjoner..");
                 main.processing.SetText = "Lagrer " + table.Rows.Count.ToString("#,##0") + " transaksjoner.. (kan ta litt tid)";
 
                 TimeWatch timewatch = new TimeWatch();
                 timewatch.Start();
                 // Send data til SQL server og avslutt forbindelsen
                 main.database.DoBulkCopy(table, "tblSalg");
-                Logg.Log("Import: Lagring av " + table.Rows.Count.ToString("#,##0") + " transaksjoner tok "
+                Log.n("Import: Lagring av " + table.Rows.Count.ToString("#,##0") + " transaksjoner tok "
                     + timewatch.Stop() + " sekunder.", Color.Black, true);
                 main.processing.SupportsCancelation = true; 
 
@@ -308,7 +308,7 @@ namespace KGSA
                 main.appConfig.dbFrom = DateTime.MinValue;
                 main.appConfig.dbTo = DateTime.MinValue;
 
-                Logg.Log("Import: Importering ferdig (Tid: " + timewatch.Stop() + ")");
+                Log.n("Import: Importering ferdig (Tid: " + timewatch.Stop() + ")");
                 main.processing.SetText = "Fullført importering av transaksjoner! Vent litt..";
                 main.processing.SetProgressStyle = ProgressBarStyle.Continuous;
                 main.processing.SetValue = 90;
@@ -347,7 +347,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         } 
 
@@ -356,7 +356,7 @@ namespace KGSA
             try
             {
                 string[] col = line.Split(';');
-                Logg.Debug("Orginal: " + line);
+                Log.d("Orginal: " + line);
 
                 decimal t = 0;
                 string combined = "";
@@ -374,14 +374,14 @@ namespace KGSA
                     }
                 }
 
-                Logg.Debug("Rettet: " + combined);
+                Log.d("Rettet: " + combined);
 
                 list.Add(combined);
                 return true;
             }
             catch
             {
-                Logg.Debug("Inport: Unntak ved delimiter fix.");
+                Log.d("Inport: Unntak ved delimiter fix.");
             }
 
             return false;
@@ -411,16 +411,16 @@ namespace KGSA
                     {
                         if (RemoveExtraDelimiter(err.RecordString, filtLines))
                         {
-                            Logg.Debug("Import: Gjenopprettet linje " + err.LineNumber + " med feil format.");
+                            Log.d("Import: Gjenopprettet linje " + err.LineNumber + " med feil format.");
                         }
                         else
                         {
                             importReadErrors++;
-                            Logg.Log("Import: Format feil ved linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
-                            Logg.Debug("Import: Feilmelding: " + err.ExceptionInfo.ToString());
+                            Log.n("Import: Format feil ved linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
+                            Log.d("Import: Feilmelding: " + err.ExceptionInfo.ToString());
                             if (importReadErrors > 100)
                             {
-                                Logg.Log("CSV er skadet eller inneholder ikke riktige ranking transaksjoner.", Color.Red);
+                                Log.n("CSV er skadet eller inneholder ikke riktige ranking transaksjoner.", Color.Red);
                                 if (!unattended)
                                 {
                                     FormError errorMsg = new FormError("CSV er skadet eller inneholder ikke riktige ranking transaksjoner.",
@@ -434,8 +434,8 @@ namespace KGSA
 
                     if (filtLines.Count > 0)
                     {
-                        Logg.Debug("Import: Forsøker å legge til " + filtLines.Count + " linjer med feil på nytt etter fix...");
-                        Logg.Debug("Import: resCSV length før: " + resCSV.Length);
+                        Log.d("Import: Forsøker å legge til " + filtLines.Count + " linjer med feil på nytt etter fix...");
+                        Log.d("Import: resCSV length før: " + resCSV.Length);
                         string tmpFile = GetTempFilename(".txt");
                         File.WriteAllLines(tmpFile, filtLines.ToArray(), Encoding.Unicode);
                         var resCSVfixed = engine.ReadFile(tmpFile) as csvImport[];
@@ -446,17 +446,17 @@ namespace KGSA
                         Array.Copy(resCSVfixed, 0, resCSV, oldLength, resCSVfixed.Length);
 
 
-                        Logg.Debug("Import: resCSV length etter: " + resCSV.Length);
+                        Log.d("Import: resCSV length etter: " + resCSV.Length);
                     }
                 }
-                Logg.Debug("Import: ReadCsv ferdig '" + file + "' - Totalt: " + resCSV.Length);
+                Log.d("Import: ReadCsv ferdig '" + file + "' - Totalt: " + resCSV.Length);
 
                 return resCSV;
             }
             catch (IOException ex)
             {
-                Logg.Log("CSV var låst for lesing. Forleng ventetid i makro hvis overføringen ikke ble ferdig i tide.", Color.Red);
-                Logg.Debug("CSV var låst.", ex);
+                Log.n("CSV var låst for lesing. Forleng ventetid i makro hvis overføringen ikke ble ferdig i tide.", Color.Red);
+                Log.d("CSV var låst.", ex);
                 return null;
             }
             catch (Exception ex)

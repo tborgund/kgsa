@@ -62,7 +62,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -104,13 +104,13 @@ namespace KGSA
             }
             catch (FormatException)
             {
-                Logg.Log("Epost adresse ugyldig.", Color.Red);
+                Log.n("Epost adresse ugyldig.", Color.Red);
                 textBoxAdresse.Focus();
                 textBoxAdresse.SelectAll();
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -128,11 +128,11 @@ namespace KGSA
                 con.Close();
 
                 UpdateEmailsDatagrid();
-                Logg.Log("Epost adresser oppdatert.", Color.Green);
+                Log.n("Epost adresser oppdatert.", Color.Green);
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -153,7 +153,7 @@ namespace KGSA
 
         private void FormEmail_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Logg.Status("E-post adresse vindu avsluttet.");
+            Log.Status("E-post adresse vindu avsluttet.");
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -168,7 +168,7 @@ namespace KGSA
 
         private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            Logg.Debug("DataError (ColumnIndex " + e.ColumnIndex + ", RowIndex " + e.RowIndex + "): " + e.Exception.Message + " Context: " + e.Context);
+            Log.d("DataError (ColumnIndex " + e.ColumnIndex + ", RowIndex " + e.RowIndex + "): " + e.Exception.Message + " Context: " + e.Context);
         }
     }
 }

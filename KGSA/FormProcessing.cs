@@ -229,7 +229,7 @@ namespace KGSA
             userPushedCancelButton = true;
             if (bgWorker == null)
             {
-                Logg.Log("Kan ikke avbryte prosessen!", Color.Red);
+                Log.n("Kan ikke avbryte prosessen!", Color.Red);
                 return;
             }
             textBoxProgressText.Text = "Avbryter..";

@@ -43,12 +43,12 @@ namespace KGSA
                         {
                             BinaryFormatter bin = new BinaryFormatter();
                             bin.Serialize(stream, documentDatabase);
-                            Logg.Debug("OpenXML: Fullført lagring av databasen.");
+                            Log.d("OpenXML: Fullført lagring av databasen.");
                         }
             }
             catch (IOException ex)
             {
-                Logg.Debug("OpenXML: Kritisk feil ved lagring av databasen.", ex);
+                Log.d("OpenXML: Kritisk feil ved lagring av databasen.", ex);
             }
         }
 
@@ -62,13 +62,13 @@ namespace KGSA
                     {
                         BinaryFormatter bin = new BinaryFormatter();
                         documentDatabase = (List<OpenXMLDocument>)bin.Deserialize(stream);
-                        Logg.Debug("OpenXML: Fullført åpning av databasen.");
+                        Log.d("OpenXML: Fullført åpning av databasen.");
                     }
                 }
             }
             catch (IOException ex)
             {
-                Logg.Debug("OpenXML: Kritisk feil ved åpning av databasen.", ex);
+                Log.d("OpenXML: Kritisk feil ved åpning av databasen.", ex);
                 try
                 {
                     File.Delete(FormMain.settingsPath + @"\OpenXMLdb.dat");
@@ -90,11 +90,11 @@ namespace KGSA
                     if (file != null)
                         System.Diagnostics.Process.Start(file);
                     else
-                        Logg.Log("Regneark for gjeldene side/dato mangler, eller finnes ikke. Oppdater og forsøk igjen.", Color.Red);
+                        Log.n("Regneark for gjeldene side/dato mangler, eller finnes ikke. Oppdater og forsøk igjen.", Color.Red);
                     return;
                 }
                 else
-                    Logg.Log("Kan ikke åpne regneark for gjeldene side. Velg en annen ranking eller oppdater.", Color.Red);
+                    Log.n("Kan ikke åpne regneark for gjeldene side. Velg en annen ranking eller oppdater.", Color.Red);
             }
             catch(Exception ex)
             {
@@ -107,19 +107,19 @@ namespace KGSA
         {
             if (table == null || bookName == null || sheetName == null)
             {
-                Logg.Debug("OpenXML: Mangler argumenter for lagring av dokument.");
+                Log.d("OpenXML: Mangler argumenter for lagring av dokument.");
                 return;
             }
 
             if (table.Rows.Count == 0)
             {
-                Logg.Debug("OpenXML: Tabellen har ingen linjer, kan ikke opprette side.");
+                Log.d("OpenXML: Tabellen har ingen linjer, kan ikke opprette side.");
                 return;
             }
 
             if (String.IsNullOrEmpty(bookName) || String.IsNullOrEmpty(sheetName))
             {
-                Logg.Debug("OpenXML: Navn ikke angitt for dokumentet og/eller siden.");
+                Log.d("OpenXML: Navn ikke angitt for dokumentet og/eller siden.");
                 return;
             }
 
@@ -146,9 +146,9 @@ namespace KGSA
                     documentDatabase[i].dataset.Tables.Add(sheet);
 
                     if (foundSheet)
-                        Logg.Debug("OpenXML: Overskrev ark '" + sheetName + "' tilhørende dokument '" + bookName + "' - Ark totalt: " + documentDatabase[i].dataset.Tables.Count);
+                        Log.d("OpenXML: Overskrev ark '" + sheetName + "' tilhørende dokument '" + bookName + "' - Ark totalt: " + documentDatabase[i].dataset.Tables.Count);
                     else
-                        Logg.Debug("OpenXML: Lagt til nytt ark med navn '" + sheetName + "' til dokument '" + bookName + "' - Ark totalt: " + documentDatabase[i].dataset.Tables.Count);
+                        Log.d("OpenXML: Lagt til nytt ark med navn '" + sheetName + "' til dokument '" + bookName + "' - Ark totalt: " + documentDatabase[i].dataset.Tables.Count);
                     return;
                 }
             }
@@ -166,7 +166,7 @@ namespace KGSA
                 document.dataset.Tables.Add(sheet);
                 documentDatabase.Add(document);
 
-                Logg.Debug("OpenXML: Opprettet nytt dokument med navn '" + bookName + "' og første ark med navn '" + sheetName + " - Linjer: " + table.Rows.Count);
+                Log.d("OpenXML: Opprettet nytt dokument med navn '" + bookName + "' og første ark med navn '" + sheetName + " - Linjer: " + table.Rows.Count);
             }
         }
 
@@ -179,11 +179,11 @@ namespace KGSA
                 if (documentDatabase[i].dataset.DataSetName.Equals(bookName) && documentDatabase[i].date.Date == date.Date)
                 {
                     documentDatabase.RemoveAt(i);
-                    Logg.Debug("OpenXML: Fjernet dokument med navn '" + bookName + "' " + date.ToShortDateString());
+                    Log.d("OpenXML: Fjernet dokument med navn '" + bookName + "' " + date.ToShortDateString());
                     return;
                 }
             }
-            Logg.Debug("OpenXML: Dokument med navn '" + bookName + "' fantes ikke fra dør.");
+            Log.d("OpenXML: Dokument med navn '" + bookName + "' fantes ikke fra dør.");
         }
 
         private string ExportDocument(string bookName, DateTime date)
@@ -193,7 +193,7 @@ namespace KGSA
                 if (documentDatabase[i].dataset.DataSetName.Equals(bookName) && documentDatabase[i].date.Date == date.Date)
                     return CreateDocument(documentDatabase[i].dataset, bookName, date);
             }
-            Logg.Debug("Fant ikke dokumentet '" + bookName + "' for lagring!");
+            Log.d("Fant ikke dokumentet '" + bookName + "' for lagring!");
             return null;
         }
 
@@ -201,7 +201,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Debug("OpenXML: Genererer dokument '" + bookName + "'...");
+                Log.d("OpenXML: Genererer dokument '" + bookName + "'...");
 
                 var wb = new XLWorkbook();
 
@@ -235,12 +235,12 @@ namespace KGSA
                 string filename = FormMain.settingsTemp + @"\KGSA_" + bookName + "_" + date.ToShortDateString() + ".xlsx";
 
                 wb.SaveAs(filename);
-                Logg.Log("OpenXML: Generert dokument '" + bookName + "' (" + dataset.Tables.Count + " sider) file://" + filename.Replace(' ', (char)160), Color.Green);
+                Log.n("OpenXML: Generert dokument '" + bookName + "' (" + dataset.Tables.Count + " sider) file://" + filename.Replace(' ', (char)160), Color.Green);
                 return filename;
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return null;
         }

@@ -73,7 +73,7 @@ namespace KGSA
 
         public void UpdateGraphChunk(string argKat, DateTime dtFraArg, DateTime dtTilArg, BackgroundWorker bw, string sk = "")
         {
-            Logg.Debug("Ber om oppdatering av grafikk: " + argKat + " | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
+            Log.d("Ber om oppdatering av grafikk: " + argKat + " | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
 
             if (!String.IsNullOrEmpty(sk) && (argKat == "Data" || argKat == "Nettbrett" || argKat == "Tele" || argKat == "AudioVideo" || argKat == "KnowHow"))
             {
@@ -88,23 +88,23 @@ namespace KGSA
                 }
 
                 if (dataSelger != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataSelgerFrom.ToShortDateString() + " | Til: " + dataSelgerTo.ToShortDateString() + " | Count: " + dataSelger.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataSelgerFrom.ToShortDateString() + " | Til: " + dataSelgerTo.ToShortDateString() + " | Count: " + dataSelger.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataSelgerFrom.Date && dtTilArg.Date <= dataSelgerTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataSelgerTo.Date || dtFraArg.Date > dataSelgerFrom.Date) && dataSelger != null && dataSelgerFrom.Date != dataSelgerTo.Date)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataSelgerTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateGraphInternalChunk(argKat, dtFraArg, dataSelgerFrom.AddDays(-1), bw, lastSelgerkode);
                             dt.Merge(this.dataSelger);
                             this.dataSelger = dt;
@@ -112,43 +112,43 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataSelger.Merge(UpdateGraphInternalChunk(argKat, dataSelgerTo.AddDays(1), dtTilArg, bw, lastSelgerkode));
                             dataSelgerTo = dtTilArg;
                         }
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataSelger = UpdateGraphInternalChunk(argKat, dtFraArg, dtTilArg, bw, lastSelgerkode);
                         dataSelgerFrom = dtFraArg;
                         dataSelgerTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataSelgerFrom.ToShortDateString() + " | Til: " + dataSelgerTo.ToShortDateString() + " Count: " + dataSelger.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataSelgerFrom.ToShortDateString() + " | Til: " + dataSelgerTo.ToShortDateString() + " Count: " + dataSelger.Rows.Count);
                 return;
             }
 
             if (argKat == "KnowHow")
             {
                 if (dataKnowHow != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataKnowHowFrom.ToShortDateString() + " | Til: " + dataKnowHowTo.ToShortDateString() + " | Count: " + dataKnowHow.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataKnowHowFrom.ToShortDateString() + " | Til: " + dataKnowHowTo.ToShortDateString() + " | Count: " + dataKnowHow.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataKnowHowFrom.Date && dtTilArg.Date <= dataKnowHowTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataKnowHowTo.Date || dtFraArg.Date > dataKnowHowFrom.Date) && dataKnowHow != null)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataKnowHowTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateGraphInternalChunk(argKat, dtFraArg, dataKnowHowFrom.AddDays(-1), bw);
                             if (FormMain._graphReqStop)
                                 return;
@@ -158,7 +158,7 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataKnowHow.Merge(UpdateGraphInternalChunk(argKat, dataKnowHowTo.AddDays(1), dtTilArg, bw));
                             if (FormMain._graphReqStop)
                                 return;
@@ -167,7 +167,7 @@ namespace KGSA
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataKnowHow = UpdateGraphInternalChunk(argKat, dtFraArg, dtTilArg, bw);
                         if (FormMain._graphReqStop)
                             return;
@@ -175,29 +175,29 @@ namespace KGSA
                         dataKnowHowTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataKnowHowFrom.ToShortDateString() + " | Til: " + dataKnowHowTo.ToShortDateString() + " Count: " + dataKnowHow.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataKnowHowFrom.ToShortDateString() + " | Til: " + dataKnowHowTo.ToShortDateString() + " Count: " + dataKnowHow.Rows.Count);
                 return;
             }
             else if (argKat == "Data")
             {
                 if (dataData != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataDataFrom.ToShortDateString() + " | Til: " + dataDataTo.ToShortDateString() + " | Count: " + dataData.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataDataFrom.ToShortDateString() + " | Til: " + dataDataTo.ToShortDateString() + " | Count: " + dataData.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataDataFrom.Date && dtTilArg.Date <= dataDataTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataDataTo.Date || dtFraArg.Date > dataDataFrom.Date) && dataData != null)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataDataTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateGraphInternalChunk(argKat, dtFraArg, dataDataFrom.AddDays(-1), bw);
                             if (FormMain._graphReqStop)
                                 return;
@@ -207,7 +207,7 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataData.Merge(UpdateGraphInternalChunk(argKat, dataDataTo.AddDays(1), dtTilArg, bw));
                             if (FormMain._graphReqStop)
                                 return;
@@ -216,7 +216,7 @@ namespace KGSA
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataData = UpdateGraphInternalChunk(argKat, dtFraArg, dtTilArg, bw);
                         if (FormMain._graphReqStop)
                             return;
@@ -224,29 +224,29 @@ namespace KGSA
                         dataDataTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataDataFrom.ToShortDateString() + " | Til: " + dataDataTo.ToShortDateString() + " Count: " + dataData.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataDataFrom.ToShortDateString() + " | Til: " + dataDataTo.ToShortDateString() + " Count: " + dataData.Rows.Count);
                 return;
             }
             else if (argKat == "Nettbrett")
             {
                 if (dataNettbrett != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataNettbrettFrom.ToShortDateString() + " | Til: " + dataNettbrettTo.ToShortDateString() + " | Count: " + dataNettbrett.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataNettbrettFrom.ToShortDateString() + " | Til: " + dataNettbrettTo.ToShortDateString() + " | Count: " + dataNettbrett.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataNettbrettFrom.Date && dtTilArg.Date <= dataNettbrettTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataNettbrettTo.Date || dtFraArg.Date > dataNettbrettFrom.Date) && dataNettbrett != null)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataNettbrettTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateGraphInternalChunk(argKat, dtFraArg, dataNettbrettFrom.AddDays(-1), bw);
                             dt.Merge(this.dataNettbrett);
                             this.dataNettbrett = dt;
@@ -254,42 +254,42 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataNettbrett.Merge(UpdateGraphInternalChunk(argKat, dataNettbrettTo.AddDays(1), dtTilArg, bw));
                             dataNettbrettTo = dtTilArg;
                         }
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataNettbrett = UpdateGraphInternalChunk(argKat, dtFraArg, dtTilArg, bw);
                         dataNettbrettFrom = dtFraArg;
                         dataNettbrettTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataNettbrettFrom.ToShortDateString() + " | Til: " + dataNettbrettTo.ToShortDateString() + " Count: " + dataNettbrett.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataNettbrettFrom.ToShortDateString() + " | Til: " + dataNettbrettTo.ToShortDateString() + " Count: " + dataNettbrett.Rows.Count);
                 return;
             }
             else if (argKat == "AudioVideo")
             {
                 if (dataAudioVideo != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataAudioVideoFrom.ToShortDateString() + " | Til: " + dataAudioVideoTo.ToShortDateString() + " | Count: " + dataAudioVideo.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataAudioVideoFrom.ToShortDateString() + " | Til: " + dataAudioVideoTo.ToShortDateString() + " | Count: " + dataAudioVideo.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataAudioVideoFrom.Date && dtTilArg.Date <= dataAudioVideoTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataAudioVideoTo.Date || dtFraArg.Date > dataAudioVideoFrom.Date) && dataAudioVideo != null)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataAudioVideoTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateGraphInternalChunk(argKat, dtFraArg, dataAudioVideoFrom.AddDays(-1), bw);
                             dt.Merge(this.dataAudioVideo);
                             this.dataAudioVideo = dt;
@@ -297,42 +297,42 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataAudioVideo.Merge(UpdateGraphInternalChunk(argKat, dataAudioVideoTo.AddDays(1), dtTilArg, bw));
                             dataAudioVideoTo = dtTilArg;
                         }
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataAudioVideo = UpdateGraphInternalChunk(argKat, dtFraArg, dtTilArg, bw);
                         dataAudioVideoFrom = dtFraArg;
                         dataAudioVideoTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataAudioVideoFrom.ToShortDateString() + " | Til: " + dataAudioVideoTo.ToShortDateString() + " Count: " + dataAudioVideo.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataAudioVideoFrom.ToShortDateString() + " | Til: " + dataAudioVideoTo.ToShortDateString() + " Count: " + dataAudioVideo.Rows.Count);
                 return;
             }
             else if (argKat == "Tele")
             {
                 if (dataTele != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataTeleFrom.ToShortDateString() + " | Til: " + dataTeleTo.ToShortDateString() + " | Count: " + dataTele.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataTeleFrom.ToShortDateString() + " | Til: " + dataTeleTo.ToShortDateString() + " | Count: " + dataTele.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataTeleFrom.Date && dtTilArg.Date <= dataTeleTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataTeleTo.Date || dtFraArg.Date > dataTeleFrom.Date) && dataTele != null)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataTeleTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateGraphInternalChunk(argKat, dtFraArg, dataTeleFrom.AddDays(-1), bw);
                             dt.Merge(this.dataTele);
                             this.dataTele = dt;
@@ -340,42 +340,42 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataTele.Merge(UpdateGraphInternalChunk(argKat, dataTeleTo.AddDays(1), dtTilArg, bw));
                             dataTeleTo = dtTilArg;
                         }
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataTele = UpdateGraphInternalChunk(argKat, dtFraArg, dtTilArg, bw);
                         dataTeleFrom = dtFraArg;
                         dataTeleTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataTeleFrom.ToShortDateString() + " | Til: " + dataTeleTo.ToShortDateString() + " Count: " + dataTele.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataTeleFrom.ToShortDateString() + " | Til: " + dataTeleTo.ToShortDateString() + " Count: " + dataTele.Rows.Count);
                 return;
             }
             else if (argKat == "Oversikt")
             {
                 if (dataOversikt != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataOversiktFrom.ToShortDateString() + " | Til: " + dataOversiktTo.ToShortDateString() + " | Count: " + dataOversikt.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataOversiktFrom.ToShortDateString() + " | Til: " + dataOversiktTo.ToShortDateString() + " | Count: " + dataOversikt.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataOversiktFrom.Date && dtTilArg.Date <= dataOversiktTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataOversiktTo.Date || dtFraArg.Date > dataOversiktFrom.Date) && dataOversikt != null)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataOversiktTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateOversiktGraphChunk(dtFraArg, dataOversiktFrom.AddDays(-1), bw);
                             dt.Merge(this.dataOversikt);
                             this.dataOversikt = dt;
@@ -383,42 +383,42 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataOversikt.Merge(UpdateOversiktGraphChunk(dataOversiktTo.AddDays(1), dtTilArg, bw));
                             dataOversiktTo = dtTilArg;
                         }
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataOversikt = UpdateOversiktGraphChunk(dtFraArg, dtTilArg, bw);
                         dataOversiktFrom = dtFraArg;
                         dataOversiktTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataOversiktFrom.ToShortDateString() + " | Til: " + dataOversiktTo.ToShortDateString() + " Count: " + dataOversikt.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataOversiktFrom.ToShortDateString() + " | Til: " + dataOversiktTo.ToShortDateString() + " Count: " + dataOversikt.Rows.Count);
                 return;
             }
             else if (argKat == "Butikk")
             {
                 if (dataButikk != null)
-                    Logg.Debug("Datoer vi har - Fra: " + dataButikkFrom.ToShortDateString() + " | Til: " + dataButikkTo.ToShortDateString() + " | Count: " + dataButikk.Rows.Count);
+                    Log.d("Datoer vi har - Fra: " + dataButikkFrom.ToShortDateString() + " | Til: " + dataButikkTo.ToShortDateString() + " | Count: " + dataButikk.Rows.Count);
                 else
-                    Logg.Debug("Databasen var tom.");
+                    Log.d("Databasen var tom.");
 
                 if (dtFraArg.Date >= dataButikkFrom.Date && dtTilArg.Date <= dataButikkTo.Date)
                 {
-                    Logg.Debug("intersection: all inside!");
+                    Log.d("intersection: all inside!");
                     return;
                 }
                 else
                 {
                     if ((dtTilArg.Date < dataButikkTo.Date || dtFraArg.Date > dataButikkFrom.Date) && dataButikk != null)
                     {
-                        Logg.Debug("intersection: true");
+                        Log.d("intersection: true");
                         if (dataButikkTo.Date > dtTilArg.Date)
                         {
-                            Logg.Debug("intersection: right");
+                            Log.d("intersection: right");
                             DataTable dt = UpdateButikkGraphChunk(dtFraArg, dataButikkFrom.AddDays(-1), bw);
                             dt.Merge(this.dataButikk);
                             this.dataButikk = dt;
@@ -426,20 +426,20 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Debug("intersection: left");
+                            Log.d("intersection: left");
                             dataButikk.Merge(UpdateButikkGraphChunk(dataButikkTo.AddDays(1), dtTilArg, bw));
                             dataButikkTo = dtTilArg;
                         }
                     }
                     else
                     {
-                        Logg.Debug("clean update!");
+                        Log.d("clean update!");
                         this.dataButikk = UpdateButikkGraphChunk(dtFraArg, dtTilArg, bw);
                         dataButikkFrom = dtFraArg;
                         dataButikkTo = dtTilArg;
                     }
                 }
-                Logg.Debug("Ny oppdatert database - Fra: " + dataButikkFrom.ToShortDateString() + " | Til: " + dataButikkTo.ToShortDateString() + " Count: " + dataButikk.Rows.Count);
+                Log.d("Ny oppdatert database - Fra: " + dataButikkFrom.ToShortDateString() + " | Til: " + dataButikkTo.ToShortDateString() + " Count: " + dataButikk.Rows.Count);
                 return;
             }
         }
@@ -487,7 +487,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return new List<string> { "Feil oppstod under lagring av graf data." };
             }
         }
@@ -521,14 +521,14 @@ namespace KGSA
                         }
                         else
                         {
-                            Logg.Log("Ingenting å tegne..");
+                            Log.n("Ingenting å tegne..");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -595,7 +595,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Debug("Feil oppstod i DrawImageScreenChunk.", ex);
+                Log.d("Feil oppstod i DrawImageScreenChunk.", ex);
             }
         }
 
@@ -952,14 +952,14 @@ namespace KGSA
 
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }
 
         private DataTable UpdateGraphInternalChunk(string argKat, DateTime dtFraArg, DateTime dtTilArg, BackgroundWorker bw, string sk = "")
         {
-            Logg.Debug("Oppdaterer graf: " + argKat + " | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
+            Log.d("Oppdaterer graf: " + argKat + " | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
 
             var dt = new DataTable();
             string skString = "";
@@ -1091,7 +1091,7 @@ namespace KGSA
 
         private DataTable UpdateOversiktGraphChunk(DateTime dtFraArg, DateTime dtTilArg, BackgroundWorker bw)
         {
-            Logg.Debug("Oppdaterer graf: Oversikt | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
+            Log.d("Oppdaterer graf: Oversikt | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
 
             var dt = new DataTable();
 
@@ -1154,7 +1154,7 @@ namespace KGSA
 
             dt.Columns.Add("Tjenester", typeof(StorageTjenester));
 
-            Logg.Status("Oppdaterer graf detaljer..");
+            Log.Status("Oppdaterer graf detaljer..");
 
             string command = "SELECT Dato, " +
                 "SUM(CASE WHEN Varegruppe LIKE '961%' THEN Btokr ELSE 0 END) AS Finans, " +
@@ -1192,7 +1192,7 @@ namespace KGSA
 
         private DataTable UpdateButikkGraphChunk(DateTime dtFraArg, DateTime dtTilArg, BackgroundWorker bw)
         {
-            Logg.Debug("Oppdaterer graf: Butikk | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
+            Log.d("Oppdaterer graf: Butikk | Fra: " + dtFraArg.ToShortDateString() + " | Til: " + dtTilArg.ToShortDateString());
 
             var dt = new DataTable();
             dt.Columns.Add("Index", typeof(int));
@@ -1270,7 +1270,7 @@ namespace KGSA
 
             if (main.appConfig.graphAdvanced)
             {
-                Logg.Status("Oppdaterer graf detaljer..");
+                Log.Status("Oppdaterer graf detaljer..");
 
                 dt.Columns.Add("TOP", typeof(StorageTop));
 
@@ -1691,7 +1691,7 @@ namespace KGSA
                         else if (Hstep < (8 * dpi))
                             argAgr = "måned";
                     }
-                    Logg.Debug("Hstpe: " + Hstep + " | argAgr: " + argAgr);
+                    Log.d("Hstpe: " + Hstep + " | argAgr: " + argAgr);
 
                     float Vstep = Y / (argMax * 1.1f);
                     if (argAgr == "uke")

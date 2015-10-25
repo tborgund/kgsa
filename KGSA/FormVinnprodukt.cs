@@ -26,7 +26,7 @@ namespace KGSA
             UpdateGrid();
             toolStripComboBoxFilterKat.SelectedIndex = 0;
             timerMsgClear.Tick += timer;
-            Logg.Debug("Vinnprodukter åpnet.");
+            Log.d("Vinnprodukter åpnet.");
         }
 
         public void UpdateGrid()
@@ -181,7 +181,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -212,7 +212,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -291,7 +291,7 @@ namespace KGSA
                 ClearMessageTimer();
 
                 if (!String.IsNullOrEmpty(str))
-                    Logg.Log(str, c, true);
+                    Log.n(str, c, true);
             }
             catch
             {
@@ -376,7 +376,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex, true);
+                Log.Unhandled(ex, true);
             }
         }
 

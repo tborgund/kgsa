@@ -20,7 +20,7 @@ namespace KGSA
                     return;
 
                 processing.SetVisible = true;
-                Logg.Status("Prosesserer..");
+                Log.Status("Prosesserer..");
                 toolStripComboBoxSkFilter.SelectedIndex = 0;
                 salesCodes.Clear();
                 OppdaterSelgerkoder();
@@ -29,7 +29,7 @@ namespace KGSA
                 if (appConfig.importSetting.StartsWith("Full"))
                 {
                     processing.SetValue = 5;
-                    Logg.Status("Legger til [Kasse] selgere..");
+                    Log.Status("Legger til [Kasse] selgere..");
                     processing.SetText = "Legger til [Kasse] selgere..";
                     using (DataTable dt = database.GetSqlDataTable("SELECT TOP 3 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE (Avdeling = '"
                         + appConfig.Avdeling.ToString() + "') AND (Dato >= '" + appConfig.dbTo.AddMonths(-1).ToString("yyy-MM-dd") + "') AND (Dato <= '"
@@ -49,7 +49,7 @@ namespace KGSA
                 }
                 processing.SetValue = 15;
                 var dataselgere = "";
-                Logg.Status("Legger til [Data] selgere..");
+                Log.Status("Legger til [Data] selgere..");
                 processing.SetText = "Legger til [Data] selgere..";
                 using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg "
                     + " WHERE (Varegruppe = '534' OR Varegruppe = '533') AND (Avdeling = '" + appConfig.Avdeling.ToString()
@@ -75,7 +75,7 @@ namespace KGSA
                     }
                 }
                 processing.SetValue = 30;
-                Logg.Status("Legger til [AudioVideo] selgere..");
+                Log.Status("Legger til [AudioVideo] selgere..");
                 processing.SetText = "Legger til [AudioVideo] selgere..";
                 using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg "
                     + " WHERE (Varegruppe = '224') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '"
@@ -97,7 +97,7 @@ namespace KGSA
                     }
                 }
                 processing.SetValue = 45;
-                Logg.Status("Legger til [Tele] selgere..");
+                Log.Status("Legger til [Tele] selgere..");
                 processing.SetText = "Legger til [Tele] selgere..";
                 using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall "
                     + " FROM tblSalg WHERE (Varegruppe = '431') AND (Avdeling = '" + appConfig.Avdeling.ToString()
@@ -120,7 +120,7 @@ namespace KGSA
                     }
                 }
                 processing.SetValue = 60;
-                Logg.Status("Legger til [Data] selgere..");
+                Log.Status("Legger til [Data] selgere..");
                 processing.SetText = "Legger til [Data] selgere..";
                 using (DataTable dt = database.GetSqlDataTable("SELECT TOP 12 Selgerkode, SUM(Antall) AS Antall FROM tblSalg WHERE "
                     + " (Varegruppe = '580') AND (Avdeling = '" + appConfig.Avdeling.ToString() + "') AND (Dato >= '"
@@ -155,7 +155,7 @@ namespace KGSA
                 processing.SetValue = 75;
                 if (appConfig.importSetting.StartsWith("Full"))
                 {
-                    Logg.Status("Legger til [SDA] og [MDA] selgere..");
+                    Log.Status("Legger til [SDA] og [MDA] selgere..");
                     processing.SetText = "Legger til [SDA] og [MDA] selgere..";
                     using (DataTable dtMda = database.GetSqlDataTable("SELECT TOP 20 Selgerkode, SUM(Antall) AS Antall "
                         + " FROM tblSalg WHERE (Varegruppe LIKE '3%') AND (Avdeling = '" + appConfig.Avdeling.ToString()
@@ -195,7 +195,7 @@ namespace KGSA
                 processing.SetValue = 99;
                 ClearHash(); // med fra om oppdatering av ranking
                 OppdaterSelgerkoder();
-                Logg.Log("Fullført automatisk utfylling av selgerkoder. Kontroller selgerkode listen!", Color.Green);
+                Log.n("Fullført automatisk utfylling av selgerkoder. Kontroller selgerkode listen!", Color.Green);
                 processing.SetText = "Ferdig!";
                 processing.HideDelayed();
                 this.Activate();
@@ -234,7 +234,7 @@ namespace KGSA
                 var msg = salesCodes.DeleteDuplicates();
                 if (!String.IsNullOrEmpty(msg))
                 {
-                    Logg.Log(msg, Color.Red);
+                    Log.n(msg, Color.Red);
                     MessageBox.Show(msg, "KGSA - Advarsel", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     daSk.Update(dsSk, "tblSelgerkoder");
                     OppdaterSelgerkoder();
@@ -242,7 +242,7 @@ namespace KGSA
                 }
                 daSk.Update(dsSk, "tblSelgerkoder");
                 OppdaterSelgerkoder();
-                Logg.Log("Selgerkoder Lagret.", Color.Green);
+                Log.n("Selgerkoder Lagret.", Color.Green);
                 salesCodes.Update();
                 ClearHash();
             }
@@ -321,10 +321,10 @@ namespace KGSA
                     var cellvalue = lastRightClickValue;
                     lastRightClickValue = "";
                     if (!salesCodes.Add(cellvalue.Trim(), kat, "Selger"))
-                        Logg.Log("Kunne ikke legge til selger '" + cellvalue + "' for selgeren finnes allerede.", Color.Red);
+                        Log.n("Kunne ikke legge til selger '" + cellvalue + "' for selgeren finnes allerede.", Color.Red);
                     else
                     {
-                        Logg.Log("Selger '" + cellvalue.Trim() + "' lagt til avdeling '" + kat + "' med provisjon Selger.", Color.Green);
+                        Log.n("Selger '" + cellvalue.Trim() + "' lagt til avdeling '" + kat + "' med provisjon Selger.", Color.Green);
                     }
                 }
                 else
@@ -332,9 +332,9 @@ namespace KGSA
                     foreach (string element in listBoxSk.SelectedItems)
                     {
                         if (!salesCodes.Add(element.Trim(), kat, "Selger"))
-                            Logg.Log("Kunne ikke legge til selger '" + element + "' for selgeren finnes allerede.", Color.Red);
+                            Log.n("Kunne ikke legge til selger '" + element + "' for selgeren finnes allerede.", Color.Red);
                         else
-                            Logg.Log("Selger '" + element.Trim() + "' lagt til avdeling '" + kat + "' med provisjon Selger.", Color.Green);
+                            Log.n("Selger '" + element.Trim() + "' lagt til avdeling '" + kat + "' med provisjon Selger.", Color.Green);
                     }
                     listBoxSk.ClearSelected();
                     LagreSelgerkoder();

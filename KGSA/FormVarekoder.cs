@@ -20,7 +20,7 @@ namespace KGSA
             InitializeComponent();
             BindVarekoder();
             timerMsgClear.Tick += timer;
-            Logg.Debug("Varekoder åpnet.");
+            Log.d("Varekoder åpnet.");
         }
 
         private void FilterVarekoder()
@@ -53,7 +53,7 @@ namespace KGSA
             }
             catch
             {
-                Logg.Log("Feil oppstod ved binding av varekoder til tabel.", Color.Red);
+                Log.n("Feil oppstod ved binding av varekoder til tabel.", Color.Red);
                 SendMessage("Feil oppstod ved binding av varekoder til tabel.", Color.Red);
             }
         }
@@ -75,7 +75,7 @@ namespace KGSA
                 ClearMessageTimer();
 
                 if (!String.IsNullOrEmpty(str))
-                    Logg.Log(str, c, true);
+                    Log.n(str, c, true);
             }
             catch
             {
@@ -111,7 +111,7 @@ namespace KGSA
         {
             try
             {
-                if (Logg.Alert("Er du sikker på at du vil slette alle eksisterende\nvarekoder og sette inn standard?", "KGSA - Informasjon", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                if (Log.Alert("Er du sikker på at du vil slette alle eksisterende\nvarekoder og sette inn standard?", "KGSA - Informasjon", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
                 {
                     if (dataGridView1.CurrentRow != null)
                         dataGridView1.CurrentRow.DataGridView.EndEdit();
@@ -129,7 +129,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil oppstod ved resetting av varekoder.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -171,7 +171,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil oppstod ved lagring av varekoder.", Color.Red);
-                Logg.Debug("Feil oppstod ved lagring av varekoder.", ex);
+                Log.d("Feil oppstod ved lagring av varekoder.", ex);
             }
             return false;
         }

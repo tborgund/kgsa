@@ -27,7 +27,7 @@ namespace KGSA
                 //start listing on all 
                 myListener = new TcpListener(IPAddress.Loopback, port);
                 myListener.Start();
-                Logg.Debug("WebEngine is listening on port " + port);
+                Log.d("WebEngine is listening on port " + port);
 
                 //start the thread which calls the method 'StartListen'
                 Thread th = new Thread(new ThreadStart(StartListen));
@@ -35,7 +35,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -60,7 +60,7 @@ namespace KGSA
                 Console.WriteLine("Socket Type " + mySocket.SocketType);
                 if (mySocket.Connected)
                 {
-                    Logg.Debug("Client connected: " + mySocket.RemoteEndPoint);
+                    Log.d("Client connected: " + mySocket.RemoteEndPoint);
                     
                     //make a byte array and receive data from the client 
                     Byte[] bReceive = new Byte[1024];
@@ -72,7 +72,7 @@ namespace KGSA
                     //At present we will only deal with GET type
                     if (sBuffer.Substring(0, 3) != "GET")
                     {
-                        Logg.Debug("Client attempted to use unsupported metod: " + sBuffer.Substring(0, 3));
+                        Log.d("Client attempted to use unsupported metod: " + sBuffer.Substring(0, 3));
                         mySocket.Close();
                         return;
                     }

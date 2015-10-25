@@ -77,7 +77,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -167,7 +167,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -232,7 +232,7 @@ namespace KGSA
                 }
                 else
                 {
-                    Logg.Log("Budsjett opprettet under avdeling " + kategori, Color.Green);
+                    Log.n("Budsjett opprettet under avdeling " + kategori, Color.Green);
                     var form = new FormBudgetDetails(main.appConfig, budget, id);
                     form.ShowDialog(this);
                 }
@@ -241,7 +241,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 MessageBox.Show("Noe var feil med de utfylte tallene. Sjekk over igjen før du forsøker å opprette nytt budsjett.", "KGSA - Feil", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -250,7 +250,7 @@ namespace KGSA
         {
             if (comboBox_Kategori.SelectedIndex < 0)
             {
-                Logg.Log("Avdeling ikke valgt!", Color.Red);
+                Log.n("Avdeling ikke valgt!", Color.Red);
                 return false;
             }
 
@@ -269,7 +269,7 @@ namespace KGSA
             }
             catch
             {
-                Logg.Log("Format feil. Sjekk alle bokser for feil.", Color.Red);
+                Log.n("Format feil. Sjekk alle bokser for feil.", Color.Red);
                 return false;
             }
 
@@ -513,7 +513,7 @@ namespace KGSA
                 if (MessageBox.Show("Er du sikker på at du vil slette markert budsjett?", "Sletting av budsjett", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Yes)
                 {
                     budget.DeleteBudget(id);
-                    Logg.Log("Budsjett med id " + id + " slettet.");
+                    Log.n("Budsjett med id " + id + " slettet.");
                     UpdateDb();
                 }
         }

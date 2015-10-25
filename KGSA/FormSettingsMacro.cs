@@ -26,7 +26,7 @@ namespace KGSA
             this.kgsaEmail = new KgsaEmail(main);
             InitializeComponent();
             timerMsgClear.Tick += timer;
-            Logg.Debug("Makro Innstillinger åpnet.");
+            Log.d("Makro Innstillinger åpnet.");
         }
 
         private void timer(object sender, EventArgs e)
@@ -81,7 +81,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage(ex.Message.ToString().Replace("\n", "").Replace("\r", ""), Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -277,7 +277,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage(ex.Message.ToString().Replace("\n", "").Replace("\r", ""), Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return false;
         }
@@ -386,7 +386,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage(ex.Message.ToString().Replace("\n", "").Replace("\r", ""), Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return false;
         }
@@ -440,7 +440,7 @@ namespace KGSA
                 ClearMessageTimer();
 
                 if (!String.IsNullOrEmpty(str) && !noLog)
-                    Logg.Log(str, c, true);
+                    Log.n(str, c, true);
             }
             catch
             {
@@ -564,7 +564,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             buttonTestMacro.Text = "Test Makro";
         }
@@ -616,7 +616,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -672,7 +672,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Kritisk feil oppstod under kjøring av Test Makro! Se logg for detaljer.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 e.Result = "Exception: " + ex.Message;
             }
         }
@@ -758,7 +758,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -788,7 +788,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil ved lesing av program 115 makro.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -803,7 +803,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil ved lesing av makro program.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -818,7 +818,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil ved lesing av makro program.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -833,7 +833,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Feil ved lesing av makro program.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -857,7 +857,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 SendMessage("Unntak ved valg av elguide profil.", Color.Red);
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
     }

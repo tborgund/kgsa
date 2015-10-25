@@ -29,7 +29,7 @@ namespace KGSA
                 if (!runningInBackground) main.savedBudgetPage = cat;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + BudgetCategoryClass.TypeToName(cat) + "]..");
+                    Log.n("Oppdaterer [" + BudgetCategoryClass.TypeToName(cat) + "]..");
                     OpenPage_Loading();
 
                     doc = new List<string>();
@@ -45,7 +45,7 @@ namespace KGSA
 
                     if (main.tableMacroQuick == null)
                     {
-                        Logg.Log("Fant ikke data fra Makro, forsøker å hente CSV..", null, true);
+                        Log.n("Fant ikke data fra Makro, forsøker å hente CSV..", null, true);
                         main.tableMacroQuick = importer.ImportElguideBudget(main.appConfig.Avdeling);
                     }
 
@@ -63,7 +63,7 @@ namespace KGSA
                     if (FormMain.stopRanking)
                     {
                         main.ClearHash(katArg);
-                        Logg.Log("Lasting avbrutt", Color.Red);
+                        Log.n("Lasting avbrutt", Color.Red);
                         OpenPage_Stopped();
                         FormMain.stopRanking = false;
                     }
@@ -72,7 +72,7 @@ namespace KGSA
                         File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
                         OpenPage(htmlPage);
                         if (!runningInBackground)
-                            Logg.Log("Side [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
+                            Log.n("Side [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
                         return true;
                     }
                 }
@@ -81,7 +81,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!runningInBackground)
                 {
                     OpenPage_Error();
@@ -96,7 +96,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Debug("Henter dagens budsjett fra database..");
+                Log.d("Henter dagens budsjett fra database..");
                 DataTable tableBudget = main.database.tableDailyBudget.GetBudgetFromDate(main.appConfig.Avdeling, DateTime.Now);
 
                 if (tableBudget == null || tableBudget.Rows.Count < 6 || main.tableMacroQuick == null || main.tableMacroQuick.Rows.Count < 6)
@@ -186,8 +186,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil ved generering av side: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Feil ved generering av side: " + ex.Message, Color.Red);
             }
             return;
         }
@@ -312,8 +312,8 @@ namespace KGSA
                             }
                             catch (Exception ex)
                             {
-                                Logg.Unhandled(ex);
-                                Logg.Log("Unntak ved skriving av RTGSA salg: " + ex.Message, Color.Red);
+                                Log.Unhandled(ex);
+                                Log.n("Unntak ved skriving av RTGSA salg: " + ex.Message, Color.Red);
                             }
                         }
 
@@ -329,8 +329,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Uventet feil oppstod under generering av daglig budsjett tabellen", Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Uventet feil oppstod under generering av daglig budsjett tabellen", Color.Red);
             }
         }
     }

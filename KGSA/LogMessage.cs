@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace KGSA
 {
-    public class Logg
+    public class Log
     {
         private static List<KgsaLog> log = new List<KgsaLog>();
         private static Color colorBtServer = Color.FromArgb(22, 93, 120);
@@ -17,19 +17,19 @@ namespace KGSA
         public static event EventHandler LogAdded;
 
         /// <summary>
-        /// Send logg melding
+        /// Create a log entry
         /// </summary>
-        /// <param name="message">Selve meldingen i string format</param>
-        /// <param name="color">Fargen på meldingen</param>
-        /// <param name="sendToLogOnly">Send bare til loggen</param>
-        /// <param name="statusOnly">Send bare til status feltet</param>
-        /// <param name="sendToFileOnly">Send bare til fil</param>
-        public static void Log(string message, Color? color = null, bool sendToLogOnly = false, bool statusOnly = false, bool sendToFileOnly = false, bool markedAsDebug = false)
+        /// <param name="message">Log message</param>
+        /// <param name="color">Color of the message</param>
+        /// <param name="onlyShowInLog">Show in Log window only</param>
+        /// <param name="onlyShowInStatus">Send bare til status feltet</param>
+        /// <param name="onlyShowInLogFile">Send bare til fil</param>
+        public static void n(string message, Color? color = null, bool onlyShowInLog = false, bool onlyShowInStatus = false, bool onlyShowInLogFile = false, bool isDebug = false, bool isSqlDebug = false)
         {
-            if (markedAsDebug)
+            if (isDebug || isSqlDebug)
                 Console.WriteLine("Debug: " + message);
 
-            var logObject = new KgsaLog(message, color, sendToLogOnly, statusOnly, sendToFileOnly, markedAsDebug);
+            var logObject = new KgsaLog(message, color, onlyShowInLog, onlyShowInStatus, onlyShowInLogFile, isDebug, isSqlDebug);
 
             log.Add(logObject);
 
@@ -37,29 +37,44 @@ namespace KGSA
                 LogAdded(null, EventArgs.Empty);
         }
 
+        public static void e(string message, bool showOnlyInLog = false)
+        {
+            n(message, Color.Red, showOnlyInLog);
+        }
+
+        public static void v(string message)
+        {
+            n(message, null, true, false, true);
+        }
+
+        public static void d(string message, Exception exception)
+        {
+            n(message + Environment.NewLine + "Exception: " + exception.Message + Environment.NewLine + "StackTrace: " + exception.StackTrace, Color.Brown, true, false, false, true);
+        }
+
+        public static void d(string message)
+        {
+            n(message, Color.Brown, true, false, false, true);
+        }
+
         public static void BtServer(string message, bool error = false)
         {
             if (error)
-                Log("Bluetooth server: " + message, colorBtServerError, true);
+                n("Bluetooth server: " + message, colorBtServerError, true);
             else
-                Log("Bluetooth server: " + message, colorBtServer, true);
+                n("Bluetooth server: " + message, colorBtServer, true);
         }
 
         public static void WebUser(string msg, HttpListenerRequest req, Color? c = null)
         {
             if (c == null)
                 c = Color.DarkGoldenrod;
-            Log("Web (" + req.UserHostAddress + "): " + msg, c);
+            n("Web (" + req.UserHostAddress + "): " + msg, c);
         }
 
         public static void DebugSql(string msg)
         {
-            Log(msg, Color.BlueViolet, true, false, false, true);
-        }
-
-        public static void Debug(string msg)
-        {
-            Log(msg, Color.Brown, true, false, false, true);
+            n(msg, Color.BlueViolet, true, false, false, true, true);
         }
 
         public static DialogResult Alert(string txt)
@@ -85,25 +100,20 @@ namespace KGSA
         public static DialogResult Alert(string txt, string title, MessageBoxButtons msgButton, MessageBoxIcon msgIcon, MessageBoxDefaultButton msgDefaultButton)
         {
             if (msgIcon == MessageBoxIcon.Exclamation)
-                Log(txt, Color.Red);
+                n("Dialog: " + txt, Color.Red);
             else
-                Log(txt, null, true);
+                n("Dialog: " + txt, null, true);
             return MessageBox.Show(txt, title, msgButton, msgIcon, msgDefaultButton);
-        }
-
-        public static void Debug(string msg, Exception ex)
-        {
-            Log(msg + Environment.NewLine + "Exception melding: " + ex.Message + Environment.NewLine + "Exception: " + ex.ToString(), Color.Brown, true, false, false, true);
         }
 
         public static void Status(string msg, Color? c = null)
         {
-            Log(msg, c, false, true);
+            n(msg, c, false, true);
         }
 
         public static void Unhandled(Exception ex, bool dialog = false)
         {
-            Log("Uhåndtert unntak oppstod! Unntak melding: " + ex.Message + Environment.NewLine + "Exception: " + ex.ToString(), Color.Red);
+            n("Uhåndtert unntak oppstod! Unntak melding: " + ex.Message + Environment.NewLine + "Exception: " + ex.ToString(), Color.Brown, false, false, false, true);
             if (dialog)
                 Alert("Ooops!\nNoe uventet skjedde som egentlig ikke skulle skje.\nMelding: " + ex.Message + "\nSe logg for detaljer.\n\nPrøv igjen, hvis det ikke fungerer; start programmet på nytt.", "Noe galt har skjedd", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
@@ -116,7 +126,7 @@ namespace KGSA
         /// <param name="title">The title of the error dialg</param>
         public static void ErrorDialog(Exception exception, string details, string title)
         {
-            Log("Uhåndtert unntak oppstod! Unntak melding: " + exception.Message + Environment.NewLine + "Exception: " + exception.ToString(), Color.Red);
+            n("Uhåndtert unntak oppstod! Unntak melding: " + exception.Message + Environment.NewLine + "Exception: " + exception.ToString(), Color.Red);
             using (FormError error = new FormError(title, exception, details))
             {
                 error.ShowDialog();
@@ -140,17 +150,18 @@ namespace KGSA
         public bool statusonly { get; set; }
         public bool fileonly { get; set; }
         public bool debug { get; set; }
-        public KgsaLog(string msg, Color? c = null, bool log = false, bool status = false, bool file = false, bool debugArg = false)
+        public bool debugSql { get; set; }
+        public KgsaLog(string msg, Color? c = null, bool log = false, bool status = false, bool file = false, bool debugArg = false, bool debugSqlArg = false)
         {
             this.message = msg;
             this.color = c.HasValue ? c.Value : Color.Black;
             this.logonly = log;
             this.statusonly = status;
             this.fileonly = file;
-
             if (this.statusonly && this.logonly)
                 this.statusonly = false;
             this.debug = debugArg;
+            this.debugSql = debugSqlArg;
         }
 
     }

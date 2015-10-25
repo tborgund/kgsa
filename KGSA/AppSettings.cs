@@ -12,10 +12,6 @@ namespace KGSA
     [Serializable]
     public class AppSettings
     {
-        #region Pages Refresh Time
-        public DateTime page_daily_time { get; set; }
-        public DateTime page_refresh_time { get; set; }
-        #endregion
         #region Online Importer settings
         /// Enable / Disable automatic online importing of weekly products and popular prisguide products
         public bool onlineImporterAuto { get; set; }
@@ -42,6 +38,8 @@ namespace KGSA
 
         /// Decides if bluetooth server is automatically started and listening for clients
         public bool blueServerIsEnabled { get; set; }
+        /// Date when the App database was updated last
+        public DateTime blueServerDatabaseUpdated { get; set; }
 
         /// Will not accept MScanner apps of earlier versions then this to connect to the bluetooth server
         public double blueServerMinimumAcceptedVersion { get; set; }
@@ -52,32 +50,14 @@ namespace KGSA
         /// Date for when the data was exported from Elguide
         public DateTime blueInventoryExportDate { get; set; }
 
-        /// Signifies if the inventory file exists and is updated
-        public bool blueInventoryReady { get; set; }
-
-        /// Automatic update of inventory database when store schedule is running
-        /// for the first time once a day
-        public bool blueInventoryAutoUpdate { get; set; }
-
         /// Date for the last item in the inventory database
         public DateTime blueProductLastDate { get; set; }
 
         /// Date for when the data was exported from Elguide
         public DateTime blueProductExportDate { get; set; }
 
-        /// Signifies if the product file exists and is updated
-        public bool blueProductReady { get; set; }
-
-        /// Automatic update of product database when store schedule is running
-        /// for the first time once a day
-        public bool blueProductAutoUpdate { get; set; }
-
         /// Date for when the EAN database was last updated.
         public DateTime blueEanUpdateDate { get; set; }
-
-        /// Automatic update of EAN database when store schedule is running
-        /// for the first time once a day
-        public bool blueEanAutoUpdate { get; set; }
         #endregion
         public DateTime dbFrom { get; set; }
         public DateTime dbTo { get; set; }
@@ -115,12 +95,6 @@ namespace KGSA
         public bool budgetShowMdasda { get; set; }
         public bool budgetShowButikk { get; set; }
         public bool useSqlCache { get; set; }
-        public bool webserverEnabled { get; set; }
-        public string webserverHost { get; set; }
-        public int webserverPort { get; set; }
-        public bool webserverRequireSimpleAuthentication { get; set; }
-        public string webserverUser { get; set; }
-        public string webserverPassword { get; set; }
         public bool macroShowWarning { get; set; }
         public string importSetting { get; set; }
         public bool storeCompareMtd { get; set; }
@@ -144,6 +118,7 @@ namespace KGSA
         public bool WindowMinimizeToTray { get; set; }
         public bool WindowExitToTray { get; set; }
         public bool debug { get; set; }
+        public bool debugSql { get; set; }
         public bool showTrivia { get; set; }
         public bool pdfExpandedGraphs { get; set; }
         public bool pdfVisButikk { get; set; }
@@ -427,15 +402,11 @@ namespace KGSA
 
             // bluetooth server defaults
             blueServerIsEnabled = false;
+            blueServerDatabaseUpdated = FormMain.rangeMin;
             blueServerMinimumAcceptedVersion = 1;
             blueInventoryLastDate = FormMain.rangeMin;
-            blueInventoryReady = false;
-            blueInventoryAutoUpdate = false;
             blueProductLastDate = FormMain.rangeMin;
-            blueProductAutoUpdate = false;
-            blueProductReady = false;
             blueEanUpdateDate = FormMain.rangeMin;
-            blueEanAutoUpdate = false;
 
             if (WindowSizeX < 994) { WindowSizeX = 994; }
             if (WindowSizeY < 736) { WindowSizeY = 736; }
@@ -506,11 +477,6 @@ namespace KGSA
             storeObsoleteSortBy = "tblUkurans.UkuransProsent";
             storeObsoleteSortAsc = false;
             storeObsoleteFilterMax = 30;
-            webserverPort = 8080; // default web port
-            webserverHost = "localhost";
-            webserverUser = "User"; // default bruker
-            webserverPassword = "094109029165239198160022101139180078146211183228"; // default passord: user1
-            webserverRequireSimpleAuthentication = true;
             epostPOP3password = "094109029165239198160022101139180078146211183228"; // default passord: user1
 
             color1 = Color.Maroon;

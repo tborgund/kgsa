@@ -29,7 +29,7 @@ namespace KGSA
                 if (!runningInBackground) main.savedBudgetPage = cat;
                 if (!abort)
                 {
-                    Logg.Log("Oppdaterer [" + BudgetCategoryClass.TypeToName(cat) + "]..");
+                    Log.n("Oppdaterer [" + BudgetCategoryClass.TypeToName(cat) + "]..");
                     OpenPage_Loading();
 
                     doc = new List<string>();
@@ -48,7 +48,7 @@ namespace KGSA
                     if (FormMain.stopRanking)
                     {
                         main.ClearHash(katArg);
-                        Logg.Log("Lasting avbrutt", Color.Red);
+                        Log.n("Lasting avbrutt", Color.Red);
                         OpenPage_Stopped();
                         FormMain.stopRanking = false;
                     }
@@ -57,7 +57,7 @@ namespace KGSA
                         File.WriteAllLines(htmlPage, doc.ToArray(), Encoding.Unicode);
                         OpenPage(htmlPage);
                         if (!runningInBackground)
-                            Logg.Log("Side [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
+                            Log.n("Side [" + katArg + "] tok " + main.timewatch.Stop() + " sekunder.", Color.Black, true);
                     }
                 }
                 else
@@ -65,7 +65,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 if (!runningInBackground)
                 {
                     OpenPage_Error();
@@ -82,7 +82,7 @@ namespace KGSA
             {
                 DateTime dateStartLastWeek = main.database.GetStartOfLastWholeWeek(pickedDate);
 
-                Logg.Debug("Henter selger tabell for sist uke..");
+                Log.d("Henter selger tabell for sist uke..");
                 DataTable table = MakeTableForWeek(main.appConfig.Avdeling, dateStartLastWeek);
                 if (table == null || table.Rows.Count == 0)
                 {
@@ -130,8 +130,8 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil ved generering av side: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Feil ved generering av side: " + ex.Message, Color.Red);
             }
             return;
         }
@@ -143,14 +143,14 @@ namespace KGSA
                 DataTable tableSales = main.database.tableSalg.GetWeeklySales(main.appConfig.Avdeling, date);
                 if (tableSales == null || tableSales.Rows.Count == 0)
                 {
-                    Logg.Log("Ingen salg funnet for uken " + main.database.GetIso8601WeekOfYear(date), Color.Red);
+                    Log.n("Ingen salg funnet for uken " + main.database.GetIso8601WeekOfYear(date), Color.Red);
                     return null;
                 }
 
                 DataTable tableSalesReps = main.database.tableSelgerkoder.GetSalesCodesTable(avdeling);
                 if (tableSalesReps == null || tableSalesReps.Rows.Count == 0)
                 {
-                    Logg.Log("Ingen selgere funnet i databasen", Color.Red);
+                    Log.n("Ingen selgere funnet i databasen", Color.Red);
                     return null;
                 }
 
@@ -198,7 +198,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return null;
         }

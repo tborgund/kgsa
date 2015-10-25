@@ -116,7 +116,7 @@ namespace KGSA
 
         private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            Logg.Log("Format feil oppdaget i time tabellen!", Color.Red);
+            Log.n("Format feil oppdaget i time tabellen!", Color.Red);
 
         }
     }

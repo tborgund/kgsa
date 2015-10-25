@@ -67,13 +67,13 @@ namespace KGSA
             }
             else if (e.Cancelled || (worker != null && worker.CancellationPending))
             {
-                Logg.Log("Prosessen ble avbrutt.", Color.Red);
+                Log.n("Prosessen ble avbrutt.", Color.Red);
                 main.processing.SetText = "Avbrutt";
                 main.processing.HideDelayed();
             }
             else
             {
-                Logg.Log("Prosessen ble fullørt men med feil. Se logg for detaljer.", Color.Red);
+                Log.n("Prosessen ble fullørt men med feil. Se logg for detaljer.", Color.Red);
                 main.processing.SetVisible = false;
             }
         }
@@ -117,13 +117,13 @@ namespace KGSA
             }
             else if (e.Cancelled || (worker != null && worker.CancellationPending))
             {
-                Logg.Log("Prosessen ble avbrutt.", Color.Red);
+                Log.n("Prosessen ble avbrutt.", Color.Red);
                 main.processing.SetText = "Avbrutt";
                 main.processing.HideDelayed();
             }
             else
             {
-                Logg.Log("Prosessen ble fullørt men med feil. Se logg for detaljer.", Color.Red);
+                Log.n("Prosessen ble fullørt men med feil. Se logg for detaljer.", Color.Red);
                 main.processing.SetVisible = false;
             }
         }
@@ -132,7 +132,7 @@ namespace KGSA
         {
             try
             {
-                Logg.Log("Laster ned populære produkter side fra prisguide.no..");
+                Log.n("Laster ned populære produkter side fra prisguide.no..");
                 main.processing.SetText = "Laster ned liste fra Prisguide.no..";
 
                 TimeWatch tw = new TimeWatch();
@@ -141,18 +141,18 @@ namespace KGSA
                 //string data = DownloadDocument(urlPrisguide + main.appConfig.onlinePrisguidePagesToImport);
                 if (data == null)
                 {
-                    Logg.Log("Error: Nedlastet data er NULL!", Color.Red);
+                    Log.n("Error: Nedlastet data er NULL!", Color.Red);
                     return false;
                 }
 
-                Logg.Log("Nedlasting ferdig. Prosesserer..");
+                Log.n("Nedlasting ferdig. Prosesserer..");
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(data);
 
                 HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[@class='product-info']/a");
                 if (nodes == null || nodes.Count == 0)
                 {
-                    Logg.Log("Fant ingen produkter på siden: " + urlPrisguide + main.appConfig.onlinePrisguidePagesToImport + " Prøv igjen senere?", Color.Red);
+                    Log.n("Fant ingen produkter på siden: " + urlPrisguide + main.appConfig.onlinePrisguidePagesToImport + " Prøv igjen senere?", Color.Red);
                     return false;
                 }
 
@@ -163,21 +163,21 @@ namespace KGSA
                     HtmlAttribute att = link.Attributes["href"];
                     productUrls.Add(att.Value);
                 }
-                Logg.Debug("Produktsider funnet: " + productUrls.Count);
+                Log.d("Produktsider funnet: " + productUrls.Count);
 
                 List<PrisguideProduct> prisguideProducts = new List<PrisguideProduct>();
 
                 main.processing.SetText = "Henter ut produktdata fra produktsider..";
-                Logg.Log("Henter ut produktdata fra Prisguide.no produktsider..");
+                Log.n("Henter ut produktdata fra Prisguide.no produktsider..");
 
                 prisguideProducts = ProcessProductUrls(productUrls, bw);
                 if (prisguideProducts == null || prisguideProducts.Count == 0)
                 {
-                    Logg.Log("Ingen produkter funnet. Prisguide er nede eller vi har problemer med internett forbindelsen. Prøv igjen senere!", Color.Red);
+                    Log.n("Ingen produkter funnet. Prisguide er nede eller vi har problemer med internett forbindelsen. Prøv igjen senere!", Color.Red);
                     return false;
                 }
 
-                Logg.Debug("Produkter funnet på prisguide.no: " + prisguideProducts.Count);
+                Log.d("Produkter funnet på prisguide.no: " + prisguideProducts.Count);
 
                 DataTable table = main.database.tablePrisguide.GetDataTable();
                 DataTable tableStock = main.database.tableUkurans.GetProductCodesInStock(main.appConfig.Avdeling);
@@ -239,19 +239,19 @@ namespace KGSA
 
                 main.processing.SupportsCancelation = false;
 
-                Logg.Debug("Sletter eksisterende oppføringer for i dag fra prisguide tabellen..");
+                Log.d("Sletter eksisterende oppføringer for i dag fra prisguide tabellen..");
                 main.database.tablePrisguide.RemoveDate(DateTime.Now);
 
-                Logg.Debug("Lagrer prisguide produkter i databasen..");
+                Log.d("Lagrer prisguide produkter i databasen..");
                 main.database.DoBulkCopy(table, "tblPrisguide");
 
-                Logg.Log("Ferdig uten feil oppdaget (Tid: " + tw.Stop() + ")", Color.Green);
+                Log.n("Ferdig uten feil oppdaget (Tid: " + tw.Stop() + ")", Color.Green);
                 return true;
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Kritis feil under prosessering av prisguide produkter: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Kritis feil under prosessering av prisguide produkter: " + ex.Message, Color.Red);
             }
             return false;
         }
@@ -262,7 +262,7 @@ namespace KGSA
             {
                 List<ProductCode> productCodes = new List<ProductCode>();
 
-                Logg.Log("Kobler til elkjop.no for nedlasting av ukens annonsevarer..");
+                Log.n("Kobler til elkjop.no for nedlasting av ukens annonsevarer..");
                 main.processing.SetText = "Laster ned annonse produkter..(Lyd og Bilde)";
 
                 productCodes.AddRange(ProcessElkjopProductPage(urlUkens_AV, bw, 2));
@@ -303,11 +303,11 @@ namespace KGSA
 
                 if (productCodes == null || productCodes.Count == 0)
                 {
-                    Logg.Log("Ingen produkter funnet. Elkjop.no svarer ikke, er nede, eller problemer med internett forbindelsen. Prøv igjen senere?", Color.Red);
+                    Log.n("Ingen produkter funnet. Elkjop.no svarer ikke, er nede, eller problemer med internett forbindelsen. Prøv igjen senere?", Color.Red);
                     return false;
                 }
 
-                Logg.Log("Antall produkter funnet: " + productCodes.Count);
+                Log.n("Antall produkter funnet: " + productCodes.Count);
                 main.processing.SetText = "Funnet " + productCodes.Count + " annonse produkter";
 
                 DataTable table = main.database.tableWeekly.GetDataTable();
@@ -349,21 +349,21 @@ namespace KGSA
 
                 main.processing.SupportsCancelation = false;
 
-                Logg.Debug("Sletter eksisterende oppføringer i dag fra tabellen..");
+                Log.d("Sletter eksisterende oppføringer i dag fra tabellen..");
                 main.database.tableWeekly.RemoveDate(main.appConfig.Avdeling, DateTime.Now);
 
-                Logg.Debug("Lagrer produkter i databasen..");
+                Log.d("Lagrer produkter i databasen..");
                 main.database.DoBulkCopy(table, "tblWeekly");
 
                 main.processing.SetValue = 100;
 
-                Logg.Log("Ukeannonse-import ferdig uten kritiske feil oppdaget", Color.Green);
+                Log.n("Ukeannonse-import ferdig uten kritiske feil oppdaget", Color.Green);
                 return true;
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Kritis feil under prosessering av annonse produkter: " + ex.Message, Color.Red);
+                Log.Unhandled(ex);
+                Log.n("Kritis feil under prosessering av annonse produkter: " + ex.Message, Color.Red);
             }
             return false;
         }
@@ -380,11 +380,11 @@ namespace KGSA
                 //string data = DownloadDocument(url);
                 if (data == null || data.Length < 8000)
                 {
-                    Logg.Log("Feil oppstod under nedlasting av side: " + url + " Størrelse: " + data.Length, Color.Red);
+                    Log.n("Feil oppstod under nedlasting av side: " + url + " Størrelse: " + data.Length, Color.Red);
                     return new List<ProductCode> { };
                 }
 
-                Logg.Debug("Nedlasting fullført (" + url + ") Størrelse: " + data.Length);
+                Log.d("Nedlasting fullført (" + url + ") Størrelse: " + data.Length);
 
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(data);
@@ -392,7 +392,7 @@ namespace KGSA
                 HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[@class='mini-product']");
                 if (nodes == null || nodes.Count == 0)
                 {
-                    Logg.Log("Fant ingen produkter på side: " + url, Color.Red);
+                    Log.n("Fant ingen produkter på side: " + url, Color.Red);
                     return new List<ProductCode> { };
                 }
 
@@ -402,7 +402,7 @@ namespace KGSA
                     HtmlNode codeNode = node.SelectSingleNode("div[1]/div[1]/small");
                     if (codeNode == null || String.IsNullOrEmpty(codeNode.InnerText))
                     {
-                        Logg.Log("Klarte ikke lese en varekode fra produktsiden. Er ignorert", Color.Red);
+                        Log.n("Klarte ikke lese en varekode fra produktsiden. Er ignorert", Color.Red);
                         continue;
                     }
 
@@ -422,13 +422,13 @@ namespace KGSA
                 }
 
                 if (productCodes.Count == 0)
-                    Logg.Log("Fant ingen produkter på side: " + url, Color.Red);
+                    Log.n("Fant ingen produkter på side: " + url, Color.Red);
 
                 return productCodes;
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return new List<ProductCode> { };
         }
@@ -451,7 +451,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return 0;
         }
@@ -479,13 +479,13 @@ namespace KGSA
                 {
                     product.prisguideId = ParsePrisguideIdFromUrl(url);
 
-                    Logg.Debug("Prisguide #" + pos + ": Laster ned side: " + url);
+                    Log.d("Prisguide #" + pos + ": Laster ned side: " + url);
 
                     string data = FetchPage(url);
                     //string data = DownloadDocument(url);
                     if (data == null || data.Length < 2000)
                     {
-                        Logg.Debug("Prisguide #" + pos + ": Feil med nedlasting av produktside");
+                        Log.d("Prisguide #" + pos + ": Feil med nedlasting av produktside");
                         product.status = PrisguideProduct.STATUS_DL_ERROR;
                         prisguideProducts.Add(product);
                         continue;
@@ -497,7 +497,7 @@ namespace KGSA
                     HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[@class='productline']/div[@class='price-info']");
                     if (nodes == null || nodes.Count == 0)
                     {
-                        Logg.Debug("Prisguide #" + pos + ": Fant ingen priser på produktsiden");
+                        Log.d("Prisguide #" + pos + ": Fant ingen priser på produktsiden");
                         product.status = PrisguideProduct.STATUS_NOT_FOUND;
                         prisguideProducts.Add(product);
                         continue;
@@ -530,7 +530,7 @@ namespace KGSA
                                 productCode.productCode = code;
 
                                 if (String.IsNullOrEmpty(prizeNode.InnerText))
-                                    Logg.Debug("Prisguide #" + pos + ": Fant ikke pris på varekoden " + code);
+                                    Log.d("Prisguide #" + pos + ": Fant ikke pris på varekoden " + code);
                                 else
                                     productCode.productInternetPrize = ParseElkjopPrize(prizeNode.InnerText);
 
@@ -542,11 +542,11 @@ namespace KGSA
                                 prevCode = code;
                             }
                             else
-                                Logg.Debug("Prisguide #" + pos + ": Vi har allerede denne varekoden: " + code);
+                                Log.d("Prisguide #" + pos + ": Vi har allerede denne varekoden: " + code);
                         }
                         catch (Exception)
                         {
-                            Logg.Debug("Prisguide #" + pos + ": Feil oppstod under produkt søk på produktsiden: " + url + " - Prøver neste..");
+                            Log.d("Prisguide #" + pos + ": Feil oppstod under produkt søk på produktsiden: " + url + " - Prøver neste..");
                         }
                     }
 
@@ -557,7 +557,7 @@ namespace KGSA
                 }
                 catch (Exception ex)
                 {
-                    Logg.Unhandled(ex);
+                    Log.Unhandled(ex);
                     product.status = PrisguideProduct.STATUS_EXCEPTION;
                 }
 
@@ -583,7 +583,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return 0;
         }
@@ -604,14 +604,14 @@ namespace KGSA
 
                     int.TryParse(prisguideIdStr, out prisguideId);
 
-                    Logg.Debug("Prisguide ID: " + prisguideId);
+                    Log.d("Prisguide ID: " + prisguideId);
 
                     return prisguideId;
                 }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return 0;
         }
@@ -659,12 +659,12 @@ namespace KGSA
                     }
                     catch (WebException)
                     {
-                        Logg.Log("Nettsiden " + url + " tok for lang tid til å svare", Color.Red);
+                        Log.n("Nettsiden " + url + " tok for lang tid til å svare", Color.Red);
                     }
                 }
                 if (attempts > maxAttempts)
                 {
-                    Logg.Log("Nedlastning av siden " + url + " ble avbrutt etter " + maxAttempts + " forsøk", Color.Red);
+                    Log.n("Nedlastning av siden " + url + " ble avbrutt etter " + maxAttempts + " forsøk", Color.Red);
                     return "";
                 }
             }

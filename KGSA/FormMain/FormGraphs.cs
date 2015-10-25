@@ -69,7 +69,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Debug("Uhåndtert unntak oppstod ved clickTopGraph().", ex);
+                Log.d("Uhåndtert unntak oppstod ved clickTopGraph().", ex);
             }
         }
 
@@ -169,7 +169,7 @@ namespace KGSA
             if (!bwUpdateBigGraph.IsBusy)
             {
                 groupGraphChoices.Enabled = false;
-                Logg.Log("Oppdaterer graf ..", Color.Black, false, true);
+                Log.n("Oppdaterer graf ..", Color.Black, false, true);
                 bwUpdateBigGraph.RunWorkerAsync();
             }
         }
@@ -186,10 +186,10 @@ namespace KGSA
             PaintGraph();
             groupGraphChoices.Enabled = true;
             if (!_graphReqStop)
-                Logg.Log("Graf oppdatert.", null, false, true);
+                Log.n("Graf oppdatert.", null, false, true);
             else
             {
-                Logg.Log("Graf stoppet.");
+                Log.n("Graf stoppet.");
                 _graphReqStop = false;
             }
         }
@@ -313,12 +313,12 @@ namespace KGSA
                     if (percent >= 0 && percent <= 100)
                         processing.SetValue = (int)(status.start + gapValue);
 
-                    Logg.Status(status.text + " (" + (current + 1) + " av " + total + ")");
+                    Log.Status(status.text + " (" + (current + 1) + " av " + total + ")");
                 }
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -326,7 +326,7 @@ namespace KGSA
         {
             ProgressStop();
             if (!IsBusy(true))
-                Logg.Status("Klar.");
+                Log.Status("Klar.");
             groupRankingChoices.Enabled = true;
         }
 
@@ -460,7 +460,7 @@ namespace KGSA
             try
             {
                 string SQL = "SELECT DISTINCT Avdeling FROM tblSalg WHERE Avdeling < 1700";
-                Logg.Debug("Avdeling søk: Henter ut unike butikker..");
+                Log.d("Avdeling søk: Henter ut unike butikker..");
                 DataTable dtAvd = database.GetSqlDataTable(SQL); 
                 if (dtAvd != null)
                 {
@@ -471,19 +471,19 @@ namespace KGSA
                     {
                         array[i] = dtAvd.Rows[i][0].ToString();
                     }
-                    Logg.Debug("Avdeling søk: Ferdig! Fant " + array.Length + " butikker.");
+                    Log.d("Avdeling søk: Ferdig! Fant " + array.Length + " butikker.");
                     return array;
                 }
                 return null;
             }
             catch (SqlCeException ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return null;
             }
         }

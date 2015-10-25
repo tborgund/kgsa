@@ -18,12 +18,12 @@ namespace KGSA
             {
                 ex = new Exception("Exception object was null");
             }
-            Logg.Log("Uhåndtert unntak oppstod! Unntak: " + ex.Message, Color.Red);
-            Logg.Debug("Unntak beskjed: " + ex.Message);
-            Logg.Debug("Unntak: " + ex.ToString());
-            Logg.Debug("KGSA versjon: " + FormMain.version);
-            Logg.Debug("OS versjon: " + Environment.OSVersion.Version.ToString());
-            Logg.Debug("Tid og Dato: " + DateTime.Now.ToShortTimeString() + " " + DateTime.Now.ToShortDateString());
+            Log.n("Uhåndtert unntak oppstod! Unntak: " + ex.Message, Color.Red);
+            Log.d("Unntak beskjed: " + ex.Message);
+            Log.d("Unntak: " + ex.ToString());
+            Log.d("KGSA versjon: " + FormMain.version);
+            Log.d("OS versjon: " + Environment.OSVersion.Version.ToString());
+            Log.d("Tid og Dato: " + DateTime.Now.ToShortTimeString() + " " + DateTime.Now.ToShortDateString());
             InitializeComponent();
             this.Text = "KGSA (" + FormMain.version + ") - Kritisk feil";
 

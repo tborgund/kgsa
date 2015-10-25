@@ -27,7 +27,7 @@ namespace KGSA
         private void LoadEmailDb()
         {
             emailDb = main.database.GetSqlDataTable("SELECT * FROM tblEmail");
-            Logg.Debug("Hentet e-post adresser fra tblEmail. Antall linjer: " + emailDb.Rows.Count);
+            Log.d("Hentet e-post adresser fra tblEmail. Antall linjer: " + emailDb.Rows.Count);
         }
 
         private string FilterString(string str, DateTime date)
@@ -69,14 +69,14 @@ namespace KGSA
                             string name = s.Substring(1, s.IndexOf("<") - 1);
 
                             if (Add(name, email, "Full", true))
-                                Logg.Log("Importert epost: " + email + " - " + name, Color.Green);
+                                Log.n("Importert epost: " + email + " - " + name, Color.Green);
                         }
                     }
                 }
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -86,7 +86,7 @@ namespace KGSA
 
             if (!IsValidEmail(addressEmail))
             {
-                Logg.Log("E-post adressen er i feil format.");
+                Log.n("E-post adressen er i feil format.");
                 return false;
             }
 
@@ -112,7 +112,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -137,7 +137,7 @@ namespace KGSA
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
                 return false;
             }
         }
@@ -188,7 +188,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return new List<MailAddress>() { };
         }
@@ -197,12 +197,12 @@ namespace KGSA
         {
             try
             {
-                Logg.Log("Forbereder sending av epost.. (" + type + ")");
+                Log.n("Forbereder sending av epost.. (" + type + ")");
 
                 List<MailAddress> recip = GetRecipients(type);
                 if (recip.Count == 0)
                 {
-                    Logg.Log("Fant ingen mottakere for denne gruppen (" + type + ")");
+                    Log.n("Fant ingen mottakere for denne gruppen (" + type + ")");
                     return false;
                 }
 
@@ -214,7 +214,7 @@ namespace KGSA
 
                 if (InternalSendMail(recip, tittel, tekst, attachment, main.appConfig.epostBrukBcc))
                 {
-                    Logg.Log("E-post sendt for mottakere '" + type + "'.", Color.Green);
+                    Log.n("E-post sendt for mottakere '" + type + "'.", Color.Green);
                     if (main.appConfig.epostNesteMelding.Length > 0 && type != "Quick")
                         main.appConfig.epostNesteMelding = ""; // slett melding
                     return true;
@@ -255,8 +255,8 @@ namespace KGSA
                 if (!IsValidEmail(from))
                     from = "no-reply@elkjop.no";
 
-                Logg.Log("Sender epost til " + str, null, true);
-                Logg.Log("Sender epost med vedlegg: " + attachmentFilename, null, true);
+                Log.n("Sender epost til " + str, null, true);
+                Log.n("Sender epost med vedlegg: " + attachmentFilename, null, true);
                 if (useBcc)
                 {
                     foreach (MailAddress mailaddress in recipient)
@@ -294,7 +294,7 @@ namespace KGSA
                         }
 
                         smtpClient.Send(message);
-                        Logg.Debug("Fullført sending av e-post til " + mailaddress.Address);
+                        Log.d("Fullført sending av e-post til " + mailaddress.Address);
                     }
                 }
                 else
@@ -334,18 +334,18 @@ namespace KGSA
 
                     smtpClient.Send(message);
 
-                    Logg.Debug("Fullført sending av e-post.");
+                    Log.d("Fullført sending av e-post.");
                 }
                 return true;
             }
             catch(SmtpException ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil oppstod under kommunikasjon med SMTP server " + main.appConfig.epostSMTPserver + ". Se logg for detaljer.");
+                Log.Unhandled(ex);
+                Log.n("Feil oppstod under kommunikasjon med SMTP server " + main.appConfig.epostSMTPserver + ". Se logg for detaljer.");
             }
             catch(Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
             return false;
         }

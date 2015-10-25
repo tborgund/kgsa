@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
-using System.Data.SqlServerCe;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -70,190 +69,149 @@ namespace KGSA
             ", [Type] nvarchar(25) NOT NULL " +
             ");";
 
-        string sqlTblEanDrop = "DROP TABLE [tblEan];";
-        string sqlTblEanCreate = "CREATE TABLE [tblEan] ( " +
-                        "[Id] int IDENTITY (1,1) NOT NULL " +
-                        ", [Barcode] nchar(13) NOT NULL " +
-                        ", [Varekode] nvarchar(25) NOT NULL " +
-                        ", [Varetekst] nvarchar(50) NOT NULL " +
-                        ");";
-        string sqlTblEanAlter = "ALTER TABLE [tblEan] ADD CONSTRAINT [PK_tblEan] PRIMARY KEY ([Id]);";
-
-        BackgroundWorker worker;
-
         #endregion
         public AppManager(FormMain form)
         {
-            this.main = form;
+            main = form;
         }
 
-        public void UpdateAllAsync(BackgroundWorker bw)
+        public void UpdateAllAsync()
         {
-            this.worker = bw;
-            worker.DoWork += new DoWorkEventHandler(bwUpdateAll_DoWork);
-            worker.ProgressChanged += new ProgressChangedEventHandler(main.bwProgressReport_ProgressChanged);
-            worker.WorkerReportsProgress = true;
-            worker.WorkerSupportsCancellation = true;
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwUpdateAll_Completed);
+            main.worker = new BackgroundWorker();
+            main.worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            main.worker.ProgressChanged += new ProgressChangedEventHandler(main.bwProgressReport_ProgressChanged);
+            main.worker.WorkerReportsProgress = true;
+            main.worker.WorkerSupportsCancellation = true;
+            main.worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_Completed);
 
             main.processing.SetVisible = true;
             main.processing.SetText = "Forbereder..";
             main.processing.SetProgressStyle = ProgressBarStyle.Marquee;
-            worker.RunWorkerAsync();
-            main.processing.SetBackgroundWorker = worker;
+            main.worker.RunWorkerAsync();
+            main.processing.SetBackgroundWorker = main.worker;
         }
 
-        internal void bwUpdateAll_DoWork(object sender, DoWorkEventArgs e)
+        public bool UpdateAll(BackgroundWorker bw)
+        {
+            try
+            {
+                if (main.IsBusy())
+                    return false;
+
+                FormMain.appManagerIsBusy = true;
+                main.ProgressStart();
+                if (UpdateInventoryDatabase(bw) && UpdateProductDatabase(bw))
+                {
+                    FormMain.appManagerIsBusy = false;
+                    main.ProgressStop();
+                    main.appConfig.blueServerDatabaseUpdated = DateTime.Now;
+                    main.SaveSettings();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Unhandled(ex);
+                Log.e("Uventet feil oppstod under oppdatering av App-databasene. Se logg for detaljer.");
+            }
+            FormMain.appManagerIsBusy = false;
+            main.ProgressStop();
+            return false;
+        }
+
+        internal void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             FormMain.appManagerIsBusy = true;
             main.ProgressStart();
 
-            bool invUpdated = ImportAndConvertInventory(worker);
+            bool invUpdated = UpdateInventoryDatabase(main.worker);
             if (invUpdated && File.Exists(FormMain.settingsPath + @"\" + BluetoothServer.inventoryFilename))
-            {
-                main.appConfig.blueInventoryReady = true;
-                Logg.Log("Varebeholdnings databasen er klar for App.", Color.Green);
-            }
-            else
-                Logg.Log("Varebeholdnings databasen ble ikke oppdatert. Se logg for detaljer", Color.Red);
+                Log.n("Varebeholdnings databasen er klar for App.", Color.Green);
 
-            bool dataUpdated = ExportProductDatabase(worker);
+            bool dataUpdated = UpdateProductDatabase(main.worker);
             if (dataUpdated && File.Exists(FormMain.settingsPath + @"\" + BluetoothServer.dataFilename))
-            {
-                main.appConfig.blueProductLastDate = main.appConfig.dbTo;
-                main.appConfig.blueProductReady = true;
-                Logg.Log("Produkt databasen er klar for App.", Color.Green);
-            }
-            else
-                Logg.Log("Produkt databasen ble ikke oppdatert. Se logg for detaljer", Color.Red);
+                Log.n("Produkt databasen er klar for App.", Color.Green);
 
-            if (!invUpdated || !dataUpdated)
-                e.Result = false;
-            else
-                e.Result = true;
+            e.Result = invUpdated && dataUpdated;
+
+            if (main.worker != null && main.worker.CancellationPending)
+                e.Cancel = true;
         }
 
-        internal void bwUpdateAll_Completed(object sender, RunWorkerCompletedEventArgs e)
+        internal void worker_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             FormMain.appManagerIsBusy = false;
             main.ProgressStop();
             main.processing.SetProgressStyle = ProgressBarStyle.Continuous;
             main.processing.SetValue = 100;
 
-            if ((bool)e.Result && e.Error == null && !e.Cancelled)
+            if (!e.Cancelled && e.Error == null && (bool)e.Result)
             {
-                main.processing.SetText = "Fullført eksportering av produkt-data og varebeholdning";
+                main.appConfig.blueServerDatabaseUpdated = DateTime.Now;
+                main.SaveSettings();
+                main.processing.SetText = "Ferdig";
                 main.processing.HideDelayed();
             }
             else if (e.Cancelled)
             {
-                main.processing.SetText = "Avbrutt etter ønske";
+                Log.e("Prosessen ble avbrutt.");
+                main.processing.SetText = "Avbrutt";
                 main.processing.HideDelayed();
-                Logg.Log("Prosessen ble avbrutt etter ønske.", Color.Red);
             }
             else
             {
                 main.processing.SetText = "Prosessen ble avbrutt";
                 main.processing.HideDelayed();
-                Logg.Log("Prosessen ble fullført, men med feil. Se logg for detaljer.", Color.Red);
+                Log.e("Prosessen ble fullført, men med feil. Se logg for detaljer.");
             }
         }
 
-        #region ExportInventory
+        #region Update inventory database
 
-        private void ReadProgressCSV(FileHelpers.ProgressEventArgs e)
+        public bool UpdateInventoryDatabase(BackgroundWorker bw)
         {
-            if (e.ProgressCurrent % 831 == 0)
-                main.processing.SetText = "Leser CSV: " + e.ProgressCurrent.ToString("#,##0") + "..";
-        }
-
-        public bool ImportAndConvertInventory(BackgroundWorker bw)
-        {
-            DateTime exported = FormMain.rangeMin;
-            String wobsoleteFile = main.appConfig.csvElguideExportFolder + @"\wobsolete.zip";
             try
             {
-                if (File.Exists(wobsoleteFile))
-                {
-                    exported = File.GetLastWriteTime(wobsoleteFile);
-                    Logg.Debug(wobsoleteFile + " eksportert: " + exported.ToShortDateString());
-                }
-                else
-                {
-                    Logg.Log("Import: Fant ikke fil eller ble nektet tilgang. (" + wobsoleteFile + ")", Color.Red);
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-                return false;
-            }
-
-            string wobsoleteDecompressed = Decompress(wobsoleteFile);
-            if (String.IsNullOrEmpty(wobsoleteDecompressed))
-            {
-                Logg.Log("Import: Feil under utpakking av CSV", Color.Red);
-                return false;
-            }
-
-            string database = FormMain.settingsPath + @"\" + BluetoothServer.inventoryFilename;
-            if (File.Exists(database))
-            {
-                try
-                {
-                    File.Delete(database);
-                    SQLiteConnection.CreateFile(database);
-                }
-                catch (Exception ex)
-                {
-                    Logg.Unhandled(ex);
-                    Logg.Log("Import: Eksport destinasjonen " + database + " eksisterer og er låst.", Color.Red);
-                    return false;
-                }
-            }
-
-            SQLiteConnection con = new SQLiteConnection("Data Source=" + database + ";Version=3;");
-            try
-            {
-                int importReadErrors = 0;
-                var engine = new FileHelperEngine(typeof(csvObsolete));
-                engine.ErrorManager.ErrorMode = ErrorMode.SaveAndContinue;
-
                 main.processing.SetProgressStyle = ProgressBarStyle.Marquee;
-                engine.SetProgressHandler(new ProgressChangeHandler(ReadProgressCSV));
-                var resCSV = engine.ReadFile(wobsoleteDecompressed) as csvObsolete[];
+                main.processing.SetText = "Henter produkt-data..";
+                Log.n("Henter produkt-data..");
+                DataTable table = main.database.tableUkurans.GetInventory(main.appConfig.Avdeling, bw);
+                if (table == null)
+                    throw new NullReferenceException("Tabellen tableUkurans returnerte NULL");
 
-                if (engine.ErrorManager.HasErrors)
-                    foreach (ErrorInfo err in engine.ErrorManager.Errors)
-                    {
-                        if (bw != null)
-                            if (bw.CancellationPending)
-                                return false;
-
-                        importReadErrors++;
-                        Logg.Log("Import: Klarte ikke lese linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
-                        Logg.Debug("Exception: " + err.ExceptionInfo.ToString());
-
-                        if (importReadErrors > 100)
-                        {
-                            Logg.Log("Feil: CSV er ikke en obsolete eksportering eller filen er skadet. (" + wobsoleteDecompressed + ")", Color.Red);
-                            return false;
-                        }
-
-                    }
-
-                int count = resCSV.Length;
+                int count = table.Rows.Count;
                 if (count == 0)
                 {
-                    Logg.Log("CSV filer var tom!", Color.Red);
+                    Log.e("Databasen inneholder ingen lagervarer. Importer lagervarer først");
                     return false;
                 }
 
+                string database = FormMain.settingsPath + @"\" + BluetoothServer.inventoryFilename;
+                if (File.Exists(database))
+                {
+                    try
+                    {
+                        File.Delete(database);
+                        SQLiteConnection.CreateFile(database);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Unhandled(ex);
+                        Log.n("Import: Eksport destinasjonen " + database + " eksisterer og er låst.", Color.Red);
+                        return false;
+                    }
+                }
+
+                Log.n("Prosesserer " + string.Format("{0:n0}", count) + " vareoppføringer..");
                 main.processing.SetProgressStyle = ProgressBarStyle.Continuous;
-                Logg.Log("Prosesserer " + count.ToString("#,##0") + " vare oppføringer.. (" + wobsoleteDecompressed + ")");
+                main.processing.SetText = "Prosesserer " + string.Format("{0:n0}", count) + " vareoppføringer..";
+
+                long TICKS_AT_EPOCH = 621355968000000000L;
+                long TICKS_PER_MILLISECOND = 10000;
 
                 DateTime lastDate = FormMain.rangeMin;
+
+                SQLiteConnection con = new SQLiteConnection("Data Source=" + database + ";Version=3;");
                 using (var conSqlite = new SQLiteConnection(con))
                 {
                     conSqlite.Open();
@@ -265,109 +223,77 @@ namespace KGSA
                     {
                         using (var transaction = conSqlite.BeginTransaction())
                         {
-                            int lager2 = main.appConfig.Avdeling + 1000;
                             for (var i = 0; i < count; i++)
                             {
-                                if (bw != null)
+                                if (bw.CancellationPending)
+                                    return false;
+
+                                if (i % 321 == 0 && bw.WorkerReportsProgress)
                                 {
-                                    if (i % 321 == 0)
-                                    {
-                                        bw.ReportProgress(i, new StatusProgress(count, null, 0, 100));
-                                        main.processing.SetText = "Lagrer vare oppføringer..: "
-                                            + i.ToString("#,##0") + " / " + count.ToString("#,##0");
-                                    }
+                                    bw.ReportProgress(i, new StatusProgress(count, null, 0, 100));
+                                    main.processing.SetText = "Lagrer vareoppføringer..: "
+                                        + i.ToString("#,##0") + " / " + count.ToString("#,##0");
                                 }
 
-                                long TICKS_AT_EPOCH = 621355968000000000L;
-                                long TICKS_PER_MILLISECOND = 10000;
+                                DateTime date = Convert.ToDateTime(table.Rows[i][TableUkurans.KEY_DATO]);
+                                if (date > lastDate)
+                                    lastDate = date;
 
-                                if (resCSV[i].Avd == main.appConfig.Avdeling || resCSV[i].Avd == lager2)
-                                {
-                                    if (resCSV[i].DatoInnLager > lastDate)
-                                        lastDate = resCSV[i].DatoInnLager;
+                                cmd.CommandText = "INSERT INTO tblInventory (Id, Avdeling, Varekode, Varetekst, Kategori, KategoriNavn,"
+                                    + " Varegruppe, VaregruppeNavn, Modgruppe, ModgruppeNavn, Merke, MerkeNavn, Antall, Kost, Dato, UkuransMnd, UkuransVerdi, UkuransProsent) VALUES (" + i + ", "
+                                    + table.Rows[i][TableUkurans.KEY_AVDELING] + ", '"
+                                    + table.Rows[i][TableVareinfo.KEY_VAREKODE] + "', '"
+                                    + table.Rows[i][TableVareinfo.KEY_TEKST].ToString().Replace("'", "''") + "', "
+                                    + table.Rows[i][TableVareinfo.KEY_KAT] + ", '"
+                                    + table.Rows[i][TableVareinfo.KEY_KATNAVN] + "', "
+                                    + table.Rows[i][TableVareinfo.KEY_GRUPPE] + ", '"
+                                    + table.Rows[i][TableVareinfo.KEY_GRUPPENAVN] + "', "
+                                    + table.Rows[i][TableVareinfo.KEY_MODGRUPPE] + ", '"
+                                    + table.Rows[i][TableVareinfo.KEY_MODGRUPPENAVN] + "', "
+                                    + table.Rows[i][TableVareinfo.KEY_MERKE] + ", '"
+                                    + table.Rows[i][TableVareinfo.KEY_MERKENAVN] + "', "
+                                    + table.Rows[i][TableUkurans.KEY_ANTALL] + ", "
+                                    + table.Rows[i][TableUkurans.KEY_KOST].ToString().Replace(" ", "").Replace(",", ".") + ", "
+                                    + ((date.ToUniversalTime().Ticks - TICKS_AT_EPOCH) / TICKS_PER_MILLISECOND).ToString() + ", "
+                                    + "0" + ", "
+                                    + table.Rows[i][TableUkurans.KEY_UKURANS].ToString().Replace(" ", "").Replace(",", ".") + ", "
+                                    + table.Rows[i][TableUkurans.KEY_UKURANSPROSENT].ToString().Replace(" ", "").Replace(",", ".") + ");";
 
-                                    cmd.CommandText = "INSERT INTO tblInventory (Id, Avdeling, Varekode, Varetekst, Kategori, KategoriNavn, Varegruppe, VaregruppeNavn, Modgruppe, ModgruppeNavn, Merke, MerkeNavn, Antall, Kost, Dato, UkuransMnd, UkuransVerdi, UkuransProsent) VALUES (" + i + ", "
-                                        + resCSV[i].Avd + ", '"
-                                        + resCSV[i].Varekode.Replace("'", "") + "', '"
-                                        + resCSV[i].VareTekst.Replace("'", "''") + "', "
-                                        + resCSV[i].Kat + ", '"
-                                        + resCSV[i].KatNavn + "', "
-                                        + resCSV[i].Grp + ", '"
-                                        + resCSV[i].GrpNavn + "', "
-                                        + resCSV[i].Mod + ", '"
-                                        + resCSV[i].ModNavn + "', "
-                                        + resCSV[i].Merke + ", '"
-                                        + resCSV[i].MerkeNavn + "', "
-                                        + resCSV[i].AntallLager + ", "
-                                        + resCSV[i].KostVerdiLager.ToString().Replace(",", ".") + ", "
-                                        + ((resCSV[i].DatoInnLager.ToUniversalTime().Ticks - TICKS_AT_EPOCH) / TICKS_PER_MILLISECOND).ToString() + ", "
-                                        + resCSV[i].MndUkurans + ", "
-                                        + resCSV[i].UkuransVerdi.Replace(" ", "").Replace(",", ".").Replace("%", "") + ", "
-                                        + resCSV[i].UkuransProsent.Replace(" ", "").Replace(",", ".").Replace("%", "") + ");";
+                                cmd.ExecuteNonQuery();
 
-                                    cmd.ExecuteNonQuery();
-                                }
                             }
                             transaction.Commit();
                         }
 
                     }
 
-                    main.appConfig.blueInventoryExportDate = exported;
+                    main.appConfig.blueInventoryExportDate = lastDate;
                     main.appConfig.blueInventoryLastDate = lastDate;
 
                     CreateInfoTable(conSqlite, "Inventory", main.appConfig.blueInventoryLastDate, main.appConfig.blueInventoryExportDate);
-                    Logg.Debug("Opprettet inventory info tabell");
+                    Log.d("Opprettet inventory info tabell");
 
                     conSqlite.Close();
                 }
 
-                Logg.Debug(wobsoleteFile + " siste dato: " + lastDate.ToShortDateString() + " og eksportert: " + exported.ToShortDateString());
+                Log.d("Varebeholdning siste dato: " + lastDate.ToShortDateString() + " og eksportert: " + lastDate.ToShortDateString());
 
                 return true;
             }
             catch (Exception ex)
             {
-                FormError errorMsg = new FormError("Feil ved konvertering av wobsolete", ex);
-                errorMsg.ShowDialog();
-                return false;
+                Log.Unhandled(ex);
+                Log.e("Uventet feil oppstod under oppdatering av App-databasen Inventory. Se logg for detaljer");
             }
-            finally
-            {
-                if (con != null)
-                {
-                    con.Close();
-                    con.Dispose();
-                }
-            }
+            return false;
         }
 
         #endregion
 
-        #region ExportProductData
+        #region Update Product data
 
-        public bool ExportProductDatabase(BackgroundWorker bw)
+        public bool UpdateProductDatabase(BackgroundWorker bw)
         {
-            DateTime exported = FormMain.rangeMin;
-            String csvPath = main.appConfig.csvElguideExportFolder + @"\irank.csv";
-            try
-            {
-                if (File.Exists(csvPath))
-                {
-                    exported = File.GetLastWriteTime(csvPath);
-                }
-                else
-                {
-                    Logg.Log("Import: Fant ikke fil eller ble nektet tilgang. (" + csvPath + ")", Color.Red);
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-                return false;
-            }
-
             string database = FormMain.settingsPath + @"\" + BluetoothServer.dataFilename;
             if (File.Exists(database))
             {
@@ -378,8 +304,8 @@ namespace KGSA
                 }
                 catch (Exception ex)
                 {
-                    Logg.Unhandled(ex);
-                    Logg.Log("Eksport: Databasen er låst og kan ikke slettes/fornyes: " + database + ". Exception: " + ex.Message);
+                    Log.Unhandled(ex);
+                    Log.n("Eksport: Databasen er låst og kan ikke slettes/fornyes: " + database + ". Exception: " + ex.Message);
                     return false;
                 }
             }
@@ -387,79 +313,64 @@ namespace KGSA
             SQLiteConnection sqliteCon = new SQLiteConnection("Data Source=" + database + ";Version=3;");
             try
             {
-                Logg.Debug("Henter varedata fra databasen..");
+                Log.d("Henter varedata fra databasen..");
                 main.processing.SetText = "Henter varedata..";
-                DataTable table = main.database.GetSqlDataTable("select * from tblVareinfo");
-                main.processing.SetText = "Henter EAN koder..";
-                DataTable tableEan = main.database.GetSqlDataTable("select Barcode, Varekode, Varetekst from tblEan");
-
+                DataTable table = main.database.tableVareinfo.GetAllProducts();
                 if (table == null)
                     throw new Exception("Intern feil i databasen. tblVareinfo var null!");
+
+                if (table.Rows.Count == 0)
+                {
+                    Log.e("Fant ingen varer i databasen. Har du importert lagervarer fra Elguide?");
+                    return false;
+                }
+
+                main.processing.SetText = "Henter EAN koder..";
+                DataTable tableEan = main.database.tableEan.GetAllRows();
                 if (tableEan == null)
                     throw new Exception("Intern feil i databasen. tblEan var null!");
 
                 if (tableEan.Rows.Count == 0)
                 {
-                    MessageBox.Show("Databasen inneholder ingen EAN koder. Eksporter EAN fra Elguide først.", "Mangler EAN", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Logg.Log("EAN tabellen er tom. Importer EAN koder fra Elguide først.", Color.Red);
+                    Log.e("Fant ingen EAN koder i databasen. Har du importert EAN koder fra Elguide?");
                     return false;
                 }
-
-                if (table.Rows.Count == 0)
-                {
-                    Logg.Log("Fant ingen varer i databasen. Har du importert lagervarer fra Elguide?", Color.Red);
-                    return false;
-                }
-
-                DataColumn column = new DataColumn();
-                column.ColumnName = "Barcode";
-                column.DataType = typeof(string);
-                table.Columns.Add(column);
-
-                table.Columns["Varekode"].AllowDBNull = true;
-                table.Columns["Kategori"].AllowDBNull = true;
-                table.Columns["KategoriNavn"].AllowDBNull = true;
-                table.Columns["Varegruppe"].AllowDBNull = true;
-                table.Columns["VaregruppeNavn"].AllowDBNull = true;
-                table.Columns["Modgruppe"].AllowDBNull = true;
-                table.Columns["ModgruppeNavn"].AllowDBNull = true;
-                table.Columns["Merke"].AllowDBNull = true;
-                table.Columns["MerkeNavn"].AllowDBNull = true;
-                table.Columns["Dato"].AllowDBNull = true;
-                table.Columns["Salgspris"].AllowDBNull = true;
+                table.Columns.Add(new DataColumn("Barcode", typeof(string)));
 
                 int countvare = table.Rows.Count;
-                Logg.Debug("Henter ut EAN koder.. (" + countvare + ")");
+                Log.d("Henter ut EAN koder.. (" + countvare + ")");
                 try
                 {
                     for (int i = 0; i < countvare; i++)
                     {
-                        if (bw.CancellationPending)
+                        if (bw != null && bw.CancellationPending)
                             return false;
 
-                        var filter = tableEan.Select("Varekode = '" + table.Rows[i]["Varekode"] + "'");
+                        var filter = tableEan.Select(TableEan.KEY_PRODUCT_CODE + " = '" + table.Rows[i]["Varekode"] + "'");
                         if (filter.Length == 1)
-                            table.Rows[i]["Barcode"] = filter[0]["Barcode"].ToString();
+                            table.Rows[i]["Barcode"] = filter[0][TableEan.KEY_BARCODE].ToString();
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logg.Log("Feil ved EAN kode setting.. " + ex.Message);
+                    Log.Unhandled(ex);
+                    Log.e("Kritisk feil ved prosessering av EAN tabellen");
+                    return false;
                 }
 
-                DataTable tableEanOnly = tableEan.Select("Varekode = ''").CopyToDataTable();
+                DataTable tableEanOnly = tableEan.Select(TableEan.KEY_PRODUCT_CODE + " = ''").CopyToDataTable();
 
-                Logg.Debug("Setter EAN kode til varedata.. (Antall: " + tableEanOnly.Rows.Count + ")");
+                Log.d("Setter EAN kode til varedata.. (Antall: " + tableEanOnly.Rows.Count + ")");
 
                 int countEanOnly = tableEanOnly.Rows.Count;
                 for (int i = 0; i < countEanOnly; i++)
                 {
-                    if (bw.CancellationPending)
+                    if (bw != null && bw.CancellationPending)
                         return false;
 
                     DataRow dtRow = table.NewRow();
-                    dtRow["Barcode"] = tableEanOnly.Rows[i]["Barcode"];
-                    dtRow["Varetekst"] = tableEanOnly.Rows[i]["Varetekst"];
+                    dtRow["Barcode"] = tableEanOnly.Rows[i][TableEan.KEY_BARCODE];
+                    dtRow["Varetekst"] = tableEanOnly.Rows[i][TableEan.KEY_PRODUCT_TEXT];
                     dtRow["Kategori"] = 0;
                     dtRow["Varegruppe"] = 0;
                     dtRow["Modgruppe"] = 0;
@@ -469,7 +380,7 @@ namespace KGSA
                 }
 
                 main.processing.SetText = "Behandler " + string.Format("{0:n0}", table.Rows.Count) + " varekoder..";
-                Logg.Log("Behandler " + string.Format("{0:n0}", table.Rows.Count) + " varekoder..");
+                Log.n("Behandler " + string.Format("{0:n0}", table.Rows.Count) + " varekoder..");
 
                 DateTime lastDate = FormMain.rangeMin;
                 using (var con = new SQLiteConnection(sqliteCon))
@@ -481,17 +392,24 @@ namespace KGSA
                     }
                     using (var cmd = new SQLiteCommand(con))
                     {
-                        Logg.Debug("Flytter resultat over til Sqlite databasen..");
+                        Log.d("Saving produkt-data to sqlite database " + database + "..");
                         using (var transaction = con.BeginTransaction())
                         {
                             int count = table.Rows.Count;
                             for (var i = 0; i < count; i++)
                             {
-                                if (count % 33 == 0)
-                                    main.processing.SetText = "Skriver " + i + " av " + count + " varekoder..";
+                                if (bw != null && bw.CancellationPending)
+                                    break;
+
+                                if (i % 83 == 0)
+                                {
+                                    bw.ReportProgress(i, new StatusProgress(count, null, 0, 100));
+                                    main.processing.SetText = "Lagrer produktdata..: "
+                                        + string.Format("{0:n0}", i) + " / " + string.Format("{0:n0}", count);
+                                }
 
                                 decimal dec = 0M;
-                                Decimal.TryParse(table.Rows[i]["Salgspris"].ToString(), out dec);
+                                decimal.TryParse(table.Rows[i]["Salgspris"].ToString(), out dec);
 
                                 DateTime date = Convert.ToDateTime(table.Rows[i]["Dato"]);
                                 if (date > lastDate)
@@ -512,26 +430,26 @@ namespace KGSA
                             }
                             transaction.Commit();
                         }
-                        Logg.Debug("Ferdig med å flytte resultat over til databasen.");
+                        Log.d("Ferdig med å flytte resultat over til databasen.");
                     }
 
-                    main.appConfig.blueProductExportDate = exported;
+                    main.appConfig.blueProductExportDate = lastDate;
                     main.appConfig.blueProductLastDate = lastDate;
 
                     CreateInfoTable(con, "ProductData", main.appConfig.blueProductLastDate, main.appConfig.blueInventoryExportDate);
-                    Logg.Debug("Opprettet produktdata info tabell");
+                    Log.d("Opprettet produktdata info tabell");
 
                     con.Close();
                 }
 
-                Logg.Debug(csvPath + " siste dato: " + lastDate.ToShortDateString() + " og eksportert: " + exported.ToShortDateString());
+                Log.d("Produkt-data siste dato: " + lastDate.ToShortDateString() + " og eksportert: " + lastDate.ToShortDateString());
 
                 return true;
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                Logg.Log("Feil ved eksport av produtdata: " + ex.Message);
+                Log.Unhandled(ex);
+                Log.n("Feil ved eksport av produtdata: " + ex.Message);
                 return false;
             }
             finally
@@ -548,15 +466,8 @@ namespace KGSA
 
         #region importEAN
 
-        private int ean_current_count = 0;
-        private int ean_new_count = 0;
-        private int ean_nomatch_count = 0;
-        private int ean_match_count = 0;
-        private int ean_totalt_count = 0;
-
-        public void ImportEan(BackgroundWorker bw)
+        public void ImportEan()
         {
-            this.worker = bw;
             // Browse etter *.dat..
             try
             {
@@ -576,19 +487,20 @@ namespace KGSA
                     main.processing.SetText = "Starter import av EAN datafil..";
                     main.processing.SetProgressStyle = ProgressBarStyle.Marquee;
 
-                    worker.DoWork += new DoWorkEventHandler(bwEanImport_DoWork);
-                    worker.ProgressChanged += new ProgressChangedEventHandler(main.bwProgressReport_ProgressChanged);
-                    worker.WorkerReportsProgress = true;
-                    worker.WorkerSupportsCancellation = true;
-                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwEanImport_Completed);
-                    worker.RunWorkerAsync(eanfiles);
-                    main.processing.SetBackgroundWorker = worker;
+                    main.worker = new BackgroundWorker();
+                    main.worker.DoWork += new DoWorkEventHandler(bwEanImport_DoWork);
+                    main.worker.ProgressChanged += new ProgressChangedEventHandler(main.bwProgressReport_ProgressChanged);
+                    main.worker.WorkerReportsProgress = true;
+                    main.worker.WorkerSupportsCancellation = true;
+                    main.worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwEanImport_Completed);
+                    main.worker.RunWorkerAsync(eanfiles);
+                    main.processing.SetBackgroundWorker = main.worker;
                 }
                 fdlg.Dispose();
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
             }
         }
 
@@ -596,202 +508,240 @@ namespace KGSA
         {
             FormMain.appManagerIsBusy = true;
             main.ProgressStart();
-            this.ean_current_count = 0;
-            this.ean_new_count = 0;
-            this.ean_nomatch_count = 0;
-            this.ean_match_count = 0;
-            this.ean_totalt_count = 0;
-            
+
             List<string> eanfiles = (List<string>)e.Argument;
             if (eanfiles != null)
-                e.Result = ImportEanWorkerBrowse(worker, eanfiles);
+                e.Result = ImportEanCodes(eanfiles);
             else
-                throw new ArgumentNullException("Background worker argument was null!");
+                throw new ArgumentNullException("No files to import was selected = Returned NULL");
+
+            if (main.worker.CancellationPending)
+                e.Cancel = true;
         }
 
-        private bool ImportEanWorkerBrowse(BackgroundWorker bw, List<string> eanfiles)
+        private bool ImportEanCodes(List<string> eanfiles)
         {
             try
             {
                 DataTable tableFile = new DataTable();
-                tableFile.Columns.Add("Barcode", typeof(string));
-                tableFile.Columns.Add("Varetekst", typeof(string));
+                tableFile.Columns.Add(TableEan.KEY_BARCODE, typeof(string));
+                tableFile.Columns.Add(TableEan.KEY_PRODUCT_TEXT, typeof(string));
 
                 foreach (string file in eanfiles)
                 {
-                    if (bw != null)
-                        if (bw.CancellationPending)
-                            return false;
+                    if (main.worker != null && main.worker.CancellationPending)
+                        return false;
 
-                    if (!File.Exists(file) || String.IsNullOrEmpty(file))
+                    if (!File.Exists(file) || string.IsNullOrEmpty(file))
                         throw new IOException("Fant ikke fil eller ble nektet tilgang: " + file);
 
-                    Logg.Log("Leser " + file + "..");
-                    string line;
-                    System.IO.StreamReader fileFile = new System.IO.StreamReader(file, System.Text.Encoding.GetEncoding(865));
-                    while ((line = fileFile.ReadLine()) != null)
+                    Log.n("Leser bærbar telle-penn fil \"" + file + "\"..");
+
+                    using (StreamReader fileReader = new StreamReader(file, System.Text.Encoding.GetEncoding(865)))
                     {
-                        if (bw != null)
-                            if (bw.CancellationPending)
+                        string fileLine;
+                        while ((fileLine = fileReader.ReadLine()) != null)
+                        {
+                            if (main.worker != null && main.worker.CancellationPending)
                                 return false;
 
-                        string lineStr = line.Trim();
-                        if (lineStr.Length > 13)
-                        {
-                            if (Regex.IsMatch(lineStr.Substring(0, 13), @"^\d+$"))
+                            string line = fileLine.Trim();
+                            if (line.Length > 13)
                             {
-                                string tekst = lineStr.Substring(13, lineStr.Length - 13);
+                                if (Regex.IsMatch(line.Substring(0, 13), @"^\d+$"))
+                                {
+                                    string tekst = line.Substring(13, line.Length - 13);
 
-                                DataRow dtRow = tableFile.NewRow();
-                                dtRow["Barcode"] = lineStr.Substring(0, 13);
-                                if (tekst.Length > 29)
-                                    dtRow["Varetekst"] = lineStr.Substring(13, 29).Trim();
-                                else
-                                    dtRow["Varetekst"] = lineStr.Substring(13, lineStr.Length - 13).Trim();
-                                tableFile.Rows.Add(dtRow);
+                                    DataRow dtRow = tableFile.NewRow();
+                                    dtRow[0] = line.Substring(0, 13);
+                                    if (tekst.Length > 29)
+                                        dtRow[1] = line.Substring(13, 29).Trim();
+                                    else
+                                        dtRow[1] = line.Substring(13, line.Length - 13).Trim();
+                                    tableFile.Rows.Add(dtRow);
+                                }
+                            }
+                        }
+                        fileReader.Close();
+                    }
+                }
+
+                int countFile = tableFile.Rows.Count;
+                if (countFile == 0)
+                {
+                    Log.e("Fant ingen EAN koder fra fil(er)");
+                    return false;
+                }
+                Log.d(string.Format("{0:n0}", countFile) + " rows read from file(s)");
+
+                Log.n("Henter EAN koder fra databasen..");
+                main.processing.SetText = "Henter EAN koder fra databasen..";
+
+                DataTable tableEan = main.database.tableEan.GetAllRows();
+                if (tableEan == null)
+                    throw new NullReferenceException("DataTable tableEan retrieved from database returned null");
+
+                int countEan = tableEan.Rows.Count;
+                Log.d(string.Format("{0:n0}", countEan) + " EAN codes read from database");
+
+                Log.n("Behandler EAN databasen..");
+                main.processing.SetText = "Behandler EAN databasen..";
+
+                TimeWatch time = new TimeWatch();
+                time.Start();
+                for (int i = 0; i < countFile; i++)
+                {
+                    if (main.worker.CancellationPending)
+                        return false;
+
+                    if (i % 134 == 0)
+                    {
+                        main.worker.ReportProgress(i, new StatusProgress(countFile, null, 0, 30));
+                        main.processing.SetText = "Leser EAN koder..: "
+                            + string.Format("{0:n0}", i) + " / " + string.Format("{0:n0}", countFile);
+                    }
+
+                    DataRow[] result = tableEan.Select(TableEan.KEY_BARCODE + " = '" + tableFile.Rows[i][TableEan.KEY_BARCODE] + "'");
+                    if (result.Count() == 0)
+                    {
+                        DataRow dtRow = tableEan.NewRow();
+                        dtRow[TableEan.INDEX_BARCODE] = tableFile.Rows[i][0];
+                        dtRow[TableEan.INDEX_PRODUCT_TEXT] = tableFile.Rows[i][1];
+                        dtRow[TableEan.INDEX_PRODUCT_CODE] = "";
+                        tableEan.Rows.Add(dtRow);
+                    }
+                    else if (result.Count() >= 1)
+                    {
+                        for (int d = 0; d < result.Count(); d++)
+                        {
+                            if (!result[d][TableEan.INDEX_PRODUCT_TEXT].Equals(tableFile.Rows[i][1]))
+                            {
+                                Log.d("Updating known EAN (" + result[d][TableEan.INDEX_BARCODE] + ") with new data..");
+                                result[0][TableEan.INDEX_BARCODE] = tableFile.Rows[i][0];
+                                result[0][TableEan.INDEX_PRODUCT_TEXT] = tableFile.Rows[i][1];
+                                result[0][TableEan.INDEX_PRODUCT_CODE] = "";
+                                result[0].EndEdit();
+                                tableEan.AcceptChanges();
                             }
                         }
                     }
-                    fileFile.Close();
+                    else
+                        Log.e("Error while searching for EAN (" + tableFile.Rows[i][TableEan.KEY_BARCODE] + ") - This should not happen!");
                 }
+                int countAfter = tableEan.Rows.Count;
+                int countNew = countAfter - countEan;
 
-                Logg.Log("Henter ut eksisterende EAN koder fra databasen..");
-
-                if (!main.connection.TableExists("tblEan"))
+                Log.d("Searched " + string.Format("{0:n0}", countFile) + " EAN codes in " + time.show + " seconds");
+                if (countNew == 0)
                 {
-                    var cmdCreate = new SqlCeCommand(sqlTblEanCreate, main.connection);
-                    cmdCreate.ExecuteNonQuery();
-                    var cmdAlter = new SqlCeCommand(sqlTblEanAlter, main.connection);
-                    cmdAlter.ExecuteNonQuery();
-                }
-                DataTable dtCurrent = main.database.GetSqlDataTable("SELECT Barcode, Varetekst FROM tblEan");
-
-                var tableNew = new DataTable();
-                tableNew.Columns.Add("Barcode", typeof(string));
-                tableNew.Columns.Add("Varetekst", typeof(string));
-                this.ean_current_count = dtCurrent.Rows.Count;
-                main.processing.SetText = "Prosesserer innhold..";
-
-                if (ean_current_count > 0)
-                {
-                    Logg.Log("EAN koder i tblEan: " + ean_current_count, null, true);
-                    Logg.Log("Filtrerer ut EAN koder vi har fra før..");
-
-                    for (int i = 0; i < tableFile.Rows.Count; i++)
-                    {
-                        if (bw != null)
-                            if (bw.CancellationPending)
-                                return false;
-
-                        DataRow[] filteredRows = dtCurrent.Select("Barcode = '" + tableFile.Rows[i]["Barcode"] + "'");
-                        if (filteredRows.Length == 0)
-                        {
-                            DataRow dtRow = tableNew.NewRow();
-                            dtRow["Barcode"] = tableFile.Rows[i]["Barcode"];
-                            dtRow["Varetekst"] = tableFile.Rows[i]["Varetekst"] ;
-                            tableNew.Rows.Add(dtRow);
-                        }
-                    }
-                }
-                else
-                    tableNew = tableFile.Copy();
-
-                this.ean_new_count = tableNew.Rows.Count;
-
-                if (ean_new_count == 0)
-                {
-                    Logg.Log("Fant ingen nye EAN koder.");
+                    Log.n("Fullført EAN importering: Ingen nye EAN koder funnet", Color.Blue);
                     return true;
                 }
-
-                Logg.Log("Fant " + string.Format("{0:n0}", tableNew.Rows.Count) + " nye EAN koder.", null, true);
-
-                return MatchEanToDatabase(tableNew, bw);
+                else
+                {
+                    Log.n("Fant " + string.Format("{0:n0}", countNew) + " EAN koder. Starter søk i databasen etter varekoder..");
+                    return MatchEanToDatabase(tableEan);
+                }
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
-                return false;
+                Log.Unhandled(ex);
+                Log.e("Kritisk feil i ImportEanCodes: Importering avbrutt. Se logg for detaljer.");
             }
+            return false;
         }
 
-        private bool MatchEanToDatabase(DataTable dtTblCurrent, BackgroundWorker bw)
+        private bool MatchEanToDatabase(DataTable tableEan)
         {
             try
             {
-                DataView view = dtTblCurrent.DefaultView;
-                view.Sort = "Varetekst ASC";
-                dtTblCurrent = view.ToTable();
+                DataView view = tableEan.DefaultView;
+                view.Sort = TableEan.KEY_PRODUCT_TEXT + " ASC";
+                tableEan = view.ToTable();
 
-                main.processing.SetText = "Behandler EAN databasen..";
-                Logg.Log("Henter varekoder fra databasen og matcher varetekst.. (kan ta en stund!)");
+                List<string> notFoundList = new List<string> { };
+                int countEans = tableEan.Rows.Count;
+                int countProductCodes = 0;
+                int countFound = 0;
+                int countNotFound = 0;
+                string sql = "SELECT " + TableVareinfo.KEY_VAREKODE + ", SUBSTRING(" + TableVareinfo.KEY_TEKST
+                    + ", 1, 29) AS " + TableVareinfo.KEY_TEKST + " FROM " + TableVareinfo.TABLE_NAME;
 
-                DataTable dtVarekoder = main.database.GetSqlDataTable("SELECT Varekode, SUBSTRING(Varetekst, 1, 29) AS Varetekst FROM tblVareinfo");
+                main.processing.SetText = "Henter varekoder fra databasen..";
 
-                var dtTblMatch = new DataTable();
-                dtTblMatch.Columns.Add("Barcode", typeof(string));
-                dtTblMatch.Columns.Add("Varekode", typeof(string));
-                dtTblMatch.Columns.Add("Varetekst", typeof(string));
-
-                for (int i = 0; i < dtVarekoder.Rows.Count; i++)
+                using (DataTable tableProducts = main.database.GetSqlDataTable(sql))
                 {
-                    if (bw != null)
-                        if (bw.CancellationPending)
+                    if (tableProducts == null)
+                        throw new NullReferenceException("DataTable tableInfo retrieved from database returned NULL");
+
+                    countProductCodes = tableProducts.Rows.Count;
+                    if (countProductCodes == 0)
+                    {
+                        Log.e("Ingen varer funnet i databasen. Importer lager først");
+                        return false;
+                    }
+                    Log.d("Started matching new EAN codes to product database..");
+
+                    TimeWatch time = new TimeWatch();
+                    time.Start();
+
+                    for (int i = 0; i < countEans; i++)
+                    {
+                        if (main.worker.CancellationPending)
                             return false;
 
-                    DataRow[] result = dtTblCurrent.Select("Varetekst = '" + dtVarekoder.Rows[i]["Varetekst"].ToString().Replace("'", "''") + "'");
-                    if (result.Count() > 0)
-                    {
-                        DataRow dtRow = dtTblMatch.NewRow();
-                        dtRow["Barcode"] = result[0]["Barcode"];
-                        dtRow["Varekode"] = dtVarekoder.Rows[i]["Varekode"];
-                        //dtRow["Varetekst"] = dtVarekoder.Rows[i]["Varetekst"];
-                        dtRow["Varetekst"] = "";
+                        if (i % 114 == 0)
+                        {
+                            main.worker.ReportProgress(i, new StatusProgress(countProductCodes, null, 30, 60));
+                            main.processing.SetText = "Søker i produkt databasen..: "
+                                + string.Format("{0:n0}", i) + " / " + string.Format("{0:n0}", countEans);
+                        }
 
-                        dtTblMatch.Rows.Add(dtRow);
+                        DataRow[] result = tableProducts.Select("Varetekst = '" + tableEan.Rows[i][TableEan.INDEX_PRODUCT_TEXT].ToString().Replace("'", "''") + "'");
+                        if (result.Count() > 0)
+                        {
+                            tableEan.Rows[i][TableEan.INDEX_PRODUCT_CODE] = result[0][0];
+                            countFound++;
+                        }
+                        else
+                        {
+                            if (notFoundList.Count < 25)
+                                notFoundList.Add(countNotFound + ";" + tableEan.Rows[i][TableEan.INDEX_BARCODE] + ";" + tableEan.Rows[i][TableEan.INDEX_PRODUCT_TEXT]);
+                            countNotFound++;
+                        }
                     }
-                    //else Logg.Debug("Fant ikke match på tekst '" + dtVarekoder.Rows[i]["Varetekst"].ToString() + "'");
+                    Log.d("Matching search took " + time.show + " seconds");
+
+                    if (main.appConfig.debug)
+                    {
+                        Log.d(string.Format("{0:n0}", countFound) + " new rows with matching ProductCodes");
+                        Log.d(string.Format("{0:n0}", countNotFound) + " rows with no ProductCodes");
+                        Log.d("-------------- NOT FOUND ------------------ START");
+                        foreach (string line in notFoundList)
+                            Log.d(line);
+                        Log.d("-------------- NOT FOUND ------------------ END");
+                    }
                 }
 
-                Logg.Log("Varekoder i databasen: " + dtVarekoder.Rows.Count, null, true);
-                Logg.Log("Match i EAN databasen: " + dtTblMatch.Rows.Count, null, true);
-                this.ean_nomatch_count = (dtVarekoder.Rows.Count - dtTblMatch.Rows.Count);
-                this.ean_match_count = dtTblMatch.Rows.Count;
-                Logg.Log("EAN med manglende varekode: " + this.ean_nomatch_count, null, true);
-
-                Logg.Log("Oppdaterer databasen..");
-                Logg.Log("Legger til strekkoder uten varekode..", null, true);
-
-                DataTable dtFinal = dtTblMatch.Copy();
-
-                for (int i = 0; i < dtTblCurrent.Rows.Count; i++)
+                if (countFound > 0)
                 {
-                    if (bw != null)
-                        if (bw.CancellationPending)
-                            return false;
+                    Log.n("Lagrer endringer i EAN databsen.. (" + string.Format("{0:n0}", countEans) + " oppføringer)");
+                    main.processing.SupportsCancelation = false;
+                    main.processing.SetText = "Lagrer endringer i EAN databasen.. (" + string.Format("{0:n0}", countEans) + " oppføringer)";
+                    main.database.tableEan.Reset();
+                    main.database.DoBulkCopy(tableEan, TableEan.TABLE_NAME);
 
-                    DataRow[] filteredRows = dtTblMatch.Select("Barcode = '" + dtTblCurrent.Rows[i]["Barcode"] + "'");
-                    if (filteredRows.Length == 0)
-                    {
-                        DataRow dtRow = dtFinal.NewRow();
-                        dtRow["Barcode"] = dtTblCurrent.Rows[i]["Barcode"];
-                        dtRow["Varekode"] = "";
-                        dtRow["Varetekst"] = dtTblCurrent.Rows[i]["Varetekst"];
-                        dtFinal.Rows.Add(dtRow);
-                    }
+                    Log.n("Fullført EAN importering: EAN databasen oppdatert med " + string.Format("{0:n0}", countFound) + " nye varekoder", Color.Green);
                 }
-                this.ean_totalt_count = dtFinal.Rows.Count;
-                Logg.Log("Lagt til " + (dtFinal.Rows.Count - dtTblMatch.Rows.Count) + " strekkoder uten varkode.");
+                else
+                    Log.n("Fullført EAN importering: Ingen nye EAN koder funnet etter å ha søkt igjennom " + string.Format("{0:n0}", countEans) + " koder", Color.Blue);
 
-                main.database.DoBulkCopy(dtFinal, "tblEan");
-
-                Logg.Log("Fullført EAN importering!", Color.Green);
-                main.processing.SetText = "Fullført importering av EAN datafil";
                 return true;
             }
             catch (Exception ex)
             {
-                Logg.Unhandled(ex);
+                Log.Unhandled(ex);
+                Log.e("Kritisk feil i MatchEanToDatabase: Importering avbrutt. Se logg for detaljer.");
             }
             return false;
         }
@@ -800,29 +750,25 @@ namespace KGSA
         {
             FormMain.appManagerIsBusy = false;
             main.ProgressStop();
+            main.processing.SetProgressStyle = ProgressBarStyle.Continuous;
+            main.processing.SetValue = 100;
+
             if (!e.Cancelled && e.Error == null && (bool)e.Result)
             {
-                this.ean_totalt_count += this.ean_current_count;
                 main.processing.SetText = "Ferdig!";
                 main.processing.HideDelayed();
-                Logg.Alert("Nye EAN koder med varekode: " + string.Format("{0:n0}", this.ean_match_count) + "\nNye EAN koder UTEN varekode: "
-                    + string.Format("{0:n0}", this.ean_nomatch_count) + "\nNye EAN koder totalt: " + string.Format("{0:n0}",
-                    (this.ean_match_count + this.ean_nomatch_count)) + "\n\nTotalt EAN koder i database (Før): "
-                    + string.Format("{0:n0}", this.ean_current_count) + "\nTotalt EAN koder i databasen (Etter): "
-                    + string.Format("{0:n0}", this.ean_totalt_count), "Import rapport", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (e.Cancelled)
             {
-                Logg.Log("Prosessen ble avbrutt.", Color.Red);
+                Log.e("Prosessen ble avbrutt");
                 main.processing.SetText = "Avbrutt";
                 main.processing.HideDelayed();
             }
             else
             {
-                Logg.Log("Prosessen bwEanImport ble fullørt men med feil. Se logg for detaljer.", Color.Red);
+                Log.e("EAN importering ble fullørt men med feil. Se logg for detaljer.");
                 main.processing.SetVisible = false;
             }
-
         }
 
         #endregion
@@ -849,70 +795,11 @@ namespace KGSA
             }
         }
 
-        public void ResetEanDb()
-        {
-            try
-            {
-                if (main.connection.TableExists("tblEan"))
-                {
-                    var cmdDrop = new SqlCeCommand(sqlTblEanDrop, main.connection);
-                    cmdDrop.ExecuteNonQuery();
-                }
-
-                var cmdCreate = new SqlCeCommand(sqlTblEanCreate, main.connection);
-                cmdCreate.ExecuteNonQuery();
-                var cmdAlter = new SqlCeCommand(sqlTblEanAlter, main.connection);
-                cmdAlter.ExecuteNonQuery();
-
-                Logg.Log("tblEan reset.", Color.Green);
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-            }
-        }
-
         public static long FromDateTimeToInteger(DateTime date)
         {
             long time = date.Ticks - new DateTime(1970, 1, 1).Ticks;
             time /= TimeSpan.TicksPerSecond;
             return time * 1000;
-        }
-
-        public string Decompress(string filename)
-        {
-            try
-            {
-                if (File.Exists(filename) && filename.EndsWith(".zip"))
-                {
-                    Logg.Log("Pakker ut " + filename + "..", null, true);
-
-                    string zipToUnpack = filename;
-                    string unpackDirectory = System.IO.Path.GetTempPath();
-                    using (ZipFile zip1 = ZipFile.Read(zipToUnpack))
-                    {
-                        foreach (ZipEntry e in zip1)
-                        {
-                            e.Extract(unpackDirectory, ExtractExistingFileAction.OverwriteSilently);
-                        }
-                    }
-
-                    Logg.Log("Utpakket.", null, true);
-
-                    if (File.Exists(System.IO.Path.GetTempPath() + @"\wobsolete.csv"))
-                        return System.IO.Path.GetTempPath() + @"\wobsolete.csv";
-                    else
-                    {
-                        Logg.Log("Feil i utpakking av Zip fil! (" + filename + ")", Color.Red);
-                    }
-                }
-                return "";
-            }
-            catch (Exception ex)
-            {
-                Logg.Unhandled(ex);
-                return "";
-            }
         }
     }
 }
