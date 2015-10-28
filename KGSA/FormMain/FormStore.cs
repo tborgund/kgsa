@@ -56,17 +56,19 @@ namespace KGSA
                 else
                 {
                     Log.n("Mislykkes forsøk ved utpakking av (" + appConfig.csvElguideExportFolder + @"\wobsolete.csv" + ")");
-                    MessageBox.Show("Obs! Utpakking av arkiv mislykkes eller wobsolete.zip ble ikke funnet. Se logg for detaljer.\nPrøv igjen eller pakk ut manuelt før importering.", "KGSA - Info", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    Log.Alert("Obs! Utpakking av arkiv mislykkes eller wobsolete.zip ble ikke funnet. Se logg for detaljer.\nPrøv igjen eller pakk ut manuelt før importering.",
+                        "KGSA Database", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
             catch (FileNotFoundException ex)
             {
                 Log.Unhandled(ex);
-                Log.n("Fant ikke fil (" + ex.FileName + ")", Color.Red);
+                Log.e("Fant ikke fil (" + ex.FileName + ")");
             }
             catch (Exception ex)
             {
                 Log.Unhandled(ex);
+                Log.e("Kritisk feil ved ImportWobsoleteCsvZip(): " + ex.Message);
             }
         }
 
@@ -301,8 +303,6 @@ namespace KGSA
             {
                 if (!String.IsNullOrEmpty(page))
                     RunStore(page);
-                else if (!String.IsNullOrEmpty(savedPage))
-                    RunStore(savedStorePage);
                 else if (!String.IsNullOrEmpty(appConfig.savedPage))
                     RunStore(appConfig.savedStorePage);
                 else
@@ -520,7 +520,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedStorePage = katArg;
+                    appConfig.savedStorePage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -633,7 +633,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedStorePage = katArg;
+                    appConfig.savedStorePage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -708,7 +708,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedStorePage = katArg;
+                    appConfig.savedStorePage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");

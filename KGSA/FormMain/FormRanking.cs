@@ -219,12 +219,6 @@ namespace KGSA
                 page.BuildPage(cat, appConfig.strBudgetDaily, htmlBudgetDaily, pickerBudget.Value);
                 appConfig.strBudgetDaily = newHash;
             }
-            else if (cat == BudgetCategory.AlleSelgere)
-            {
-                PageBudgetAllSales page = new PageBudgetAllSales(this, false, bw, webBudget);
-                page.BuildPage(cat, appConfig.strBudgetAllSales, htmlBudgetAllSales, pickerBudget.Value);
-                appConfig.strBudgetAllSales = newHash;
-            }
             else
                 Log.n("Ingen kategori valgt for beregning av budsjett.");
         }
@@ -344,7 +338,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = "Butikk";
+                    appConfig.savedPage = "Butikk";
                 if (!abort)
                 {
                     if (!bg)
@@ -498,7 +492,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedBudgetPage = cat;
+                    appConfig.savedBudgetPage = BudgetCategoryClass.TypeToName(cat);
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + " Budget]..");
@@ -798,7 +792,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -966,7 +960,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -1117,7 +1111,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -1265,7 +1259,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -1413,7 +1407,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -1537,7 +1531,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -1638,7 +1632,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -1802,7 +1796,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "]..");
@@ -1985,7 +1979,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "] ..");
@@ -2067,7 +2061,7 @@ namespace KGSA
             {
                 if (!bg && !abort) timewatch.Start();
                 if (!bg)
-                    savedPage = katArg;
+                    appConfig.savedPage = katArg;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + katArg + "] ..");

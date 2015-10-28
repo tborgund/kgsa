@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -14,6 +15,16 @@ namespace KGSA
         public KgsaTools(FormMain form)
         {
             this.main = form;
+        }
+
+        public string GetTempFilename(string shortName, string extension)
+        {
+            string filename = Path.ChangeExtension(shortName, extension);
+
+            if (File.Exists(Path.Combine(FormMain.settingsTemp, filename)))
+                filename = Path.ChangeExtension(shortName + " " + Path.GetRandomFileName(), extension);
+
+            return Path.Combine(FormMain.settingsTemp, filename);
         }
 
         public string TextStyle_Shorten(string text, int maxChars)

@@ -807,6 +807,29 @@ namespace KGSA
                     Log.n("Auto: Misslykket oppdatering av Ukenytt produkter. Se logg for detaljer.", Color.Red);
             }
 
+            List<string> openXmlFiles = new List<string> { };
+            if (appConfig.openXml_AllSalesRep_AutoSend)
+            {
+                bool sendNow = false;
+                if (appConfig.openXml_AllSalesRep_AutoSend_Daily)
+                    sendNow = true;
+                else
+                {
+                    if (appConfig.ignoreSunday && DateTime.Now.Date.DayOfWeek == DayOfWeek.Sunday)
+                        sendNow = true;
+                    else if (!appConfig.ignoreSunday && DateTime.Now.Date.DayOfWeek == DayOfWeek.Monday)
+                        sendNow = true;
+                }
+
+                if (sendNow)
+                {
+                    Log.n("Auto: Starter generering av regneark..");
+                    string file = openXml.CreateDocumentSpecial(OpenXML.DOC_ALL_SALES_REP, bwAutoRanking);
+                    if (!string.IsNullOrEmpty(file))
+                        openXmlFiles.Add(file);
+                }
+            }
+
             processing.SetText = "Klargjør for sending av ranking..";
             Log.n("Auto: Konverterer ranking til PDF..");
 
@@ -814,7 +837,13 @@ namespace KGSA
 
             string pdfAlt = CreatePDF("Full", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'Full'..";
-            kgsaEmail.Send(pdfAlt, appConfig.dbTo, "Full", appConfig.epostEmne, appConfig.epostBody);
+            if (openXmlFiles.Count > 0)
+            {
+                openXmlFiles.Add(pdfAlt);
+                kgsaEmail.Send(openXmlFiles, appConfig.dbTo, "Full", appConfig.epostEmne, appConfig.epostBody);
+            }
+            else
+                kgsaEmail.Send(pdfAlt, appConfig.dbTo, "Full", appConfig.epostEmne, appConfig.epostBody);
 
             string pdfComputer = CreatePDF("Computer", "", bwAutoRanking);
             processing.SetText = "Sender e-post for gruppe 'Computer'..";
@@ -1746,8 +1775,6 @@ namespace KGSA
                 // Har ikke fått instruks om hvilken side, sjekker hvilken side som er synlig..
                 if (!String.IsNullOrEmpty(page)) // Har funnet hvilken side vi er på
                     RunRanking(page);
-                else if (!String.IsNullOrEmpty(savedPage)) // ..eller sjekk siste åpnet.
-                    RunRanking(savedPage);
                 else if (!String.IsNullOrEmpty(appConfig.savedPage)) // eller kanskje den er lagret?
                     RunRanking(appConfig.savedPage);
                 else // OK, vi gir opp og åpner standard side..
@@ -1771,12 +1798,10 @@ namespace KGSA
 
                 if (page != BudgetCategory.None)
                     RunBudget(page);
-                else if (savedBudgetPage != BudgetCategory.None)
-                    RunBudget(savedBudgetPage);
-                else if (appConfig.savedBudgetPage != BudgetCategory.None)
-                    RunBudget(appConfig.savedBudgetPage);
+                else if (!appConfig.savedBudgetPage.Equals(BudgetCategoryClass.TypeToName(BudgetCategory.None)))
+                    RunBudget(BudgetCategoryClass.NameToType(appConfig.savedBudgetPage));
                 else
-                    RunBudget(BudgetCategory.MDA);
+                    RunBudget(BudgetCategory.Daglig);
             }
         }
 
@@ -1928,14 +1953,13 @@ namespace KGSA
                     else
                         return "";
                 }
-                else
-                    return "";
             }
             catch(Exception ex)
             {
                 Log.Unhandled(ex);
-                return "";
+                Log.e("Kritisk uhåndtert feil oppdaget i currentPage()");
             }
+            return "";
         }
 
         private BudgetCategory currentBudgetPage()
@@ -1974,7 +1998,7 @@ namespace KGSA
             catch (Exception ex)
             {
                 Log.Unhandled(ex);
-                Log.n("Kritisk uhåndtert feil oppdaget i currentBudgetPage()! Forsøkte å finne budsjett side", Color.Red);
+                Log.e("Kritisk uhåndtert feil oppdaget i currentBudgetPage()! Forsøkte å finne budsjett side");
             }
             return BudgetCategory.None;
         }
@@ -2173,7 +2197,6 @@ namespace KGSA
                 buttonBudgetAftersales.BackColor = SystemColors.ControlLight;
                 buttonBudgetMdaSda.BackColor = SystemColors.ControlLight;
                 buttonBudgetButikk.BackColor = SystemColors.ControlLight;
-                buttonBudgetAllSalesRep.BackColor = SystemColors.ControlLight;
 
                 if (cat == BudgetCategory.MDA)
                     buttonBudgetMda.BackColor = Color.LightSkyBlue;
@@ -2197,8 +2220,6 @@ namespace KGSA
                     buttonBudgetButikk.BackColor = Color.LightSkyBlue;
                 else if (cat == BudgetCategory.Daglig)
                     buttonBudgetDaily.BackColor = Color.LightSkyBlue;
-                else if (cat == BudgetCategory.AlleSelgere)
-                    buttonBudgetAllSalesRep.BackColor = Color.LightSkyBlue;
 
                 this.Update();
             }
@@ -3237,7 +3258,7 @@ namespace KGSA
                     Directory.CreateDirectory(settingsTemp);
                 }
                 try {
-                    var files = new DirectoryInfo(settingsTemp).GetFiles("*.*");
+                    var files = new DirectoryInfo(settingsTemp).GetFiles();
                     foreach (var file in files.Where(file => DateTime.UtcNow - file.CreationTimeUtc > TimeSpan.FromHours(72)))
                     {
                         file.Delete();
@@ -3552,7 +3573,7 @@ namespace KGSA
                 {
                     ClearBudgetHash(BudgetCategory.None);
                 }
-                if (EmptyDatabase() || !appConfig.experimental)
+                if (EmptyDatabase())
                 {
                     webBudget.Navigate(htmlImport);
                     groupBudgetPages.Enabled = false;

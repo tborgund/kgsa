@@ -195,6 +195,11 @@ namespace KGSA
 
         public bool Send(string attachment, DateTime date, string type, string emailHeader, string emailBody)
         {
+            return Send(new List<string> { attachment }, date, type, emailHeader, emailBody);
+        }
+
+        public bool Send(List<string> attachmentList, DateTime date, string type, string emailHeader, string emailBody)
+        {
             try
             {
                 Log.n("Forbereder sending av epost.. (" + type + ")");
@@ -212,7 +217,7 @@ namespace KGSA
                 if (main.appConfig.epostNesteMelding.Length > 5 && type != "Quick")
                     tekst = main.appConfig.epostNesteMelding;
 
-                if (InternalSendMail(recip, tittel, tekst, attachment, main.appConfig.epostBrukBcc))
+                if (InternalSendMail(recip, tittel, tekst, attachmentList, main.appConfig.epostBrukBcc))
                 {
                     Log.n("E-post sendt for mottakere '" + type + "'.", Color.Green);
                     if (main.appConfig.epostNesteMelding.Length > 0 && type != "Quick")
@@ -243,7 +248,7 @@ namespace KGSA
             }
         }
 
-        public bool InternalSendMail(List<MailAddress> recipient, string subject, string body, string attachmentFilename, bool useBcc = true)
+        public bool InternalSendMail(List<MailAddress> recipient, string subject, string body, List<string> attachmentList, bool useBcc = true)
         {
             try
             {
@@ -256,7 +261,7 @@ namespace KGSA
                     from = "no-reply@elkjop.no";
 
                 Log.n("Sender epost til " + str, null, true);
-                Log.n("Sender epost med vedlegg: " + attachmentFilename, null, true);
+                Log.n("Sender epost med " + attachmentList.Count + " vedlegg..", null, true);
                 if (useBcc)
                 {
                     foreach (MailAddress mailaddress in recipient)
@@ -280,22 +285,40 @@ namespace KGSA
                         message.Body = body;
                         message.To.Add(mailaddress);
 
-                        if (attachmentFilename != null)
+                        foreach (string file in attachmentList)
                         {
-                            Attachment attachment = new Attachment(attachmentFilename, MediaTypeNames.Application.Octet);
-                            ContentDisposition disposition = attachment.ContentDisposition;
-                            disposition.CreationDate = File.GetCreationTime(attachmentFilename);
-                            disposition.ModificationDate = File.GetLastWriteTime(attachmentFilename);
-                            disposition.ReadDate = File.GetLastAccessTime(attachmentFilename);
-                            disposition.FileName = Path.GetFileName(attachmentFilename);
-                            disposition.Size = new FileInfo(attachmentFilename).Length;
-                            disposition.DispositionType = DispositionTypeNames.Attachment;
-                            message.Attachments.Add(attachment);
+                            try
+                            {
+                                Attachment attachment = new Attachment(file, MediaTypeNames.Application.Octet);
+                                ContentDisposition disposition = attachment.ContentDisposition;
+                                disposition.CreationDate = File.GetCreationTime(file);
+                                disposition.ModificationDate = File.GetLastWriteTime(file);
+                                disposition.ReadDate = File.GetLastAccessTime(file);
+                                disposition.FileName = Path.GetFileName(file);
+                                disposition.Size = new FileInfo(file).Length;
+                                disposition.DispositionType = DispositionTypeNames.Attachment;
+                                message.Attachments.Add(attachment);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Unhandled(ex);
+                                Log.e("Problemer med vedlegget " + file + ": " + ex.Message + ". Hopper over..");
+                            }
                         }
 
-                        smtpClient.Send(message);
-                        Log.d("Fullført sending av e-post til " + mailaddress.Address);
+                        if (message.Attachments == null || message.Attachments.Count == 0)
+                        {
+                            Log.e("E-post mangler vedlegg! E-post vil ikke bli sendt");
+                        }
+                        else
+                        {
+                            smtpClient.Send(message);
+                            Log.d("Fullført sending av e-post til " + mailaddress.Address);
+                        }
                     }
+
+                    Log.d("Fullført sending av e-poster");
+                    return true;
                 }
                 else
                 {
@@ -319,33 +342,49 @@ namespace KGSA
                     foreach (MailAddress mailaddress in recipient)
                         message.To.Add(mailaddress);
 
-                    if (attachmentFilename != null)
+                    foreach (string file in attachmentList)
                     {
-                        Attachment attachment = new Attachment(attachmentFilename, MediaTypeNames.Application.Octet);
-                        ContentDisposition disposition = attachment.ContentDisposition;
-                        disposition.CreationDate = File.GetCreationTime(attachmentFilename);
-                        disposition.ModificationDate = File.GetLastWriteTime(attachmentFilename);
-                        disposition.ReadDate = File.GetLastAccessTime(attachmentFilename);
-                        disposition.FileName = Path.GetFileName(attachmentFilename);
-                        disposition.Size = new FileInfo(attachmentFilename).Length;
-                        disposition.DispositionType = DispositionTypeNames.Attachment;
-                        message.Attachments.Add(attachment);
+                        try
+                        {
+                            Attachment attachment = new Attachment(file, MediaTypeNames.Application.Octet);
+                            ContentDisposition disposition = attachment.ContentDisposition;
+                            disposition.CreationDate = File.GetCreationTime(file);
+                            disposition.ModificationDate = File.GetLastWriteTime(file);
+                            disposition.ReadDate = File.GetLastAccessTime(file);
+                            disposition.FileName = Path.GetFileName(file);
+                            disposition.Size = new FileInfo(file).Length;
+                            disposition.DispositionType = DispositionTypeNames.Attachment;
+                            message.Attachments.Add(attachment);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Unhandled(ex);
+                            Log.e("Problemer med vedlegget \"" + file + "\": " + ex.Message + ". Hopper over..");
+                        }
                     }
 
-                    smtpClient.Send(message);
 
-                    Log.d("Fullført sending av e-post.");
+                    if (message.Attachments == null || message.Attachments.Count == 0)
+                    {
+                        Log.e("E-post mangler vedlegg! E-post vil ikke bli sendt");
+                    }
+                    else
+                    {
+                        smtpClient.Send(message);
+                        Log.d("Fullført sending av e-post.");
+                        return true;
+                    }
                 }
-                return true;
             }
             catch(SmtpException ex)
             {
                 Log.Unhandled(ex);
-                Log.n("Feil oppstod under kommunikasjon med SMTP server " + main.appConfig.epostSMTPserver + ". Se logg for detaljer.");
+                Log.e("Feil oppstod under kommunikasjon med SMTP server " + main.appConfig.epostSMTPserver + ". Se logg for detaljer.");
             }
             catch(Exception ex)
             {
                 Log.Unhandled(ex);
+                Log.e("Feil oppstod under sending av e-post. Se logg for detaljer.");
             }
             return false;
         }

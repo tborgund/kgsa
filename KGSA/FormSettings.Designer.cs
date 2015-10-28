@@ -287,6 +287,11 @@
             this.label142 = new System.Windows.Forms.Label();
             this.textBoxHovedMda = new System.Windows.Forms.TextBox();
             this.tabPageEpost = new System.Windows.Forms.TabPage();
+            this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.radioButtonOpenXmlAllSalesRepDaily = new System.Windows.Forms.RadioButton();
+            this.radioButtonOpenXmlAllSalesRepWeekly = new System.Windows.Forms.RadioButton();
+            this.label42 = new System.Windows.Forms.Label();
+            this.checkBoxOpenXmlSendAllSalesRep = new System.Windows.Forms.CheckBox();
             this.groupBox28 = new System.Windows.Forms.GroupBox();
             this.label138 = new System.Windows.Forms.Label();
             this.label130 = new System.Windows.Forms.Label();
@@ -299,10 +304,6 @@
             this.textBoxEpostPOP3bruker = new System.Windows.Forms.TextBox();
             this.textBoxEpostPOP3port = new System.Windows.Forms.TextBox();
             this.checkBoxPOP3UseSsl = new System.Windows.Forms.CheckBox();
-            this.groupBox20 = new System.Windows.Forms.GroupBox();
-            this.label96 = new System.Windows.Forms.Label();
-            this.label68 = new System.Windows.Forms.Label();
-            this.textBoxEpostNesteMelding = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label46 = new System.Windows.Forms.Label();
             this.textBoxEpostAvsenderNavn = new System.Windows.Forms.TextBox();
@@ -372,6 +373,7 @@
             this.radioLagerUtviklingDato = new System.Windows.Forms.RadioButton();
             this.tabPageVedlikehold = new System.Windows.Forms.TabPage();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
+            this.checkBoxDebugShowSql = new System.Windows.Forms.CheckBox();
             this.button18 = new System.Windows.Forms.Button();
             this.checkBoxDebug = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -406,7 +408,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.errorMessage = new System.Windows.Forms.Label();
-            this.checkBoxDebugShowSql = new System.Windows.Forms.CheckBox();
             this.tabControlMain.SuspendLayout();
             this.tabPageGenerelt.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -472,8 +473,8 @@
             this.groupBox37.SuspendLayout();
             this.groupBox27.SuspendLayout();
             this.tabPageEpost.SuspendLayout();
+            this.groupBox14.SuspendLayout();
             this.groupBox28.SuspendLayout();
-            this.groupBox20.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPageService.SuspendLayout();
             this.groupBox19.SuspendLayout();
@@ -804,10 +805,10 @@
             this.tabPageRanking.Controls.Add(this.groupBox25);
             this.tabPageRanking.Controls.Add(this.groupBox24);
             this.tabPageRanking.Controls.Add(this.groupBox3);
-            this.tabPageRanking.Location = new System.Drawing.Point(4, 22);
+            this.tabPageRanking.Location = new System.Drawing.Point(4, 40);
             this.tabPageRanking.Name = "tabPageRanking";
             this.tabPageRanking.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRanking.Size = new System.Drawing.Size(642, 435);
+            this.tabPageRanking.Size = new System.Drawing.Size(642, 417);
             this.tabPageRanking.TabIndex = 9;
             this.tabPageRanking.Text = "Ranking";
             this.tabPageRanking.UseVisualStyleBackColor = true;
@@ -1294,10 +1295,10 @@
             this.tabPagePdf.Controls.Add(this.groupBox23);
             this.tabPagePdf.Controls.Add(this.groupBox18);
             this.tabPagePdf.Controls.Add(this.groupBox15);
-            this.tabPagePdf.Location = new System.Drawing.Point(4, 22);
+            this.tabPagePdf.Location = new System.Drawing.Point(4, 40);
             this.tabPagePdf.Name = "tabPagePdf";
             this.tabPagePdf.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePdf.Size = new System.Drawing.Size(642, 435);
+            this.tabPagePdf.Size = new System.Drawing.Size(642, 417);
             this.tabPagePdf.TabIndex = 15;
             this.tabPagePdf.Text = "PDF";
             this.tabPagePdf.UseVisualStyleBackColor = true;
@@ -1756,10 +1757,10 @@
             this.tabPageToppselgere.Controls.Add(this.groupBox26);
             this.tabPageToppselgere.Controls.Add(this.groupBox13);
             this.tabPageToppselgere.Controls.Add(this.groupBox22);
-            this.tabPageToppselgere.Location = new System.Drawing.Point(4, 22);
+            this.tabPageToppselgere.Location = new System.Drawing.Point(4, 40);
             this.tabPageToppselgere.Name = "tabPageToppselgere";
             this.tabPageToppselgere.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageToppselgere.Size = new System.Drawing.Size(642, 435);
+            this.tabPageToppselgere.Size = new System.Drawing.Size(642, 417);
             this.tabPageToppselgere.TabIndex = 14;
             this.tabPageToppselgere.Text = "Toppselgere";
             this.tabPageToppselgere.UseVisualStyleBackColor = true;
@@ -2119,10 +2120,10 @@
             // 
             this.tabPageOversikt.Controls.Add(this.groupBox33);
             this.tabPageOversikt.Controls.Add(this.groupKrav);
-            this.tabPageOversikt.Location = new System.Drawing.Point(4, 22);
+            this.tabPageOversikt.Location = new System.Drawing.Point(4, 40);
             this.tabPageOversikt.Name = "tabPageOversikt";
             this.tabPageOversikt.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOversikt.Size = new System.Drawing.Size(642, 435);
+            this.tabPageOversikt.Size = new System.Drawing.Size(642, 417);
             this.tabPageOversikt.TabIndex = 13;
             this.tabPageOversikt.Text = "Oversikt";
             this.tabPageOversikt.UseVisualStyleBackColor = true;
@@ -2344,10 +2345,10 @@
             this.tabPageUtseende.Controls.Add(this.groupBox12);
             this.tabPageUtseende.Controls.Add(this.groupBox4);
             this.tabPageUtseende.Controls.Add(this.groupBox5);
-            this.tabPageUtseende.Location = new System.Drawing.Point(4, 22);
+            this.tabPageUtseende.Location = new System.Drawing.Point(4, 40);
             this.tabPageUtseende.Name = "tabPageUtseende";
             this.tabPageUtseende.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageUtseende.Size = new System.Drawing.Size(642, 435);
+            this.tabPageUtseende.Size = new System.Drawing.Size(642, 417);
             this.tabPageUtseende.TabIndex = 2;
             this.tabPageUtseende.Text = "Utseende";
             this.tabPageUtseende.UseVisualStyleBackColor = true;
@@ -3009,10 +3010,10 @@
             // 
             this.tabPageFavoritter.Controls.Add(this.groupBox32);
             this.tabPageFavoritter.Controls.Add(this.groupBox8);
-            this.tabPageFavoritter.Location = new System.Drawing.Point(4, 22);
+            this.tabPageFavoritter.Location = new System.Drawing.Point(4, 40);
             this.tabPageFavoritter.Name = "tabPageFavoritter";
             this.tabPageFavoritter.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFavoritter.Size = new System.Drawing.Size(642, 435);
+            this.tabPageFavoritter.Size = new System.Drawing.Size(642, 417);
             this.tabPageFavoritter.TabIndex = 5;
             this.tabPageFavoritter.Text = "Favoritter";
             this.tabPageFavoritter.UseVisualStyleBackColor = true;
@@ -3147,10 +3148,10 @@
             // 
             this.tabPageAvansert.Controls.Add(this.groupBox37);
             this.tabPageAvansert.Controls.Add(this.groupBox27);
-            this.tabPageAvansert.Location = new System.Drawing.Point(4, 22);
+            this.tabPageAvansert.Location = new System.Drawing.Point(4, 40);
             this.tabPageAvansert.Name = "tabPageAvansert";
             this.tabPageAvansert.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageAvansert.Size = new System.Drawing.Size(642, 435);
+            this.tabPageAvansert.Size = new System.Drawing.Size(642, 417);
             this.tabPageAvansert.TabIndex = 20;
             this.tabPageAvansert.Text = "Avansert";
             this.tabPageAvansert.UseVisualStyleBackColor = true;
@@ -3397,16 +3398,71 @@
             // 
             // tabPageEpost
             // 
+            this.tabPageEpost.Controls.Add(this.groupBox14);
             this.tabPageEpost.Controls.Add(this.groupBox28);
-            this.tabPageEpost.Controls.Add(this.groupBox20);
             this.tabPageEpost.Controls.Add(this.groupBox1);
-            this.tabPageEpost.Location = new System.Drawing.Point(4, 22);
+            this.tabPageEpost.Location = new System.Drawing.Point(4, 40);
             this.tabPageEpost.Name = "tabPageEpost";
             this.tabPageEpost.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageEpost.Size = new System.Drawing.Size(642, 435);
+            this.tabPageEpost.Size = new System.Drawing.Size(642, 417);
             this.tabPageEpost.TabIndex = 7;
             this.tabPageEpost.Text = "E-post";
             this.tabPageEpost.UseVisualStyleBackColor = true;
+            // 
+            // groupBox14
+            // 
+            this.groupBox14.Controls.Add(this.radioButtonOpenXmlAllSalesRepDaily);
+            this.groupBox14.Controls.Add(this.radioButtonOpenXmlAllSalesRepWeekly);
+            this.groupBox14.Controls.Add(this.label42);
+            this.groupBox14.Controls.Add(this.checkBoxOpenXmlSendAllSalesRep);
+            this.groupBox14.Location = new System.Drawing.Point(6, 129);
+            this.groupBox14.Name = "groupBox14";
+            this.groupBox14.Size = new System.Drawing.Size(630, 148);
+            this.groupBox14.TabIndex = 4;
+            this.groupBox14.TabStop = false;
+            this.groupBox14.Text = "Vedlegg";
+            // 
+            // radioButtonOpenXmlAllSalesRepDaily
+            // 
+            this.radioButtonOpenXmlAllSalesRepDaily.AutoSize = true;
+            this.radioButtonOpenXmlAllSalesRepDaily.Location = new System.Drawing.Point(275, 71);
+            this.radioButtonOpenXmlAllSalesRepDaily.Name = "radioButtonOpenXmlAllSalesRepDaily";
+            this.radioButtonOpenXmlAllSalesRepDaily.Size = new System.Drawing.Size(69, 17);
+            this.radioButtonOpenXmlAllSalesRepDaily.TabIndex = 3;
+            this.radioButtonOpenXmlAllSalesRepDaily.Text = "Hver dag";
+            this.radioButtonOpenXmlAllSalesRepDaily.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonOpenXmlAllSalesRepWeekly
+            // 
+            this.radioButtonOpenXmlAllSalesRepWeekly.AutoSize = true;
+            this.radioButtonOpenXmlAllSalesRepWeekly.Checked = true;
+            this.radioButtonOpenXmlAllSalesRepWeekly.Location = new System.Drawing.Point(205, 71);
+            this.radioButtonOpenXmlAllSalesRepWeekly.Name = "radioButtonOpenXmlAllSalesRepWeekly";
+            this.radioButtonOpenXmlAllSalesRepWeekly.Size = new System.Drawing.Size(64, 17);
+            this.radioButtonOpenXmlAllSalesRepWeekly.TabIndex = 2;
+            this.radioButtonOpenXmlAllSalesRepWeekly.TabStop = true;
+            this.radioButtonOpenXmlAllSalesRepWeekly.Text = "Ukeslutt";
+            this.radioButtonOpenXmlAllSalesRepWeekly.UseVisualStyleBackColor = true;
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(19, 31);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(328, 26);
+            this.label42.TabIndex = 1;
+            this.label42.Text = "Send med følgende regneark til mottakere som mottar \"Full\" ranking,\r\nsendes ved u" +
+    "keslutt eller hver dag.\r\n";
+            // 
+            // checkBoxOpenXmlSendAllSalesRep
+            // 
+            this.checkBoxOpenXmlSendAllSalesRep.AutoSize = true;
+            this.checkBoxOpenXmlSendAllSalesRep.Location = new System.Drawing.Point(22, 72);
+            this.checkBoxOpenXmlSendAllSalesRep.Name = "checkBoxOpenXmlSendAllSalesRep";
+            this.checkBoxOpenXmlSendAllSalesRep.Size = new System.Drawing.Size(155, 17);
+            this.checkBoxOpenXmlSendAllSalesRep.TabIndex = 0;
+            this.checkBoxOpenXmlSendAllSalesRep.Text = "Regneark: Oversikt selgere";
+            this.checkBoxOpenXmlSendAllSalesRep.UseVisualStyleBackColor = true;
             // 
             // groupBox28
             // 
@@ -3421,9 +3477,9 @@
             this.groupBox28.Controls.Add(this.textBoxEpostPOP3bruker);
             this.groupBox28.Controls.Add(this.textBoxEpostPOP3port);
             this.groupBox28.Controls.Add(this.checkBoxPOP3UseSsl);
-            this.groupBox28.Location = new System.Drawing.Point(6, 129);
+            this.groupBox28.Location = new System.Drawing.Point(6, 283);
             this.groupBox28.Name = "groupBox28";
-            this.groupBox28.Size = new System.Drawing.Size(630, 117);
+            this.groupBox28.Size = new System.Drawing.Size(630, 128);
             this.groupBox28.TabIndex = 3;
             this.groupBox28.TabStop = false;
             this.groupBox28.Text = "POP3         ";
@@ -3522,44 +3578,6 @@
             this.checkBoxPOP3UseSsl.TabIndex = 15;
             this.checkBoxPOP3UseSsl.Text = "Bruk SSL";
             this.checkBoxPOP3UseSsl.UseVisualStyleBackColor = true;
-            // 
-            // groupBox20
-            // 
-            this.groupBox20.Controls.Add(this.label96);
-            this.groupBox20.Controls.Add(this.label68);
-            this.groupBox20.Controls.Add(this.textBoxEpostNesteMelding);
-            this.groupBox20.Location = new System.Drawing.Point(6, 252);
-            this.groupBox20.Name = "groupBox20";
-            this.groupBox20.Size = new System.Drawing.Size(630, 159);
-            this.groupBox20.TabIndex = 2;
-            this.groupBox20.TabStop = false;
-            this.groupBox20.Text = "Annet";
-            // 
-            // label96
-            // 
-            this.label96.AutoSize = true;
-            this.label96.Location = new System.Drawing.Point(19, 60);
-            this.label96.Name = "label96";
-            this.label96.Size = new System.Drawing.Size(94, 52);
-            this.label96.TabIndex = 2;
-            this.label96.Text = "Meldingen sendes\r\nbare en gang ved\r\nneste automatiske\r\nranking utsending.";
-            // 
-            // label68
-            // 
-            this.label68.AutoSize = true;
-            this.label68.Location = new System.Drawing.Point(19, 27);
-            this.label68.Name = "label68";
-            this.label68.Size = new System.Drawing.Size(77, 13);
-            this.label68.TabIndex = 1;
-            this.label68.Text = "Neste melding:";
-            // 
-            // textBoxEpostNesteMelding
-            // 
-            this.textBoxEpostNesteMelding.Location = new System.Drawing.Point(119, 24);
-            this.textBoxEpostNesteMelding.Multiline = true;
-            this.textBoxEpostNesteMelding.Name = "textBoxEpostNesteMelding";
-            this.textBoxEpostNesteMelding.Size = new System.Drawing.Size(485, 110);
-            this.textBoxEpostNesteMelding.TabIndex = 8;
             // 
             // groupBox1
             // 
@@ -3668,9 +3686,9 @@
             // tabPageService
             // 
             this.tabPageService.Controls.Add(this.groupBox19);
-            this.tabPageService.Location = new System.Drawing.Point(4, 22);
+            this.tabPageService.Location = new System.Drawing.Point(4, 40);
             this.tabPageService.Name = "tabPageService";
-            this.tabPageService.Size = new System.Drawing.Size(642, 435);
+            this.tabPageService.Size = new System.Drawing.Size(642, 417);
             this.tabPageService.TabIndex = 12;
             this.tabPageService.Text = "Service";
             this.tabPageService.UseVisualStyleBackColor = true;
@@ -3799,10 +3817,10 @@
             // tabPageGraf
             // 
             this.tabPageGraf.Controls.Add(this.groupBox9);
-            this.tabPageGraf.Location = new System.Drawing.Point(4, 22);
+            this.tabPageGraf.Location = new System.Drawing.Point(4, 40);
             this.tabPageGraf.Name = "tabPageGraf";
             this.tabPageGraf.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGraf.Size = new System.Drawing.Size(642, 435);
+            this.tabPageGraf.Size = new System.Drawing.Size(642, 417);
             this.tabPageGraf.TabIndex = 16;
             this.tabPageGraf.Text = "Graf";
             this.tabPageGraf.UseVisualStyleBackColor = true;
@@ -4031,10 +4049,10 @@
             this.tabPageLager.Controls.Add(this.groupBox10);
             this.tabPageLager.Controls.Add(this.groupBox31);
             this.tabPageLager.Controls.Add(this.groupBox30);
-            this.tabPageLager.Location = new System.Drawing.Point(4, 22);
+            this.tabPageLager.Location = new System.Drawing.Point(4, 40);
             this.tabPageLager.Name = "tabPageLager";
             this.tabPageLager.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLager.Size = new System.Drawing.Size(642, 435);
+            this.tabPageLager.Size = new System.Drawing.Size(642, 417);
             this.tabPageLager.TabIndex = 18;
             this.tabPageLager.Text = "Lager";
             this.tabPageLager.UseVisualStyleBackColor = true;
@@ -4305,6 +4323,16 @@
             this.groupBox16.TabIndex = 8;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "Annet";
+            // 
+            // checkBoxDebugShowSql
+            // 
+            this.checkBoxDebugShowSql.AutoSize = true;
+            this.checkBoxDebugShowSql.Location = new System.Drawing.Point(22, 53);
+            this.checkBoxDebugShowSql.Name = "checkBoxDebugShowSql";
+            this.checkBoxDebugShowSql.Size = new System.Drawing.Size(116, 17);
+            this.checkBoxDebugShowSql.TabIndex = 10;
+            this.checkBoxDebugShowSql.Text = "Vis utvidet SQL log";
+            this.checkBoxDebugShowSql.UseVisualStyleBackColor = true;
             // 
             // button18
             // 
@@ -4619,16 +4647,6 @@
             this.errorMessage.Size = new System.Drawing.Size(0, 13);
             this.errorMessage.TabIndex = 33;
             // 
-            // checkBoxDebugShowSql
-            // 
-            this.checkBoxDebugShowSql.AutoSize = true;
-            this.checkBoxDebugShowSql.Location = new System.Drawing.Point(22, 53);
-            this.checkBoxDebugShowSql.Name = "checkBoxDebugShowSql";
-            this.checkBoxDebugShowSql.Size = new System.Drawing.Size(116, 17);
-            this.checkBoxDebugShowSql.TabIndex = 10;
-            this.checkBoxDebugShowSql.Text = "Vis utvidet SQL log";
-            this.checkBoxDebugShowSql.UseVisualStyleBackColor = true;
-            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -4739,10 +4757,10 @@
             this.groupBox27.ResumeLayout(false);
             this.groupBox27.PerformLayout();
             this.tabPageEpost.ResumeLayout(false);
+            this.groupBox14.ResumeLayout(false);
+            this.groupBox14.PerformLayout();
             this.groupBox28.ResumeLayout(false);
             this.groupBox28.PerformLayout();
-            this.groupBox20.ResumeLayout(false);
-            this.groupBox20.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabPageService.ResumeLayout(false);
@@ -4924,10 +4942,6 @@
         private System.Windows.Forms.CheckBox checkKravMtdShowTarget;
         private System.Windows.Forms.GroupBox groupAndreTjenester;
         private System.Windows.Forms.Label label90;
-        private System.Windows.Forms.GroupBox groupBox20;
-        private System.Windows.Forms.Label label96;
-        private System.Windows.Forms.Label label68;
-        private System.Windows.Forms.TextBox textBoxEpostNesteMelding;
         private System.Windows.Forms.TabPage tabPagePdf;
         private System.Windows.Forms.GroupBox groupBox15;
         private System.Windows.Forms.Label label87;
@@ -5155,5 +5169,10 @@
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.CheckBox checkBoxDebugShowSql;
+        private System.Windows.Forms.GroupBox groupBox14;
+        private System.Windows.Forms.RadioButton radioButtonOpenXmlAllSalesRepDaily;
+        private System.Windows.Forms.RadioButton radioButtonOpenXmlAllSalesRepWeekly;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.CheckBox checkBoxOpenXmlSendAllSalesRep;
     }
 }

@@ -661,7 +661,7 @@ namespace KGSA
                 recip.Add(new MailAddress(kgsaEmail.emailDb.Rows[0]["Address"].ToString(), kgsaEmail.emailDb.Rows[0]["Name"].ToString()));
 
                 SendMessage("Sender e-post for mottaker " + kgsaEmail.emailDb.Rows[0]["Address"].ToString() + "..");
-                if (!kgsaEmail.InternalSendMail(recip, main.appConfig.epostEmne, main.appConfig.epostBody, pdf, main.appConfig.epostBrukBcc))
+                if (!kgsaEmail.InternalSendMail(recip, main.appConfig.epostEmne, main.appConfig.epostBody, new List<string> { pdf }, main.appConfig.epostBrukBcc))
                 {
                     e.Result = "Sending av e-post misslyktes";
                     return;

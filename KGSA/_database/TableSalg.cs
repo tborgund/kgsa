@@ -101,5 +101,19 @@ namespace KGSA
                 table.Columns.Add("SalgsprisExMva", typeof(double), "Salgspris / Mva");
             return table;
         }
+
+        public DataTable GetMonthlySales(int avdeling, DateTime date)
+        {
+            var firstDay = new DateTime(date.Year, date.Month, 1);
+            var lastDay = firstDay.AddMonths(1).AddDays(-1);
+
+            string sql = "SELECT * FROM " + TABLE_NAME + " WHERE " + KEY_AVDELING + " = " + avdeling
+                + " AND CONVERT(NVARCHAR(10)," + KEY_DATO + ",121) >= CONVERT(NVARCHAR(10),'" + firstDay.ToString("yyyy-MM-dd")
+                + "',121) AND CONVERT(NVARCHAR(10)," + KEY_DATO + ",121) <= CONVERT(NVARCHAR(10),'" + lastDay.ToString("yyyy-MM-dd") + "',121)";
+            DataTable table = main.database.GetSqlDataTable(sql);
+            if (table != null)
+                table.Columns.Add("SalgsprisExMva", typeof(double), "Salgspris / Mva");
+            return table;
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace KGSA
             try
             {
                 if (!runningInBackground && !abort) main.timewatch.Start();
-                if (!runningInBackground) main.savedStorePage = strCat;
+                if (!runningInBackground) main.appConfig.savedStorePage = strCat;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + strCat + "]..");
@@ -88,7 +88,7 @@ namespace KGSA
             try
             {
                 if (!runningInBackground && !abort) main.timewatch.Start();
-                if (!runningInBackground) main.savedStorePage = strCat;
+                if (!runningInBackground) main.appConfig.savedStorePage = strCat;
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + strCat + "]..");

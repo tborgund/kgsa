@@ -26,7 +26,7 @@ namespace KGSA
             try
             {
                 if (!runningInBackground && !abort) main.timewatch.Start();
-                if (!runningInBackground) main.savedBudgetPage = cat;
+                if (!runningInBackground) main.appConfig.savedBudgetPage = BudgetCategoryClass.TypeToName(cat);
                 if (!abort)
                 {
                     Log.n("Oppdaterer [" + BudgetCategoryClass.TypeToName(cat) + "]..");

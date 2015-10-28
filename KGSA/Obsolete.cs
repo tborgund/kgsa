@@ -497,138 +497,179 @@ namespace KGSA
                 var resCSV = engine.ReadFile(filename) as csvObsolete[];
 
                 if (engine.ErrorManager.HasErrors)
+                {
                     foreach (ErrorInfo err in engine.ErrorManager.Errors)
                     {
                         importReadErrors++;
-                        Log.n("Import: Klarte ikke lese linje " + err.LineNumber + ": " + err.RecordString, Color.Red);
+                        Log.e("Import: Klarte ikke lese linje " + err.LineNumber + ": " + err.RecordString);
                         Log.d("Exception: " + err.ExceptionInfo.ToString());
 
                         if (importReadErrors > 100)
                         {
-                            Log.n("Feil: CSV er ikke en obsolete eksportering eller filen er skadet. (" + filename + ")", Color.Red);
+                            Log.e("Feil: CSV er ikke en obsolete eksportering eller filen er skadet. (" + filename + ")");
                             return false;
                         }
-
                     }
+                }
 
                 main.processing.SetProgressStyle = ProgressBarStyle.Continuous;
                 int count = resCSV.Length;
-                string dateFormat = "dd/MM/yyyy HH:mm:ss";
+                if (count == 0)
+                    return false;
 
+                string dateFormat = "dd/MM/yyyy HH:mm:ss";
                 DateTime dtLast = DateTime.MinValue;
                 for (int i = 0; i < count; i++)
                 {
-                    if (bw != null)
-                        if (bw.CancellationPending)
-                            return false;
+                    if (bw != null && bw.CancellationPending)
+                        return false;
 
                     DateTime dtTemp = DateTime.ParseExact(resCSV[i].DatoInnLager.ToString(), dateFormat, FormMain.norway);
                     if (DateTime.Compare(dtTemp, dtLast) > 0)
                         dtLast = dtTemp;
                 }
 
-                if (count > 0)
+                Log.n("Prosesserer " + count.ToString("#,##0") + " vare oppføringer.. (" + filename + ")");
+
+                DataTable tableUkurans = main.database.tableUkurans.GetDataTable();
+                DataTable tableInfo = main.database.tableVareinfo.GetAllProducts();
+                if (tableInfo == null)
+                    throw new Exception("Intern feil i databasen. tableInfo var null!");
+
+                int countInfo = tableInfo.Rows.Count;
+                Log.d("Product info table has " + string.Format("{0:n0}", countInfo) + " rows before import");
+
+                for (int i = 0; i < count; i++)
                 {
-
-                    Log.n("Prosesserer " + count.ToString("#,##0") + " vare oppføringer.. (" + filename + ")");
-
-                    var tableUkurans = main.database.tableUkurans.GetDataTable();
-
-                    DataTable dtVareinfo = main.database.GetSqlDataTable("SELECT Varekode FROM tblVareinfo");
-
-                    var tableVareinfo = main.database.tableVareinfo.GetDataTable();
-
-                    int lager2 = main.appConfig.Avdeling + 1000;
-                    for (int i = 0; i < count; i++)
+                    if (bw != null)
                     {
-                        if (bw != null)
+                        if (bw.CancellationPending)
+                            return false;
+
+                        if (i % 83 == 0)
                         {
-                            if (i % 321 == 0)
-                            {
-                                bw.ReportProgress(i, new StatusProgress(count, null, 0, 100));
-                                main.processing.SetText = "Lagrer vare oppføringer..: " + i.ToString("#,##0") + " / " + count.ToString("#,##0");
-                            }
-                            if (bw.CancellationPending)
-                            {
-                                Log.n("Lager importering avbrutt av bruker!", Color.Red);
-                                return false;
-                            }
-                        }
-
-                        var varekode = resCSV[i].Varekode;
-                        if (varekode.Length > 0)
-                            varekode = varekode.Substring(1, varekode.Length - 1);
-
-                            if (!dtVareinfo.AsEnumerable().Any(row => varekode == row.Field<String>("Varekode")) && !tableVareinfo.AsEnumerable().Any(row => varekode == row.Field<String>("Varekode")))
-                            {
-                                DataRow dtRow = tableVareinfo.NewRow();
-                                dtRow["Varekode"] = varekode;
-                                dtRow["Varetekst"] = resCSV[i].VareTekst;
-                                dtRow["Kategori"] = (int)resCSV[i].Kat;
-                                dtRow["KategoriNavn"] = resCSV[i].KatNavn;
-                                dtRow["Varegruppe"] = (int)resCSV[i].Grp;
-                                dtRow["VaregruppeNavn"] = resCSV[i].GrpNavn;
-                                dtRow["Modgruppe"] = (int)resCSV[i].Mod;
-                                dtRow["ModgruppeNavn"] = resCSV[i].ModNavn;
-                                dtRow["Merke"] = (int)resCSV[i].Merke;
-                                dtRow["MerkeNavn"] = resCSV[i].MerkeNavn;
-                                dtRow["Dato"] = DateTime.Now;
-                                tableVareinfo.Rows.Add(dtRow);
-                            }
-
-
-                        if (resCSV[i].Avd == main.appConfig.Avdeling || resCSV[i].Avd == lager2)
-                        {
-                            DataRow dtRow = tableUkurans.NewRow();
-                            dtRow["Avdeling"] = Convert.ToInt32(resCSV[i].Avd);
-                            dtRow["Varekode"] = varekode;
-                            dtRow["Antall"] = Convert.ToInt32(resCSV[i].AntallLager);
-                            dtRow["Kost"] = Convert.ToDecimal(resCSV[i].KostVerdiLager);
-                            dtRow["Dato"] = resCSV[i].DatoInnLager;
-                            dtRow["UkuransVerdi"] = Convert.ToDecimal(resCSV[i].UkuransVerdi);
-                            var s = resCSV[i].UkuransProsent;
-                            decimal d = 0;
-                            if (s.Length > 0)
-                            {
-                                s = s.Substring(0, s.Length - 1);
-                                if (s.StartsWith(","))
-                                    s = "0" + s;
-                                d = Convert.ToDecimal(s);
-                                dtRow["UkuransProsent"] = d;
-                            }
-                            else
-                                dtRow["UkuransProsent"] = 0;
-
-                            tableUkurans.Rows.Add(dtRow);
+                            bw.ReportProgress(i, new StatusProgress(count, null, 0, 100));
+                            main.processing.SetText = "Lagrer varebeholdning..: "
+                                + string.Format("{0:n0}", i) + " / " + string.Format("{0:n0}", count);
                         }
                     }
 
-                    main.processing.SetText = "Fullfører vare import..";
-                    main.database.tableUkurans.Reset();
-                    main.database.DoBulkCopy(tableUkurans, "tblUkurans");
+                    string varekode = resCSV[i].Varekode;
+                    if (varekode.Length > 0)
+                        varekode = varekode.Substring(1, varekode.Length - 1);
 
-                    if (tableVareinfo.Rows.Count > 0)
-                        main.database.DoBulkCopy(tableVareinfo, "tblVareinfo");
+                    DataRow[] filter = tableInfo.Select(TableVareinfo.KEY_VAREKODE + " = '" + varekode + "'");
+                    if (filter.Length == 0)
+                    {
+                        DataRow row = tableInfo.NewRow();
+                        row[TableVareinfo.INDEX_VAREKODE] = varekode;
+                        row[TableVareinfo.INDEX_TEKST] = resCSV[i].VareTekst;
+                        row[TableVareinfo.INDEX_KAT] = (int)resCSV[i].Kat;
+                        row[TableVareinfo.INDEX_KATNAVN] = resCSV[i].KatNavn;
+                        row[TableVareinfo.INDEX_GRUPPE] = (int)resCSV[i].Grp;
+                        row[TableVareinfo.INDEX_GRUPPENAVN] = resCSV[i].GrpNavn;
+                        row[TableVareinfo.INDEX_MODGRUPPE] = (int)resCSV[i].Mod;
+                        row[TableVareinfo.INDEX_MODGRUPPENAVN] = resCSV[i].ModNavn;
+                        row[TableVareinfo.INDEX_MERKE] = (int)resCSV[i].Merke;
+                        row[TableVareinfo.INDEX_MERKENAVN] = resCSV[i].MerkeNavn;
+                        row[TableVareinfo.INDEX_DATO] = DateTime.Now;
+                        tableInfo.Rows.Add(row);
+                    }
+                    //else if (filter.Length == 1)
+                    //{
+                    //    filter[0][TableVareinfo.INDEX_TEKST] = resCSV[i].VareTekst;
+                    //    filter[0][TableVareinfo.INDEX_KAT] = (int)resCSV[i].Kat;
+                    //    filter[0][TableVareinfo.INDEX_KATNAVN] = resCSV[i].KatNavn;
+                    //    filter[0][TableVareinfo.INDEX_GRUPPE] = (int)resCSV[i].Grp;
+                    //    filter[0][TableVareinfo.INDEX_GRUPPENAVN] = resCSV[i].GrpNavn;
+                    //    filter[0][TableVareinfo.INDEX_MODGRUPPE] = (int)resCSV[i].Mod;
+                    //    filter[0][TableVareinfo.INDEX_MODGRUPPENAVN] = resCSV[i].ModNavn;
+                    //    filter[0][TableVareinfo.INDEX_MERKE] = (int)resCSV[i].Merke;
+                    //    filter[0][TableVareinfo.INDEX_MERKENAVN] = resCSV[i].MerkeNavn;
+                    //    filter[0][TableVareinfo.INDEX_DATO] = DateTime.Now;
+                    //    filter[0].EndEdit();
+                    //    tableInfo.AcceptChanges();
+                    //}
 
-                    main.appConfig.dbObsoleteUpdated = dtLast;
-                    main.appConfig.dbStoreFrom = FormMain.rangeMin;
-                    main.appConfig.dbStoreTo = FormMain.rangeMin;
+                    //if (!tableInfo.AsEnumerable().Any(row => varekode == row.Field<String>("Varekode"))
+                    //    && !tableVareinfo.AsEnumerable().Any(row => varekode == row.Field<String>("Varekode")))
+                    //{
+                    //    DataRow dtRow = tableVareinfo.NewRow();
+                    //    dtRow["Varekode"] = varekode;
+                    //    dtRow["Varetekst"] = resCSV[i].VareTekst;
+                    //    dtRow["Kategori"] = (int)resCSV[i].Kat;
+                    //    dtRow["KategoriNavn"] = resCSV[i].KatNavn;
+                    //    dtRow["Varegruppe"] = (int)resCSV[i].Grp;
+                    //    dtRow["VaregruppeNavn"] = resCSV[i].GrpNavn;
+                    //    dtRow["Modgruppe"] = (int)resCSV[i].Mod;
+                    //    dtRow["ModgruppeNavn"] = resCSV[i].ModNavn;
+                    //    dtRow["Merke"] = (int)resCSV[i].Merke;
+                    //    dtRow["MerkeNavn"] = resCSV[i].MerkeNavn;
+                    //    dtRow["Dato"] = DateTime.Now;
+                    //    tableVareinfo.Rows.Add(dtRow);
+                    //}
 
-                    Log.d("Forbereder lagring av historikk for lager..");
-                    SaveHistory(MakeTableObsolete(false), dtLast, false);
-                    SaveHistory(MakeTableObsolete(true), dtLast, true);
-                    Log.d("Lagring av historikk fullført.");
+                    if (resCSV[i].Avd == main.appConfig.Avdeling || resCSV[i].Avd == (main.appConfig.Avdeling + 1000))
+                    {
+                        DataRow dtRow = tableUkurans.NewRow();
+                        dtRow[TableUkurans.INDEX_AVDELING] = Convert.ToInt32(resCSV[i].Avd);
+                        dtRow[TableUkurans.INDEX_VAREKODE] = varekode;
+                        dtRow[TableUkurans.INDEX_ANTALL] = Convert.ToInt32(resCSV[i].AntallLager);
+                        dtRow[TableUkurans.INDEX_KOST] = Convert.ToDecimal(resCSV[i].KostVerdiLager);
+                        dtRow[TableUkurans.INDEX_DATO] = resCSV[i].DatoInnLager;
+                        dtRow[TableUkurans.INDEX_UKURANS] = Convert.ToDecimal(resCSV[i].UkuransVerdi);
+                        var s = resCSV[i].UkuransProsent;
+                        decimal d = 0;
+                        if (s.Length > 0)
+                        {
+                            s = s.Substring(0, s.Length - 1);
+                            if (s.StartsWith(","))
+                                s = "0" + s;
+                            d = Convert.ToDecimal(s);
+                            dtRow[TableUkurans.INDEX_UKURANSPROSENT] = d;
+                        }
+                        else
+                            dtRow[TableUkurans.INDEX_UKURANSPROSENT] = 0;
 
+                        tableUkurans.Rows.Add(dtRow);
+                    }
                 }
+
+                if (tableUkurans.Rows.Count == 0)
+                {
+                    Log.e("Fant ikke varebeholding data for din avdeling, eller CSV inneholdte ikke wobsolete data. Forsøk igjen?");
+                    return false;
+                }
+
+                main.processing.SetText = "Fullfører vare import..";
+                main.database.tableUkurans.Reset();
+                main.database.DoBulkCopy(tableUkurans, TableUkurans.TABLE_NAME);
+
+                int countInfoAfter = tableInfo.Rows.Count;
+                if (countInfoAfter > countInfo)
+                {
+                    Log.d("Product info table has " + string.Format("{0:n0}", countInfo) + " rows after import. " + string.Format("{0:n0}", (countInfoAfter - countInfo)) + " new products found");
+                    main.database.DoBulkCopy(tableInfo, TableVareinfo.TABLE_NAME);
+                }
+                else
+                    Log.d("No new products found. Nothing to save to product info table");
+
+                main.appConfig.dbObsoleteUpdated = dtLast;
+                main.appConfig.dbStoreFrom = FormMain.rangeMin;
+                main.appConfig.dbStoreTo = FormMain.rangeMin;
+
+                Log.d("Forbereder lagring av historikk for lager..");
+                SaveHistory(MakeTableObsolete(false), dtLast, false);
+                SaveHistory(MakeTableObsolete(true), dtLast, true);
+                Log.d("Lagring av historikk fullført.");
+
                 return true;
             }
             catch (Exception ex)
             {
-                FormError errorMsg = new FormError("Feil ved importering av lager", ex);
-                errorMsg.ShowDialog();
-                return false;
+                Log.ErrorDialog(ex, "Feil ved importering av lager", "KGSA Database");
             }
+            return false;
         }
-
     }
 }

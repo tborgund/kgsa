@@ -12,6 +12,12 @@ namespace KGSA
     [Serializable]
     public class AppSettings
     {
+        #region Open XML settings
+        // Enable / disable auto creation and sending of document while auto-ranking
+        public bool openXml_AllSalesRep_AutoSend { get; set; }
+        // Send only at weekend or daily: true = send daily
+        public bool openXml_AllSalesRep_AutoSend_Daily { get; set; }
+        #endregion
         #region Online Importer settings
         /// Enable / Disable automatic online importing of weekly products and popular prisguide products
         public bool onlineImporterAuto { get; set; }
@@ -179,8 +185,7 @@ namespace KGSA
         public string strServiceOversikt { get; set; }
         public string strServiceList { get; set; }
         public string savedPage { get; set; }
-        public string savedAvdPage { get; set; }
-        public BudgetCategory savedBudgetPage { get; set; }
+        public string savedBudgetPage { get; set; }
         public string savedStorePage { get; set; }
         public string savedTab { get; set; }
         public int Avdeling { get; set; }
@@ -420,7 +425,7 @@ namespace KGSA
             storeObsoleteListMainProductsOnly = true;
             storeShowStoreTwo = true;
             savedPage = "Data";
-            savedBudgetPage = BudgetCategory.MDA;
+            savedBudgetPage = "Daglig";
             savedStorePage = "Obsolete";
             savedTab = "Ranking ";
             listerMaxLinjer = 25;

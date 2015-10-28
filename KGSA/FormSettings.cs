@@ -402,9 +402,9 @@ namespace KGSA
             else
                 textBoxEpostPOP3pass.Text = "";
 
-            // E-POST - Annet
-            textBoxEpostNesteMelding.Text = main.appConfig.epostNesteMelding.Replace("\n", Environment.NewLine);
-
+            // E-POST - Vedlegg
+            checkBoxOpenXmlSendAllSalesRep.Checked = main.appConfig.openXml_AllSalesRep_AutoSend;
+            radioButtonOpenXmlAllSalesRepDaily.Checked = main.appConfig.openXml_AllSalesRep_AutoSend_Daily;
 
             // Fane: SERVICE
             // SERVICE - Service generelt
@@ -777,8 +777,9 @@ namespace KGSA
                 else
                     main.appConfig.epostPOP3password = "";
 
-                // E-POST - Annet
-                main.appConfig.epostNesteMelding = textBoxEpostNesteMelding.Text.Replace(Environment.NewLine, "\n");
+                // E-POST - Vedlegg
+                main.appConfig.openXml_AllSalesRep_AutoSend = checkBoxOpenXmlSendAllSalesRep.Checked;
+                main.appConfig.openXml_AllSalesRep_AutoSend_Daily = radioButtonOpenXmlAllSalesRepDaily.Checked;
 
                 // Fane: SERVICE -------------------------------------------------------------------------
                 // SERVICE - Service generelt

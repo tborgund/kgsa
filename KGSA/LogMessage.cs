@@ -119,7 +119,7 @@ namespace KGSA
         }
 
         /// <summary>
-        /// Show detailed modal error dialog
+        /// Show detailed modal error dialog. Will only create a log entry if FormMain.automode is true
         /// </summary>
         /// <param name="exception">Exception object, optionally Null, but not recommended</param>
         /// <param name="details">Explain the possible nature of the problem when possible</param>
@@ -127,10 +127,9 @@ namespace KGSA
         public static void ErrorDialog(Exception exception, string details, string title)
         {
             n("Uhåndtert unntak oppstod! Unntak melding: " + exception.Message + Environment.NewLine + "Exception: " + exception.ToString(), Color.Red);
-            using (FormError error = new FormError(title, exception, details))
-            {
-                error.ShowDialog();
-            }
+            if (!FormMain.autoMode)
+                using (FormError error = new FormError(title, exception, details))
+                    error.ShowDialog();
         }
 
         public static KgsaLog GetLastLog()

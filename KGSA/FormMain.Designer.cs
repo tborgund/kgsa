@@ -30,13 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle43 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle44 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle45 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle46 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle47 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle48 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle49 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.progressbar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -121,6 +121,9 @@
             this.oppdaterAutomatiskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.budsjettToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.lagRegnearkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oversiktSelgereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.androidAppToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.oppdaterEANDatabasenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.slettAlleEANKoderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -202,7 +205,6 @@
             this.pickerBudget = new System.Windows.Forms.DateTimePicker();
             this.buttonBudgetSettings = new System.Windows.Forms.Button();
             this.groupBudgetPages = new System.Windows.Forms.GroupBox();
-            this.buttonBudgetAllSalesRep = new System.Windows.Forms.Button();
             this.buttonBudgetDaily = new System.Windows.Forms.Button();
             this.buttonBudgetButikk = new System.Windows.Forms.Button();
             this.buttonBudgetMdaSda = new System.Windows.Forms.Button();
@@ -384,6 +386,8 @@
             this.kopierToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.merkAltToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.checkBoxLogDebug = new System.Windows.Forms.CheckBox();
+            this.checkBoxLogDebugSql = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
@@ -392,30 +396,28 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.panelOverlayBottom = new System.Windows.Forms.Panel();
             this.button5 = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panelStatusTimere = new System.Windows.Forms.Panel();
+            this.labelStatusTmerLager = new System.Windows.Forms.Label();
+            this.labelStatusTmerService = new System.Windows.Forms.Label();
+            this.labelStatusTmerKveldstall = new System.Windows.Forms.Label();
+            this.labelStatusTmerRanking = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.panelStatusDatabase = new System.Windows.Forms.Panel();
+            this.labelStatusDbService = new System.Windows.Forms.Label();
+            this.labelStatusDbLager = new System.Windows.Forms.Label();
+            this.labelStatusDbRanking = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.panel21 = new System.Windows.Forms.Panel();
             this.bindingSourceSk = new System.Windows.Forms.BindingSource(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStripTray = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.visToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.avsluttToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel21 = new System.Windows.Forms.Panel();
-            this.panelStatusDatabase = new System.Windows.Forms.Panel();
-            this.label13 = new System.Windows.Forms.Label();
-            this.labelStatusDbRanking = new System.Windows.Forms.Label();
-            this.labelStatusDbLager = new System.Windows.Forms.Label();
-            this.labelStatusDbService = new System.Windows.Forms.Label();
-            this.panelStatusTimere = new System.Windows.Forms.Panel();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.labelStatusTmerRanking = new System.Windows.Forms.Label();
-            this.labelStatusTmerKveldstall = new System.Windows.Forms.Label();
-            this.labelStatusTmerService = new System.Windows.Forms.Label();
-            this.labelStatusTmerLager = new System.Windows.Forms.Label();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.checkBoxLogDebugSql = new System.Windows.Forms.CheckBox();
-            this.checkBoxLogDebug = new System.Windows.Forms.CheckBox();
             this.statusStrip.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -470,11 +472,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.panel5.SuspendLayout();
             this.panelOverlayBottom.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.panelStatusTimere.SuspendLayout();
+            this.panelStatusDatabase.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSk)).BeginInit();
             this.contextMenuStripTray.SuspendLayout();
-            this.panelStatusDatabase.SuspendLayout();
-            this.panelStatusTimere.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -982,28 +984,28 @@
             // butikkToolStripMenuItem
             // 
             this.butikkToolStripMenuItem.Name = "butikkToolStripMenuItem";
-            this.butikkToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.butikkToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.butikkToolStripMenuItem.Text = "Butikk";
             this.butikkToolStripMenuItem.Click += new System.EventHandler(this.butikkToolStripMenuItem_Click);
             // 
             // dataToolStripMenuItem
             // 
             this.dataToolStripMenuItem.Name = "dataToolStripMenuItem";
-            this.dataToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.dataToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.dataToolStripMenuItem.Text = "Data";
             this.dataToolStripMenuItem.Click += new System.EventHandler(this.dataToolStripMenuItem_Click);
             // 
             // lydOgBildeToolStripMenuItem
             // 
             this.lydOgBildeToolStripMenuItem.Name = "lydOgBildeToolStripMenuItem";
-            this.lydOgBildeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.lydOgBildeToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.lydOgBildeToolStripMenuItem.Text = "Lyd og Bilde";
             this.lydOgBildeToolStripMenuItem.Click += new System.EventHandler(this.lydOgBildeToolStripMenuItem_Click);
             // 
             // teleToolStripMenuItem
             // 
             this.teleToolStripMenuItem.Name = "teleToolStripMenuItem";
-            this.teleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.teleToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.teleToolStripMenuItem.Text = "Tele";
             this.teleToolStripMenuItem.Click += new System.EventHandler(this.teleToolStripMenuItem_Click);
             // 
@@ -1100,7 +1102,9 @@
             this.automasjonToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.epostToolStripMenuItem1,
             this.toolStripSeparator13,
-            this.budsjettToolStripMenuItem});
+            this.budsjettToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.lagRegnearkToolStripMenuItem});
             this.automasjonToolStripMenuItem.Name = "automasjonToolStripMenuItem";
             this.automasjonToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
             this.automasjonToolStripMenuItem.Text = "Budsjett";
@@ -1154,6 +1158,26 @@
             this.budsjettToolStripMenuItem.Text = "Budsjett innstillinger";
             this.budsjettToolStripMenuItem.Click += new System.EventHandler(this.budsjettToolStripMenuItem_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(179, 6);
+            // 
+            // lagRegnearkToolStripMenuItem
+            // 
+            this.lagRegnearkToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.oversiktSelgereToolStripMenuItem});
+            this.lagRegnearkToolStripMenuItem.Name = "lagRegnearkToolStripMenuItem";
+            this.lagRegnearkToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.lagRegnearkToolStripMenuItem.Text = "Lag regneark:";
+            // 
+            // oversiktSelgereToolStripMenuItem
+            // 
+            this.oversiktSelgereToolStripMenuItem.Name = "oversiktSelgereToolStripMenuItem";
+            this.oversiktSelgereToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.oversiktSelgereToolStripMenuItem.Text = "Oversikt selgere";
+            this.oversiktSelgereToolStripMenuItem.Click += new System.EventHandler(this.oversiktSelgereToolStripMenuItem_Click);
+            // 
             // androidAppToolStripMenuItem1
             // 
             this.androidAppToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1198,14 +1222,14 @@
             // påAutoToolStripMenuItem
             // 
             this.påAutoToolStripMenuItem.Name = "påAutoToolStripMenuItem";
-            this.påAutoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.påAutoToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.påAutoToolStripMenuItem.Text = "På (Auto)";
             this.påAutoToolStripMenuItem.Click += new System.EventHandler(this.påAutoToolStripMenuItem_Click);
             // 
             // avToolStripMenuItem
             // 
             this.avToolStripMenuItem.Name = "avToolStripMenuItem";
-            this.avToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.avToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.avToolStripMenuItem.Text = "Av";
             this.avToolStripMenuItem.Click += new System.EventHandler(this.avToolStripMenuItem_Click);
             // 
@@ -1239,53 +1263,53 @@
             // hentTransaksjonerToolStripMenuItem
             // 
             this.hentTransaksjonerToolStripMenuItem.Name = "hentTransaksjonerToolStripMenuItem";
-            this.hentTransaksjonerToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.hentTransaksjonerToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.hentTransaksjonerToolStripMenuItem.Text = "Hent transaksjoner";
             this.hentTransaksjonerToolStripMenuItem.Click += new System.EventHandler(this.hentTransaksjonerToolStripMenuItem_Click);
             // 
             // hentLagervarerToolStripMenuItem
             // 
             this.hentLagervarerToolStripMenuItem.Name = "hentLagervarerToolStripMenuItem";
-            this.hentLagervarerToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.hentLagervarerToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.hentLagervarerToolStripMenuItem.Text = "Hent lagervarer";
             this.hentLagervarerToolStripMenuItem.Click += new System.EventHandler(this.hentLagervarerToolStripMenuItem_Click);
             // 
             // hentServicerToolStripMenuItem
             // 
             this.hentServicerToolStripMenuItem.Name = "hentServicerToolStripMenuItem";
-            this.hentServicerToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.hentServicerToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.hentServicerToolStripMenuItem.Text = "Hent servicer";
             this.hentServicerToolStripMenuItem.Click += new System.EventHandler(this.hentServicerToolStripMenuItem_Click);
             // 
             // toolStripSeparator16
             // 
             this.toolStripSeparator16.Name = "toolStripSeparator16";
-            this.toolStripSeparator16.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator16.Size = new System.Drawing.Size(176, 6);
             // 
             // kjørAutorankingToolStripMenuItem
             // 
             this.kjørAutorankingToolStripMenuItem.Name = "kjørAutorankingToolStripMenuItem";
-            this.kjørAutorankingToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
-            this.kjørAutorankingToolStripMenuItem.Text = "Kjør auto-ranking";
+            this.kjørAutorankingToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.kjørAutorankingToolStripMenuItem.Text = "Start auto-ranking";
             this.kjørAutorankingToolStripMenuItem.Click += new System.EventHandler(this.kjørAutorankingToolStripMenuItem_Click);
             // 
             // kjørKveldstankingToolStripMenuItem
             // 
             this.kjørKveldstankingToolStripMenuItem.Name = "kjørKveldstankingToolStripMenuItem";
-            this.kjørKveldstankingToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
-            this.kjørKveldstankingToolStripMenuItem.Text = "Kjør kvelds-ranking";
+            this.kjørKveldstankingToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.kjørKveldstankingToolStripMenuItem.Text = "Start kvelds-ranking";
             this.kjørKveldstankingToolStripMenuItem.Click += new System.EventHandler(this.kjørKveldstankingToolStripMenuItem_Click);
             // 
             // toolStripSeparator15
             // 
             this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator15.Size = new System.Drawing.Size(176, 6);
             // 
             // makroInnstillingerToolStripMenuItem1
             // 
             this.makroInnstillingerToolStripMenuItem1.Image = global::KGSA.Properties.Resources.script_16xLG;
             this.makroInnstillingerToolStripMenuItem1.Name = "makroInnstillingerToolStripMenuItem1";
-            this.makroInnstillingerToolStripMenuItem1.Size = new System.Drawing.Size(176, 22);
+            this.makroInnstillingerToolStripMenuItem1.Size = new System.Drawing.Size(179, 22);
             this.makroInnstillingerToolStripMenuItem1.Text = "Makro innstillinger";
             this.makroInnstillingerToolStripMenuItem1.Click += new System.EventHandler(this.makroInnstillingerToolStripMenuItem1_Click);
             // 
@@ -2057,7 +2081,6 @@
             // 
             // groupBudgetPages
             // 
-            this.groupBudgetPages.Controls.Add(this.buttonBudgetAllSalesRep);
             this.groupBudgetPages.Controls.Add(this.buttonBudgetDaily);
             this.groupBudgetPages.Controls.Add(this.buttonBudgetButikk);
             this.groupBudgetPages.Controls.Add(this.buttonBudgetMdaSda);
@@ -2075,20 +2098,6 @@
             this.groupBudgetPages.TabIndex = 21;
             this.groupBudgetPages.TabStop = false;
             this.groupBudgetPages.Text = "Sider: Budsjett";
-            // 
-            // buttonBudgetAllSalesRep
-            // 
-            this.buttonBudgetAllSalesRep.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.buttonBudgetAllSalesRep.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.buttonBudgetAllSalesRep.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightSkyBlue;
-            this.buttonBudgetAllSalesRep.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonBudgetAllSalesRep.Location = new System.Drawing.Point(98, 22);
-            this.buttonBudgetAllSalesRep.Name = "buttonBudgetAllSalesRep";
-            this.buttonBudgetAllSalesRep.Size = new System.Drawing.Size(86, 23);
-            this.buttonBudgetAllSalesRep.TabIndex = 16;
-            this.buttonBudgetAllSalesRep.Text = "Alle selgere";
-            this.buttonBudgetAllSalesRep.UseVisualStyleBackColor = false;
-            this.buttonBudgetAllSalesRep.Click += new System.EventHandler(this.buttonBudgetAllSalesRep_Click);
             // 
             // buttonBudgetDaily
             // 
@@ -3478,10 +3487,10 @@
             // FinansKrav
             // 
             this.FinansKrav.DataPropertyName = "FinansKrav";
-            dataGridViewCellStyle43.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            dataGridViewCellStyle43.Format = "N0";
-            dataGridViewCellStyle43.NullValue = null;
-            this.FinansKrav.DefaultCellStyle = dataGridViewCellStyle43;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            dataGridViewCellStyle1.Format = "N0";
+            dataGridViewCellStyle1.NullValue = null;
+            this.FinansKrav.DefaultCellStyle = dataGridViewCellStyle1;
             this.FinansKrav.FillWeight = 90F;
             this.FinansKrav.HeaderText = "Finans krav";
             this.FinansKrav.MaxInputLength = 10;
@@ -3491,10 +3500,10 @@
             // ModKrav
             // 
             this.ModKrav.DataPropertyName = "ModKrav";
-            dataGridViewCellStyle44.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            dataGridViewCellStyle44.Format = "N0";
-            dataGridViewCellStyle44.NullValue = null;
-            this.ModKrav.DefaultCellStyle = dataGridViewCellStyle44;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            dataGridViewCellStyle2.Format = "N0";
+            dataGridViewCellStyle2.NullValue = null;
+            this.ModKrav.DefaultCellStyle = dataGridViewCellStyle2;
             this.ModKrav.FillWeight = 90F;
             this.ModKrav.HeaderText = "TA krav";
             this.ModKrav.MaxInputLength = 10;
@@ -3504,10 +3513,10 @@
             // StromKrav
             // 
             this.StromKrav.DataPropertyName = "StromKrav";
-            dataGridViewCellStyle45.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            dataGridViewCellStyle45.Format = "N0";
-            dataGridViewCellStyle45.NullValue = null;
-            this.StromKrav.DefaultCellStyle = dataGridViewCellStyle45;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            dataGridViewCellStyle3.Format = "N0";
+            dataGridViewCellStyle3.NullValue = null;
+            this.StromKrav.DefaultCellStyle = dataGridViewCellStyle3;
             this.StromKrav.FillWeight = 90F;
             this.StromKrav.HeaderText = "Strøm krav";
             this.StromKrav.MaxInputLength = 10;
@@ -3517,10 +3526,10 @@
             // RtgsaKrav
             // 
             this.RtgsaKrav.DataPropertyName = "RtgsaKrav";
-            dataGridViewCellStyle46.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
-            dataGridViewCellStyle46.Format = "N0";
-            dataGridViewCellStyle46.NullValue = null;
-            this.RtgsaKrav.DefaultCellStyle = dataGridViewCellStyle46;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            dataGridViewCellStyle4.Format = "N0";
+            dataGridViewCellStyle4.NullValue = null;
+            this.RtgsaKrav.DefaultCellStyle = dataGridViewCellStyle4;
             this.RtgsaKrav.FillWeight = 90F;
             this.RtgsaKrav.HeaderText = "RTGSA krav";
             this.RtgsaKrav.MaxInputLength = 10;
@@ -3857,8 +3866,8 @@
             // Btokr
             // 
             this.Btokr.DataPropertyName = "Btokr";
-            dataGridViewCellStyle47.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Btokr.DefaultCellStyle = dataGridViewCellStyle47;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Btokr.DefaultCellStyle = dataGridViewCellStyle5;
             this.Btokr.HeaderText = "Inntjening";
             this.Btokr.Name = "Btokr";
             this.Btokr.ReadOnly = true;
@@ -3867,8 +3876,8 @@
             // Salgspris
             // 
             this.Salgspris.DataPropertyName = "Salgspris";
-            dataGridViewCellStyle48.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.Salgspris.DefaultCellStyle = dataGridViewCellStyle48;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Salgspris.DefaultCellStyle = dataGridViewCellStyle6;
             this.Salgspris.HeaderText = "Salgspris";
             this.Salgspris.Name = "Salgspris";
             this.Salgspris.ReadOnly = true;
@@ -3885,8 +3894,8 @@
             // 
             this.SalgsprisExMva.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             this.SalgsprisExMva.DataPropertyName = "SalgsprisExMva";
-            dataGridViewCellStyle49.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.SalgsprisExMva.DefaultCellStyle = dataGridViewCellStyle49;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.SalgsprisExMva.DefaultCellStyle = dataGridViewCellStyle7;
             this.SalgsprisExMva.HeaderText = "SalgsprisEksMva";
             this.SalgsprisExMva.MinimumWidth = 100;
             this.SalgsprisExMva.Name = "SalgsprisExMva";
@@ -4224,6 +4233,30 @@
             this.panel2.Size = new System.Drawing.Size(1045, 31);
             this.panel2.TabIndex = 2;
             // 
+            // checkBoxLogDebug
+            // 
+            this.checkBoxLogDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxLogDebug.AutoSize = true;
+            this.checkBoxLogDebug.Location = new System.Drawing.Point(891, 9);
+            this.checkBoxLogDebug.Name = "checkBoxLogDebug";
+            this.checkBoxLogDebug.Size = new System.Drawing.Size(58, 17);
+            this.checkBoxLogDebug.TabIndex = 2;
+            this.checkBoxLogDebug.Text = "Debug";
+            this.checkBoxLogDebug.UseVisualStyleBackColor = true;
+            this.checkBoxLogDebug.CheckedChanged += new System.EventHandler(this.checkBoxLogDebug_CheckedChanged);
+            // 
+            // checkBoxLogDebugSql
+            // 
+            this.checkBoxLogDebugSql.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxLogDebugSql.AutoSize = true;
+            this.checkBoxLogDebugSql.Location = new System.Drawing.Point(955, 9);
+            this.checkBoxLogDebugSql.Name = "checkBoxLogDebugSql";
+            this.checkBoxLogDebugSql.Size = new System.Drawing.Size(82, 17);
+            this.checkBoxLogDebugSql.TabIndex = 1;
+            this.checkBoxLogDebugSql.Text = "SQL Debug";
+            this.checkBoxLogDebugSql.UseVisualStyleBackColor = true;
+            this.checkBoxLogDebugSql.CheckedChanged += new System.EventHandler(this.checkBoxLogDebugSql_CheckedChanged);
+            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(20, 5);
@@ -4296,6 +4329,186 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.ShowHideOverlayBottom);
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 4;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 61F));
+            this.tableLayoutPanel1.Controls.Add(this.panelStatusTimere, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panelStatusDatabase, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panel21, 2, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 5);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1041, 80);
+            this.tableLayoutPanel1.TabIndex = 2;
+            // 
+            // panelStatusTimere
+            // 
+            this.panelStatusTimere.BackColor = System.Drawing.Color.White;
+            this.panelStatusTimere.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelStatusTimere.Controls.Add(this.labelStatusTmerLager);
+            this.panelStatusTimere.Controls.Add(this.labelStatusTmerService);
+            this.panelStatusTimere.Controls.Add(this.labelStatusTmerKveldstall);
+            this.panelStatusTimere.Controls.Add(this.labelStatusTmerRanking);
+            this.panelStatusTimere.Controls.Add(this.label21);
+            this.panelStatusTimere.Controls.Add(this.label20);
+            this.panelStatusTimere.Controls.Add(this.label19);
+            this.panelStatusTimere.Controls.Add(this.label17);
+            this.panelStatusTimere.Controls.Add(this.label12);
+            this.panelStatusTimere.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelStatusTimere.Location = new System.Drawing.Point(297, 3);
+            this.panelStatusTimere.Name = "panelStatusTimere";
+            this.panelStatusTimere.Size = new System.Drawing.Size(484, 74);
+            this.panelStatusTimere.TabIndex = 1;
+            // 
+            // labelStatusTmerLager
+            // 
+            this.labelStatusTmerLager.AutoSize = true;
+            this.labelStatusTmerLager.Location = new System.Drawing.Point(213, 55);
+            this.labelStatusTmerLager.Name = "labelStatusTmerLager";
+            this.labelStatusTmerLager.Size = new System.Drawing.Size(39, 13);
+            this.labelStatusTmerLager.TabIndex = 8;
+            this.labelStatusTmerLager.Text = "Avslått";
+            // 
+            // labelStatusTmerService
+            // 
+            this.labelStatusTmerService.AutoSize = true;
+            this.labelStatusTmerService.Location = new System.Drawing.Point(213, 38);
+            this.labelStatusTmerService.Name = "labelStatusTmerService";
+            this.labelStatusTmerService.Size = new System.Drawing.Size(39, 13);
+            this.labelStatusTmerService.TabIndex = 7;
+            this.labelStatusTmerService.Text = "Avslått";
+            // 
+            // labelStatusTmerKveldstall
+            // 
+            this.labelStatusTmerKveldstall.AutoSize = true;
+            this.labelStatusTmerKveldstall.Location = new System.Drawing.Point(213, 21);
+            this.labelStatusTmerKveldstall.Name = "labelStatusTmerKveldstall";
+            this.labelStatusTmerKveldstall.Size = new System.Drawing.Size(39, 13);
+            this.labelStatusTmerKveldstall.TabIndex = 6;
+            this.labelStatusTmerKveldstall.Text = "Avslått";
+            // 
+            // labelStatusTmerRanking
+            // 
+            this.labelStatusTmerRanking.AutoSize = true;
+            this.labelStatusTmerRanking.Location = new System.Drawing.Point(213, 4);
+            this.labelStatusTmerRanking.Name = "labelStatusTmerRanking";
+            this.labelStatusTmerRanking.Size = new System.Drawing.Size(39, 13);
+            this.labelStatusTmerRanking.TabIndex = 5;
+            this.labelStatusTmerRanking.Text = "Avslått";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(143, 55);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(68, 13);
+            this.label21.TabIndex = 4;
+            this.label21.Text = "Lager import:";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(134, 38);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(77, 13);
+            this.label20.TabIndex = 3;
+            this.label20.Text = "Service import:";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(107, 21);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(104, 13);
+            this.label19.TabIndex = 2;
+            this.label19.Text = "Kveldstall utsending:";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(112, 4);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(99, 13);
+            this.label17.TabIndex = 1;
+            this.label17.Text = "Ranking utsending:";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(3, 4);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(89, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "Aktive Timere:";
+            // 
+            // panelStatusDatabase
+            // 
+            this.panelStatusDatabase.BackColor = System.Drawing.Color.White;
+            this.panelStatusDatabase.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelStatusDatabase.Controls.Add(this.labelStatusDbService);
+            this.panelStatusDatabase.Controls.Add(this.labelStatusDbLager);
+            this.panelStatusDatabase.Controls.Add(this.labelStatusDbRanking);
+            this.panelStatusDatabase.Controls.Add(this.label13);
+            this.panelStatusDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelStatusDatabase.Location = new System.Drawing.Point(3, 3);
+            this.panelStatusDatabase.Name = "panelStatusDatabase";
+            this.panelStatusDatabase.Size = new System.Drawing.Size(288, 74);
+            this.panelStatusDatabase.TabIndex = 0;
+            // 
+            // labelStatusDbService
+            // 
+            this.labelStatusDbService.AutoSize = true;
+            this.labelStatusDbService.Location = new System.Drawing.Point(7, 55);
+            this.labelStatusDbService.Name = "labelStatusDbService";
+            this.labelStatusDbService.Size = new System.Drawing.Size(43, 13);
+            this.labelStatusDbService.TabIndex = 4;
+            this.labelStatusDbService.Text = "Service";
+            // 
+            // labelStatusDbLager
+            // 
+            this.labelStatusDbLager.AutoSize = true;
+            this.labelStatusDbLager.Location = new System.Drawing.Point(7, 38);
+            this.labelStatusDbLager.Name = "labelStatusDbLager";
+            this.labelStatusDbLager.Size = new System.Drawing.Size(34, 13);
+            this.labelStatusDbLager.TabIndex = 3;
+            this.labelStatusDbLager.Text = "Lager";
+            // 
+            // labelStatusDbRanking
+            // 
+            this.labelStatusDbRanking.AutoSize = true;
+            this.labelStatusDbRanking.Location = new System.Drawing.Point(7, 21);
+            this.labelStatusDbRanking.Name = "labelStatusDbRanking";
+            this.labelStatusDbRanking.Size = new System.Drawing.Size(47, 13);
+            this.labelStatusDbRanking.TabIndex = 2;
+            this.labelStatusDbRanking.Text = "Ranking";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(7, 4);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(65, 13);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "Database:";
+            // 
+            // panel21
+            // 
+            this.panel21.BackColor = System.Drawing.Color.White;
+            this.panel21.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel21.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel21.Location = new System.Drawing.Point(787, 3);
+            this.panel21.Name = "panel21";
+            this.panel21.Size = new System.Drawing.Size(190, 74);
+            this.panel21.TabIndex = 3;
+            // 
             // notifyIcon1
             // 
             this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
@@ -4328,210 +4541,6 @@
             this.avsluttToolStripMenuItem1.Size = new System.Drawing.Size(111, 22);
             this.avsluttToolStripMenuItem1.Text = "Avslutt";
             this.avsluttToolStripMenuItem1.Click += new System.EventHandler(this.avsluttToolStripMenuItem1_Click);
-            // 
-            // panel21
-            // 
-            this.panel21.BackColor = System.Drawing.Color.White;
-            this.panel21.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel21.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel21.Location = new System.Drawing.Point(787, 3);
-            this.panel21.Name = "panel21";
-            this.panel21.Size = new System.Drawing.Size(190, 74);
-            this.panel21.TabIndex = 3;
-            // 
-            // panelStatusDatabase
-            // 
-            this.panelStatusDatabase.BackColor = System.Drawing.Color.White;
-            this.panelStatusDatabase.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelStatusDatabase.Controls.Add(this.labelStatusDbService);
-            this.panelStatusDatabase.Controls.Add(this.labelStatusDbLager);
-            this.panelStatusDatabase.Controls.Add(this.labelStatusDbRanking);
-            this.panelStatusDatabase.Controls.Add(this.label13);
-            this.panelStatusDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelStatusDatabase.Location = new System.Drawing.Point(3, 3);
-            this.panelStatusDatabase.Name = "panelStatusDatabase";
-            this.panelStatusDatabase.Size = new System.Drawing.Size(288, 74);
-            this.panelStatusDatabase.TabIndex = 0;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(7, 4);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(65, 13);
-            this.label13.TabIndex = 1;
-            this.label13.Text = "Database:";
-            // 
-            // labelStatusDbRanking
-            // 
-            this.labelStatusDbRanking.AutoSize = true;
-            this.labelStatusDbRanking.Location = new System.Drawing.Point(7, 21);
-            this.labelStatusDbRanking.Name = "labelStatusDbRanking";
-            this.labelStatusDbRanking.Size = new System.Drawing.Size(47, 13);
-            this.labelStatusDbRanking.TabIndex = 2;
-            this.labelStatusDbRanking.Text = "Ranking";
-            // 
-            // labelStatusDbLager
-            // 
-            this.labelStatusDbLager.AutoSize = true;
-            this.labelStatusDbLager.Location = new System.Drawing.Point(7, 38);
-            this.labelStatusDbLager.Name = "labelStatusDbLager";
-            this.labelStatusDbLager.Size = new System.Drawing.Size(34, 13);
-            this.labelStatusDbLager.TabIndex = 3;
-            this.labelStatusDbLager.Text = "Lager";
-            // 
-            // labelStatusDbService
-            // 
-            this.labelStatusDbService.AutoSize = true;
-            this.labelStatusDbService.Location = new System.Drawing.Point(7, 55);
-            this.labelStatusDbService.Name = "labelStatusDbService";
-            this.labelStatusDbService.Size = new System.Drawing.Size(43, 13);
-            this.labelStatusDbService.TabIndex = 4;
-            this.labelStatusDbService.Text = "Service";
-            // 
-            // panelStatusTimere
-            // 
-            this.panelStatusTimere.BackColor = System.Drawing.Color.White;
-            this.panelStatusTimere.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelStatusTimere.Controls.Add(this.labelStatusTmerLager);
-            this.panelStatusTimere.Controls.Add(this.labelStatusTmerService);
-            this.panelStatusTimere.Controls.Add(this.labelStatusTmerKveldstall);
-            this.panelStatusTimere.Controls.Add(this.labelStatusTmerRanking);
-            this.panelStatusTimere.Controls.Add(this.label21);
-            this.panelStatusTimere.Controls.Add(this.label20);
-            this.panelStatusTimere.Controls.Add(this.label19);
-            this.panelStatusTimere.Controls.Add(this.label17);
-            this.panelStatusTimere.Controls.Add(this.label12);
-            this.panelStatusTimere.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelStatusTimere.Location = new System.Drawing.Point(297, 3);
-            this.panelStatusTimere.Name = "panelStatusTimere";
-            this.panelStatusTimere.Size = new System.Drawing.Size(484, 74);
-            this.panelStatusTimere.TabIndex = 1;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(3, 4);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(89, 13);
-            this.label12.TabIndex = 0;
-            this.label12.Text = "Aktive Timere:";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(112, 4);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(99, 13);
-            this.label17.TabIndex = 1;
-            this.label17.Text = "Ranking utsending:";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(107, 21);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(104, 13);
-            this.label19.TabIndex = 2;
-            this.label19.Text = "Kveldstall utsending:";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(134, 38);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(77, 13);
-            this.label20.TabIndex = 3;
-            this.label20.Text = "Service import:";
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(143, 55);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(68, 13);
-            this.label21.TabIndex = 4;
-            this.label21.Text = "Lager import:";
-            // 
-            // labelStatusTmerRanking
-            // 
-            this.labelStatusTmerRanking.AutoSize = true;
-            this.labelStatusTmerRanking.Location = new System.Drawing.Point(213, 4);
-            this.labelStatusTmerRanking.Name = "labelStatusTmerRanking";
-            this.labelStatusTmerRanking.Size = new System.Drawing.Size(39, 13);
-            this.labelStatusTmerRanking.TabIndex = 5;
-            this.labelStatusTmerRanking.Text = "Avslått";
-            // 
-            // labelStatusTmerKveldstall
-            // 
-            this.labelStatusTmerKveldstall.AutoSize = true;
-            this.labelStatusTmerKveldstall.Location = new System.Drawing.Point(213, 21);
-            this.labelStatusTmerKveldstall.Name = "labelStatusTmerKveldstall";
-            this.labelStatusTmerKveldstall.Size = new System.Drawing.Size(39, 13);
-            this.labelStatusTmerKveldstall.TabIndex = 6;
-            this.labelStatusTmerKveldstall.Text = "Avslått";
-            // 
-            // labelStatusTmerService
-            // 
-            this.labelStatusTmerService.AutoSize = true;
-            this.labelStatusTmerService.Location = new System.Drawing.Point(213, 38);
-            this.labelStatusTmerService.Name = "labelStatusTmerService";
-            this.labelStatusTmerService.Size = new System.Drawing.Size(39, 13);
-            this.labelStatusTmerService.TabIndex = 7;
-            this.labelStatusTmerService.Text = "Avslått";
-            // 
-            // labelStatusTmerLager
-            // 
-            this.labelStatusTmerLager.AutoSize = true;
-            this.labelStatusTmerLager.Location = new System.Drawing.Point(213, 55);
-            this.labelStatusTmerLager.Name = "labelStatusTmerLager";
-            this.labelStatusTmerLager.Size = new System.Drawing.Size(39, 13);
-            this.labelStatusTmerLager.TabIndex = 8;
-            this.labelStatusTmerLager.Text = "Avslått";
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 61F));
-            this.tableLayoutPanel1.Controls.Add(this.panelStatusTimere, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panelStatusDatabase, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panel21, 2, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 5);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1041, 80);
-            this.tableLayoutPanel1.TabIndex = 2;
-            // 
-            // checkBoxLogDebugSql
-            // 
-            this.checkBoxLogDebugSql.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxLogDebugSql.AutoSize = true;
-            this.checkBoxLogDebugSql.Location = new System.Drawing.Point(955, 9);
-            this.checkBoxLogDebugSql.Name = "checkBoxLogDebugSql";
-            this.checkBoxLogDebugSql.Size = new System.Drawing.Size(82, 17);
-            this.checkBoxLogDebugSql.TabIndex = 1;
-            this.checkBoxLogDebugSql.Text = "SQL Debug";
-            this.checkBoxLogDebugSql.UseVisualStyleBackColor = true;
-            this.checkBoxLogDebugSql.CheckedChanged += new System.EventHandler(this.checkBoxLogDebugSql_CheckedChanged);
-            // 
-            // checkBoxLogDebug
-            // 
-            this.checkBoxLogDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxLogDebug.AutoSize = true;
-            this.checkBoxLogDebug.Location = new System.Drawing.Point(891, 9);
-            this.checkBoxLogDebug.Name = "checkBoxLogDebug";
-            this.checkBoxLogDebug.Size = new System.Drawing.Size(58, 17);
-            this.checkBoxLogDebug.TabIndex = 2;
-            this.checkBoxLogDebug.Text = "Debug";
-            this.checkBoxLogDebug.UseVisualStyleBackColor = true;
-            this.checkBoxLogDebug.CheckedChanged += new System.EventHandler(this.checkBoxLogDebug_CheckedChanged);
             // 
             // FormMain
             // 
@@ -4623,13 +4632,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.panel5.ResumeLayout(false);
             this.panelOverlayBottom.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSk)).EndInit();
-            this.contextMenuStripTray.ResumeLayout(false);
-            this.panelStatusDatabase.ResumeLayout(false);
-            this.panelStatusDatabase.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.panelStatusTimere.ResumeLayout(false);
             this.panelStatusTimere.PerformLayout();
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.panelStatusDatabase.ResumeLayout(false);
+            this.panelStatusDatabase.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSk)).EndInit();
+            this.contextMenuStripTray.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -4984,7 +4993,6 @@
         private System.Windows.Forms.ToolStripMenuItem budsjettToolStripMenuItem;
         private System.Windows.Forms.Button buttonBudgetActionBudgetImport;
         private System.Windows.Forms.ToolStripMenuItem oppdaterAlleSiderToolStripMenuItem;
-        private System.Windows.Forms.Button buttonBudgetAllSalesRep;
         public System.Windows.Forms.WebBrowser webRanking;
         public System.Windows.Forms.WebBrowser webService;
         public System.Windows.Forms.WebBrowser webStore;
@@ -5016,6 +5024,9 @@
         private System.Windows.Forms.Label labelStatusDbRanking;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Panel panel21;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem lagRegnearkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem oversiktSelgereToolStripMenuItem;
     }
 }
 

@@ -171,10 +171,6 @@ namespace KGSA
         public AppSettings appConfig = new AppSettings();
         private int lagretAvdeling = 0;
         public Avdeling avdeling = new Avdeling();
-        public string savedPage = "";
-        public string savedTab = "";
-        public BudgetCategory savedBudgetPage = BudgetCategory.None;
-        public string savedStorePage = "";
         public FormProcessing processing;
         public static string filenamePDF;
         private string lastRightClickValue = "";
@@ -357,15 +353,6 @@ namespace KGSA
 
                 if (lagretAvdeling != appConfig.Avdeling) // Hvis favoritt-velger er benyttet, lagre avdelingsnummer som var sist satt i innstillinger.
                     appConfig.Avdeling = lagretAvdeling;
-
-                if (!String.IsNullOrEmpty(savedPage)) // Lagre siste viste rankingside
-                    appConfig.savedPage = savedPage;
-
-                if (savedBudgetPage != BudgetCategory.None) // Lagre siste viste budsjett side
-                    appConfig.savedBudgetPage = savedBudgetPage;
-
-                if (!String.IsNullOrEmpty(savedStorePage)) // Lagre siste viste rankingside
-                    appConfig.savedStorePage = savedStorePage;
 
                 appConfig.savedTab = tabControlMain.SelectedTab.Text;
 
@@ -1680,7 +1667,7 @@ namespace KGSA
             datoPeriodeVelger = false;
 
             if (tabControlMain.SelectedTab == tabPageRank)
-                UpdateRank(savedPage);
+                UpdateRank(appConfig.savedPage);
             else if (tabControlMain.SelectedTab == tabPageGrafikk)
             {
                 if (_graphInitialized)
@@ -2380,15 +2367,19 @@ namespace KGSA
 
         private void richLog_LinkClicked(object sender, LinkClickedEventArgs e)
         {
+            string link = e.LinkText.Replace((char)160, ' ');
             try
             {
-                string linkText = e.LinkText.Replace((char)160, ' ');
-
-                System.Diagnostics.Process.Start(linkText);
+                Process.Start(link);
             }
             catch(FileNotFoundException)
             {
-                Log.n("Fant ikke filen! Filen er enten slettet eller flyttet.", Color.Red);
+                Log.Alert("Dokumentet " + link + " finnes ikke.\nFilen kan være slettet, låst eller ødelagt");
+            }
+            catch(Exception ex)
+            {
+                Log.Unhandled(ex);
+                Log.e("Klarte ikke åpne link. Feilmelding: " + ex.Message);
             }
         }
 
@@ -2895,6 +2886,14 @@ namespace KGSA
         private void checkBoxLogDebug_CheckedChanged(object sender, EventArgs e)
         {
             appConfig.debug = checkBoxLogDebug.Checked;
+        }
+
+        private void oversiktSelgereToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!IsBusy() && openXml != null)
+            {
+                openXml.CreateAndOpenXml(OpenXML.DOC_ALL_SALES_REP);
+            }
         }
     }
 }

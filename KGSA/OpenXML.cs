@@ -1,12 +1,14 @@
 ﻿using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+using System.Windows.Forms;
 
 namespace KGSA
 {
@@ -14,10 +16,11 @@ namespace KGSA
     {
         FormMain main;
         private List<OpenXMLDocument> documentDatabase;
+        public static string DOC_ALL_SALES_REP = "AllSalesRep";
 
         public OpenXML(FormMain form)
         {
-            this.main = form;
+            main = form;
             documentDatabase = new List<OpenXMLDocument> { };
             LoadDatabase();
         }
@@ -98,8 +101,7 @@ namespace KGSA
             }
             catch(Exception ex)
             {
-                FormError errorMsg = new FormError("Feil ved åpning av regneark", ex);
-                errorMsg.ShowDialog();
+                Log.ErrorDialog(ex, "Feil ved åpning av regneark", "KGSA OpenXML");
             }
         }
 
@@ -243,6 +245,277 @@ namespace KGSA
                 Log.Unhandled(ex);
             }
             return null;
+        }
+
+        /// <summary>
+        /// Creates and opens special OpenXML documents, runs async
+        /// </summary>
+        public void CreateAndOpenXml(string name)
+        {
+            main.worker = new BackgroundWorker();
+            main.worker.DoWork += new DoWorkEventHandler(openXML_DoWork);
+            main.worker.ProgressChanged += new ProgressChangedEventHandler(main.bwProgressCustom_ProgressChanged);
+            main.worker.WorkerReportsProgress = true;
+            main.worker.WorkerSupportsCancellation = true;
+            main.worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(openXML_Completed);
+            main.processing.SetVisible = true;
+            main.processing.SetProgressStyle = ProgressBarStyle.Marquee;
+            main.processing.SetBackgroundWorker = main.worker;
+            main.worker.RunWorkerAsync(name);
+        }
+
+        private void openXML_DoWork(object sender, DoWorkEventArgs e)
+        {
+            main.ProgressStart();
+            e.Result = CreateDocumentSpecial((string)e.Argument, main.worker);
+
+            if (main.worker.CancellationPending)
+                e.Cancel = true;
+        }
+
+        private void openXML_Completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            main.ProgressStop();
+            main.processing.SetProgressStyle = ProgressBarStyle.Continuous;
+            main.processing.SetValue = 100;
+
+            if (!e.Cancelled && e.Error == null && e.Result != null)
+            {
+                string path = (string)e.Result;
+                try
+                {
+                    Log.n("Åpner regneark..: " + Path.GetFileName(path));
+                    Process.Start(path);
+
+                    main.processing.SetText = "Ferdig!";
+                }
+                catch (FileNotFoundException)
+                {
+                    Log.Alert("Dokumentet " + path + " finnes ikke.\nFilen kan være slettet, låst eller ødelagt");
+                    main.processing.SetText = "Avbrutt";
+                }
+                catch (Exception ex)
+                {
+                    main.processing.SetText = "Avbrutt!";
+                    Log.Unhandled(ex);
+                    Log.e("Klarte ikke åpne dokument. Feilmelding: " + ex.Message);
+                }
+                main.processing.HideDelayed();
+            }
+            else if (e.Cancelled)
+            {
+                main.processing.SetText = "Avbrutt!";
+                main.processing.HideDelayed();
+                Log.e("Avbrutt av bruker");
+            }
+            else
+            {
+                main.processing.Visible = false;
+            }
+        }
+
+        public string CreateDocumentSpecial(string selection, BackgroundWorker bw)
+        {
+            try
+            {
+                if (selection.IsNullOrWhiteSpace() || bw == null)
+                {
+                    Log.e("OpenXML: Mangler argumenter for å lage dokument");
+                    return "";
+                }
+
+                if (selection.Equals(DOC_ALL_SALES_REP))
+                    return CreateDocument_AllSalesRep(bw);
+                else
+                    Log.e("OpenXML: Ukjent navn på dokument '" + selection + "'");
+            }
+            catch (Exception ex)
+            {
+                Log.Unhandled(ex);
+                Log.e("OpenXML: Uventet feil - klarte ikke lage dokument " + selection + ". Feilmelding: " + ex.Message);
+            }
+            return "";
+        }
+
+        private string CreateDocument_AllSalesRep(BackgroundWorker bw)
+        {
+            main.processing.SetText = "Lager regneark: Forbereder..";
+
+            PageBudgetAllSales page = new PageBudgetAllSales(main, true, bw, main.webBudget);
+            DateTime dateStart = main.database.GetStartOfLastWholeWeek(main.appConfig.dbTo);
+            XLWorkbook workBook = new XLWorkbook();
+            try
+            {
+                for (int i = 0; i < 30; i = i + 7)
+                {
+                    DateTime date = dateStart.AddDays(-i);
+                    if (date < main.appConfig.dbFrom)
+                    {
+                        Log.d("OpenXML: Skipping sheet, don't have complete data for week " + main.database.GetIso8601WeekOfYear(date)
+                            + ". Database goes from " + main.appConfig.dbFrom.ToShortDateString() + " to " + main.appConfig.dbTo.ToShortDateString());
+                        break;
+                    }
+
+                    main.processing.SetText = "Lager regneark: Genererer ark for uke " + main.database.GetIso8601WeekOfYear(date) + "..";
+                    Log.n("OpenXML: Lager side for uke " + main.database.GetIso8601WeekOfYear(date) + "..");
+
+                    IXLWorksheet ws;
+                    if (i == 0)
+                        ws = workBook.Worksheets.Add("Uke " + main.database.GetIso8601WeekOfYear(date).ToString()).SetTabColor(XLColor.Green);
+                    else
+                        ws = workBook.Worksheets.Add("Uke " + main.database.GetIso8601WeekOfYear(date).ToString());
+
+                    DataTable table = page.MakeTableForWeek(main.appConfig.Avdeling, date);
+                    int width = table.Columns.Count;
+                    int height = table.Rows.Count;
+
+                    // ws.Range(Row, Colum, LastRow, LastColum)
+                    var tableWithData = ws.Cell(3, 1).InsertTable(table.AsEnumerable());
+
+                    ws.Cell(1, 1).Value = "Eksportert av KGSA " + FormMain.version + " - " + DateTime.Now.ToString("dddd d. MMMM  HH:mm", FormMain.norway);
+                    ws.Range(1, 1, 1, width).Merge().AddToNamed("HeaderLeft");
+
+                    ws.Cell(2, 1).Value = "Selgeroversikt - Uke " + main.database.GetIso8601WeekOfYear(date);
+                    ws.Range(2, 1, 2, 2).Merge().AddToNamed("HeaderLeft");
+
+                    ws.Cell(2, 3).Value = date.StartOfWeek().ToString("dddd d. MMMM", FormMain.norway) + " - " + date.EndOfWeek().ToString("dddd d. MMMM", FormMain.norway);
+                    ws.Range(2, 3, 2, 8).Merge().AddToNamed("HeaderRight");
+
+                    ws.Range(4, 3, height + 3, 3).AddToNamed("Numbers");
+                    ws.Range(4, 4, height + 3, 4).AddToNamed("Percent");
+                    ws.Range(4, 5, height + 3, 5).AddToNamed("Numbers");
+                    ws.Range(4, 6, height + 3, 6).AddToNamed("InputHours");
+                    ws.Range(4, 7, height + 3, 7).AddToNamed("Numbers");
+                    ws.Range(4, 8, height + 3, 8).AddToNamed("Numbers");
+
+                    for (int d = 0; d < height; d++)
+                    {
+                        ws.Cell(4 + d, 7).FormulaA1 = "=IF(F" + (4 + d) + "=0,\"0\",E" + (4 + d) + "/F" + (4 + d) + ")";
+                        ws.Cell(4 + d, 8).FormulaA1 = "=IF(F" + (4 + d) + "=0,\"0\",C" + (4 + d) + "/F" + (4 + d) + ")";
+                    }
+
+                    ws.Columns().AdjustToContents();
+                    ws.Columns("9:34").Hide();
+                    ws.Cell(4, 6).Select();
+                }
+                
+                for (int i = 0; i < 4; i++)
+                {
+                    DateTime date = main.appConfig.dbTo.AddMonths(-i);
+                    var firstDay = new DateTime(date.Year, date.Month, 1);
+                    var lastDay = firstDay.AddMonths(1).AddDays(-1);
+                    if (firstDay < main.appConfig.dbFrom)
+                    {
+                        Log.d("OpenXML: Skipping sheet, don't have complete data for " + date.ToString("MMMM yyyy")
+                            + ". Database goes from " + main.appConfig.dbFrom.ToShortDateString() + " to " + main.appConfig.dbTo.ToShortDateString());
+                        break;
+                    }
+
+                    main.processing.SetText = "Lager regneark: Genererer ark for måned " + date.ToString("MMMM yyyy") + "..";
+                    Log.n("OpenXML: Lager side for måned " + date.ToString("MMMM yyyy") + "..");
+
+                    IXLWorksheet ws;
+                    string sheetName = date.ToString("MMMM");
+                    if (date.Month == main.appConfig.dbTo.Month && date.Year == main.appConfig.dbTo.Year)
+                    {
+                        lastDay = main.appConfig.dbTo;
+                        sheetName = "MTD " + sheetName;
+                        ws = workBook.Worksheets.Add(sheetName).SetTabColor(XLColor.Green);
+                    }
+                    else
+                        ws = workBook.Worksheets.Add(sheetName);
+
+                    DataTable table = page.MakeTableForMonth(main.appConfig.Avdeling, date);
+                    int width = table.Columns.Count;
+                    int height = table.Rows.Count;
+
+                    // ws.Range(Row, Colum, LastRow, LastColum)
+                    var tableWithData = ws.Cell(3, 1).InsertTable(table.AsEnumerable());
+
+                    ws.Cell(1, 1).Value = "Eksportert av KGSA " + FormMain.version + " - " + DateTime.Now.ToString("dddd d. MMMM  HH:mm", FormMain.norway);
+                    ws.Range(1, 1, 1, width).Merge().AddToNamed("HeaderLeft");
+
+                    ws.Cell(2, 1).Value = "Selgeroversikt - Måned " + date.ToString("MMMM yyyy", FormMain.norway);
+                    ws.Range(2, 1, 2, 2).Merge().AddToNamed("HeaderLeft");
+
+                    ws.Cell(2, 3).Value = firstDay.ToString("dddd d. MMMM", FormMain.norway) + " - " + lastDay.ToString("dddd d. MMMM", FormMain.norway);
+                    ws.Range(2, 3, 2, 8).Merge().AddToNamed("HeaderRight");
+
+                    ws.Range(4, 3, height + 3, 3).AddToNamed("Numbers");
+                    ws.Range(4, 4, height + 3, 4).AddToNamed("Percent");
+                    ws.Range(4, 5, height + 3, 5).AddToNamed("Numbers");
+                    ws.Range(4, 6, height + 3, 6).AddToNamed("InputHours");
+                    ws.Range(4, 7, height + 3, 7).AddToNamed("Numbers");
+                    ws.Range(4, 8, height + 3, 8).AddToNamed("Numbers");
+
+                    for (int d = 0; d < height; d++)
+                    {
+                        ws.Cell(4 + d, 7).FormulaA1 = "=IF(F" + (4 + d) + "=0,\"0\",E" + (4 + d) + "/F" + (4 + d) + ")";
+                        ws.Cell(4 + d, 8).FormulaA1 = "=IF(F" + (4 + d) + "=0,\"0\",C" + (4 + d) + "/F" + (4 + d) + ")";
+                    }
+
+                    ws.Columns().AdjustToContents();
+                    ws.Columns("9:34").Hide();
+                    ws.Cell(4, 6).Select();
+                }
+
+                main.processing.SetText = "Lager regneark: Snart der!";
+                Log.n("OpenXML: Lager regneark..");
+
+                try
+                {
+                    IXLStyle sHeaderLeft = workBook.Style;
+                    sHeaderLeft.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+                    workBook.NamedRanges.NamedRange("HeaderLeft").Ranges.Style = sHeaderLeft;
+
+                    IXLStyle sHeaderRight = workBook.Style;
+                    sHeaderRight.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+                    workBook.NamedRanges.NamedRange("HeaderRight").Ranges.Style = sHeaderRight;
+
+                    IXLStyle sNumbers = workBook.Style;
+                    sNumbers.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+                    sNumbers.NumberFormat.Format = "#,##0";
+                    workBook.NamedRanges.NamedRange("Numbers").Ranges.Style = sNumbers;
+
+                    IXLStyle sPercent = workBook.Style;
+                    sPercent.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+                    sPercent.NumberFormat.Format = "0.0%";
+                    workBook.NamedRanges.NamedRange("Percent").Ranges.Style = sPercent;
+
+                    IXLStyle sHourInput = workBook.Style;
+                    sHourInput.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    sHourInput.Fill.BackgroundColor = XLColor.FromHtml("#ffcc99");
+                    sHourInput.Font.FontColor = XLColor.FromHtml("#3f3f76");
+                    sHourInput.NumberFormat.Format = "#,##0";
+                    workBook.NamedRanges.NamedRange("InputHours").Ranges.Style = sHourInput;
+                }
+                catch (Exception ex)
+                {
+                    Log.Unhandled(ex);
+                    Log.n("OpenXML: Exception while attempting to apply styles to document. It might not be fatal", Color.Brown);
+                }
+
+                string path = main.tools.GetTempFilename("KGSA Selgeroversikt " + main.appConfig.dbTo.ToShortDateString(), ".xlsx");
+
+
+                workBook.SaveAs(path);
+                Log.n("OpenXML: Opprettet dokument: file://" + path.Replace(' ', (char)160), Color.Green);
+
+                return path;
+            }
+            catch (Exception ex)
+            {
+                Log.Unhandled(ex);
+                Log.e("OpenXML: Uventet feil - klarte ikke lage dokumentet. Feilmelding: " + ex.Message);
+            }
+            finally
+            {
+                if (workBook != null)
+                    workBook = null;
+                if (page != null)
+                    page = null;
+            }
+            return "";
         }
 
         private DataTable TrimColumns(DataTable table, string[] ignoreColumns)

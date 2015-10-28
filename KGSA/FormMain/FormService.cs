@@ -150,7 +150,7 @@ namespace KGSA
             e.Result = complete;
         }
 
-        private void bwProgressCustom_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        public void bwProgressCustom_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             ReportProgressCustom(Convert.ToDecimal(e.ProgressPercentage), (StatusProgress)e.UserState);
         }
