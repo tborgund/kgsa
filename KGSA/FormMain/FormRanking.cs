@@ -399,7 +399,7 @@ namespace KGSA
                         }
                         if (appConfig.rankingShowLastWeek)
                         {
-                            doc.Add("<h3>Sist uke - Uke " + database.GetIso8601WeekOfYear(dtPick) + " (Fra " + database.GetStartOfLastWholeWeek(dtPick).ToString("d. MMM") + " til " + database.GetStartOfLastWholeWeek(dtPick).AddDays(6).ToString("d. MMM") + ")</h3>");
+                            doc.Add("<h3>Sist uke - Uke " + database.GetIso8601WeekOfYear(dtPick) + " (Fra " + dtPick.EndOfLastWorkWeek(appConfig.ignoreSunday).StartOfWeek().ToString("d. MMM") + " til " + dtPick.EndOfLastWorkWeek(appConfig.ignoreSunday).ToString("d. MMM") + ")</h3>");
                             doc.Add("<span class='Loading'>Beregner..</span>");
                             if (!bg && timewatch.ReadyForRefresh())
                                 webRanking.DocumentText = string.Join(null, doc.ToArray());

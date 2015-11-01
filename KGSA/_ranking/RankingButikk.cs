@@ -72,7 +72,7 @@ namespace KGSA
                 }
                 else if (strArg == "lastweek")
                 {
-                    DateTime startOfLastWeek = main.database.GetStartOfLastWholeWeek(dtTil); ;
+                    DateTime startOfLastWeek = dtTil.EndOfLastWorkWeek(main.appConfig.ignoreSunday).StartOfWeek();
                     dtMainFra = startOfLastWeek;
                     dtMainTil = startOfLastWeek.AddDays(6);
 
@@ -373,7 +373,7 @@ namespace KGSA
                 DateTime dtMainFra;
                 DateTime dtMainTil;
 
-                DateTime startOfLastWeek = main.database.GetStartOfLastWholeWeek(dtTil); ;
+                DateTime startOfLastWeek = dtTil.EndOfLastWorkWeek(main.appConfig.ignoreSunday).StartOfWeek();
                 dtMainFra = startOfLastWeek;
                 dtMainTil = startOfLastWeek.AddDays(6);
 

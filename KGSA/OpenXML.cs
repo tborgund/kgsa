@@ -342,7 +342,7 @@ namespace KGSA
             main.processing.SetText = "Lager regneark: Forbereder..";
 
             PageBudgetAllSales page = new PageBudgetAllSales(main, true, bw, main.webBudget);
-            DateTime dateStart = main.database.GetStartOfLastWholeWeek(main.appConfig.dbTo);
+            DateTime dateStart = main.appConfig.dbTo.EndOfLastWorkWeek(main.appConfig.ignoreSunday);
             XLWorkbook workBook = new XLWorkbook();
             try
             {
@@ -378,7 +378,7 @@ namespace KGSA
                     ws.Cell(2, 1).Value = "Selgeroversikt - Uke " + main.database.GetIso8601WeekOfYear(date);
                     ws.Range(2, 1, 2, 2).Merge().AddToNamed("HeaderLeft");
 
-                    ws.Cell(2, 3).Value = date.StartOfWeek().ToString("dddd d. MMMM", FormMain.norway) + " - " + date.EndOfWeek().ToString("dddd d. MMMM", FormMain.norway);
+                    ws.Cell(2, 3).Value = date.StartOfWeek().ToString("dddd d. MMMM", FormMain.norway) + " - " + date.ToString("dddd d. MMMM", FormMain.norway);
                     ws.Range(2, 3, 2, 8).Merge().AddToNamed("HeaderRight");
 
                     ws.Range(4, 3, height + 3, 3).AddToNamed("Numbers");
@@ -496,7 +496,6 @@ namespace KGSA
                 }
 
                 string path = main.tools.GetTempFilename("KGSA Selgeroversikt " + main.appConfig.dbTo.ToShortDateString(), ".xlsx");
-
 
                 workBook.SaveAs(path);
                 Log.n("OpenXML: Opprettet dokument: file://" + path.Replace(' ', (char)160), Color.Green);

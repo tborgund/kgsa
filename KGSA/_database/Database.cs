@@ -416,22 +416,22 @@ namespace KGSA
             }
         }
 
-        public DateTime GetStartOfLastWholeWeek(DateTime time)
-        {
-            DateTime startOfLastWeek = time;
-            if (main.appConfig.ignoreSunday)
-            {
-                while (startOfLastWeek.DayOfWeek != DayOfWeek.Monday || (time - startOfLastWeek).TotalDays < 7)
-                    startOfLastWeek = startOfLastWeek.AddDays(-1);
-            }
-            else
-            {
-                while (startOfLastWeek.DayOfWeek != DayOfWeek.Sunday || (time - startOfLastWeek).TotalDays < 7)
-                    startOfLastWeek = startOfLastWeek.AddDays(-1);
-            }
+        //public DateTime GetStartOfLastWholeWeek(DateTime time)
+        //{
+        //    DateTime startOfLastWeek = time;
+        //    if (main.appConfig.ignoreSunday)
+        //    {
+        //        while (startOfLastWeek.DayOfWeek != DayOfWeek.Monday || (time - startOfLastWeek).TotalDays < 7)
+        //            startOfLastWeek = startOfLastWeek.AddDays(-1);
+        //    }
+        //    else
+        //    {
+        //        while (startOfLastWeek.DayOfWeek != DayOfWeek.Sunday || (time - startOfLastWeek).TotalDays < 7)
+        //            startOfLastWeek = startOfLastWeek.AddDays(-1);
+        //    }
 
-            return startOfLastWeek;
-        }
+        //    return startOfLastWeek;
+        //}
 
         // This presumes that weeks start with Monday.
         // Week 1 is the 1st week of the year with a Thursday in it.
@@ -551,6 +551,20 @@ namespace KGSA
 
     public static class DateTimeExtensions
     {
+        public static DateTime EndOfLastWorkWeek(this DateTime date, bool ignoreSunday)
+        {
+            if (date.DayOfWeek == DayOfWeek.Saturday)
+                return date;
+            else if (date.DayOfWeek == DayOfWeek.Sunday && ignoreSunday)
+                return date.AddDays(-1);
+            else if (date.DayOfWeek == DayOfWeek.Monday && !ignoreSunday)
+                return date.AddDays(-1);
+            else if (ignoreSunday)
+                return date.AddDays(-7).EndOfWeek().AddDays(-1);
+            else
+                return date.AddDays(-7).EndOfWeek();
+        }
+        
         public static DateTime StartOfWeek(this DateTime dt)
         {
             int diff = 0;

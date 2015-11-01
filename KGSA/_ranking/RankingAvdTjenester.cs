@@ -79,7 +79,7 @@ namespace KGSA
                 }
                 else if (rankMode == 4)
                 {
-                    DateTime startOfLastWeek = main.database.GetStartOfLastWholeWeek(dtTil); ;
+                    DateTime startOfLastWeek = dtTil.EndOfLastWorkWeek(main.appConfig.ignoreSunday).StartOfWeek();
                     dtMainFra = startOfLastWeek;
                     dtMainTil = startOfLastWeek.AddDays(6);
 
