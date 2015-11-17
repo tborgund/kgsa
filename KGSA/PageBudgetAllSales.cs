@@ -318,8 +318,6 @@ namespace KGSA
                     DataTable tableSel = rows.Any() ? rows.CopyToDataTable() : tableSales.Clone();
 
                     omset = Compute(tableSel, "SUM(" + TableSalg.KEY_SALGSPRIS + ")", TableSalg.KEY_SELGERKODE + " like '" + sk + "'");
-                    if (omset <= 0)
-                        continue;
 
                     omset_eks_mva = Compute(tableSel, "SUM(" + TableSalg.KEY_SALGSPRIS_EX_MVA + ")", TableSalg.KEY_SELGERKODE + " like '" + sk + "'");
                     inntjen = Compute(tableSel, "SUM(" + TableSalg.KEY_BTOKR + ")", TableSalg.KEY_SELGERKODE + " like '" + sk + "'");
@@ -330,6 +328,9 @@ namespace KGSA
                     decimal sSnittOmsetSel = 0, sTjenOmsetSel = 0, sTjenInntjenSel = 0, sAntallTjenSel = 0;
 
                     sAntallSalgSel = Compute(tableSel, "Sum(" + TableSalg.KEY_ANTALL + ")", null);
+                    if (sAntallSalgSel <= 0)
+                        continue;
+
                     sAntallBilagSel = tableSel.AsEnumerable().Select(g => g.Field<int>(TableSalg.KEY_BILAGSNR)).Distinct().Count();
                     sFinansAntallSel = Compute(tableSel, "Sum(" + TableSalg.KEY_ANTALL + ")", "[" + TableSalg.KEY_VAREGRUPPE + "] = 961");
                     sFinansInntjenSel = Compute(tableSel, "Sum(" + TableSalg.KEY_BTOKR + ")", "[" + TableSalg.KEY_VAREGRUPPE + "] = 961");

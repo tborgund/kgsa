@@ -2833,16 +2833,17 @@ namespace KGSA
 
         private void påAutoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            appConfig.blueServerIsEnabled = påAutoToolStripMenuItem.Checked;
-            if (appConfig.blueServerIsEnabled)
+            if (påAutoToolStripMenuItem.Checked)
             {
-                avToolStripMenuItem.Checked = false;
-                påAutoToolStripMenuItem.Checked = true;
+                appConfig.blueServerIsEnabled = false;
+                avToolStripMenuItem.Checked = true;
+                påAutoToolStripMenuItem.Checked = false;
             }
             else
             {
-                avToolStripMenuItem.Checked = true;
-                påAutoToolStripMenuItem.Checked = false;
+                appConfig.blueServerIsEnabled = true;
+                avToolStripMenuItem.Checked = false;
+                påAutoToolStripMenuItem.Checked = true;
             }
 
             SaveSettings();

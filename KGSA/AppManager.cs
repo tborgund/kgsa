@@ -369,13 +369,18 @@ namespace KGSA
                         return false;
 
                     DataRow dtRow = table.NewRow();
+                    dtRow[TableVareinfo.KEY_VAREKODE] = "";
                     dtRow["Barcode"] = tableEanOnly.Rows[i][TableEan.KEY_BARCODE];
-                    dtRow["Varetekst"] = tableEanOnly.Rows[i][TableEan.KEY_PRODUCT_TEXT];
-                    dtRow["Kategori"] = 0;
-                    dtRow["Varegruppe"] = 0;
-                    dtRow["Modgruppe"] = 0;
-                    dtRow["Merke"] = 0;
-                    dtRow["Dato"] = FormMain.rangeMin;
+                    dtRow[TableVareinfo.KEY_TEKST] = tableEanOnly.Rows[i][TableEan.KEY_PRODUCT_TEXT];
+                    dtRow[TableVareinfo.KEY_KAT] = 0;
+                    dtRow[TableVareinfo.KEY_KATNAVN] = "";
+                    dtRow[TableVareinfo.KEY_GRUPPE] = 0;
+                    dtRow[TableVareinfo.KEY_GRUPPENAVN] = "";
+                    dtRow[TableVareinfo.KEY_MODGRUPPE] = 0;
+                    dtRow[TableVareinfo.KEY_MODGRUPPENAVN] = "";
+                    dtRow[TableVareinfo.KEY_MERKE] = 0;
+                    dtRow[TableVareinfo.KEY_MERKENAVN] = "";
+                    dtRow[TableVareinfo.KEY_DATO] = FormMain.rangeMin;
                     table.Rows.Add(dtRow);
                 }
 

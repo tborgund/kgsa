@@ -11,11 +11,7 @@ namespace KGSA
     public class KgsaTools
     {
         FormMain main;
-
-        public KgsaTools(FormMain form)
-        {
-            this.main = form;
-        }
+        public KgsaTools(FormMain form) { main = form; }
 
         public string GetTempFilename(string shortName, string extension)
         {
