@@ -1,3 +1,7 @@
+Versjon 3.0.1 - 10.03.2016
+
+- Rettet på feil på selgerkrav under TA hvor kravet visest som oppnådd uten å virkelig være det.
+
 Versjon 3.0 - 17.10.2015
 
 Veldig mange endringer siden sist versjon var utgitt.

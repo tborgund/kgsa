@@ -22,7 +22,7 @@ namespace KGSA
     {
         #region Variables
         #region Static variables
-        public static string version = "v3.0";
+        public static string version = "v3.0.1";
         public static string settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA";
         public static string settingsFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA\Settings.xml";
         public static string settingsTemp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KGSA\Temp";

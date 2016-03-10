@@ -540,14 +540,14 @@ namespace KGSA
                                     decimal modTemp = sModOmsetSel;
                                     dtRowSel["ModKrav"] = modKrav * multi;
                                     dtRowSel["ModKravUmod"] = modKrav;
-                                    if (main.appConfig.oversiktKravModAntall && modKrav <= sModAntall && modKrav != 0)
+                                    if (main.appConfig.oversiktKravModAntall && modKrav <= sModAntallSel && modKrav != 0)
                                         dtRowSel["ModKravUmodOppfylt"] = true;
                                     else if (!main.appConfig.oversiktKravModAntall && modKrav <= modTemp && modKrav != 0)
                                         dtRowSel["ModKravUmodOppfylt"] = true;
                                     else
                                         dtRowSel["ModKravUmodOppfylt"] = false;
                                     modKrav = (int)(modKrav * multi);
-                                    if (main.appConfig.oversiktKravModAntall && modKrav <= sModAntall && modKrav != 0)
+                                    if (main.appConfig.oversiktKravModAntall && modKrav <= sModAntallSel && modKrav != 0)
                                         dtRowSel["ModKravOppfylt"] = true;
                                     else if (!main.appConfig.oversiktKravModAntall && modKrav <= modTemp && modKrav != 0)
                                         dtRowSel["ModKravOppfylt"] = true;
