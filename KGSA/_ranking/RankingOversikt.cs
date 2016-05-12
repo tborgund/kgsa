@@ -185,13 +185,13 @@ namespace KGSA
 
                         for (int i = 0; i < selgere.Length; i++)
                         {
-                            if (main.appConfig.oversiktKravVis && d > 6)
-                            {
+                            //if (main.appConfig.oversiktKravVis && d > 6)
+                            //{
                                 finansKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Finans", main.appConfig.oversiktKravFinansAntall));
                                 modKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Mod", main.appConfig.oversiktKravModAntall));
                                 stromKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Strom", main.appConfig.oversiktKravStromAntall));
                                 rtgsaKravAcc += (int)(main.salesCodes.GetKrav(selgere[i], sKat, "Rtgsa", main.appConfig.oversiktKravRtgsaAntall));
-                            }
+                            //}
                         }
 
                         if (sInntjen != 0)

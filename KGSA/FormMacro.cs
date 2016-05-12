@@ -338,6 +338,7 @@ namespace KGSA
 
         private void GenerateCommandsQuick()
         {
+            bool exportFixDone = false;
             for (int f = 0; f < FormMain.Favoritter.Count; f++)
             {
                 program.Add("Wait(3)");
@@ -349,6 +350,7 @@ namespace KGSA
                 program.Add("KeyPress(Enter)");
                 program.Add("KeyPress(Enter)");
                 program.Add("KeyPress(F12)");
+                if (!exportFixDone) program.Add("KeyPress(Enter)"); // export fix
                 program.Add("KeyPress(Right)");
                 program.Add("KeyPress(Enter)");
                 program.Add("Wait(2)");
@@ -376,6 +378,7 @@ namespace KGSA
                 program.Add("KeyPress(Enter)");
                 program.Add("Wait(2)");
                 program.Add("KeyPress(F12)");
+                if (!exportFixDone) program.Add("KeyPress(Enter)"); // export fix
                 program.Add("KeyPress(Right)");
                 program.Add("KeyPress(Enter)");
                 program.Add("Wait(2)");
@@ -390,6 +393,7 @@ namespace KGSA
                 program.Add("KeyPress(Enter)");
                 program.Add("Wait(2)");
                 program.Add("KeyPress(F12)");
+                if (!exportFixDone) program.Add("KeyPress(Enter)"); // export fix
                 program.Add("KeyPress(Right)");
                 program.Add("KeyPress(Enter)");
                 program.Add("Wait(2)");
@@ -403,6 +407,7 @@ namespace KGSA
                 program.Add("KeyPress(Enter)");
                 program.Add("Wait(2)");
                 program.Add("KeyPress(F12)");
+                if (!exportFixDone) program.Add("KeyPress(Enter)"); // export fix
                 program.Add("KeyPress(Right)");
                 program.Add("KeyPress(Enter)");
                 program.Add("Wait(2)");
